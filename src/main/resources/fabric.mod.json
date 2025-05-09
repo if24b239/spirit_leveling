@@ -3,20 +3,22 @@
 	"id": "spiritleveling",
 	"version": "${version}",
 	"name": "Spirit Leveling",
-	"description": "This is an example description! Tell everyone what your mod is about!",
+	"description": "BlaBlaTODO",
 	"authors": [
-		"Me!"
+		"Rattenmann"
 	],
 	"contact": {
-		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
+		"sources": "https://github.com/if24b239/spirit_leveling",
+		"issues": "https://github.com/if24b239/spirit_leveling/issues"
 	},
-	"license": "CC0-1.0",
-	"icon": "assets/spiritleveling/icon.png",
+	"license": "MIT",
 	"environment": "*",
 	"entrypoints": {
 		"main": [
 			"com.rain.spiritleveling.SpiritLeveling"
+		],
+		"client": [
+			"com.rain.spiritleveling.SpiritLevelingClient"
 		],
 		"fabric-datagen": [
 			"com.rain.spiritleveling.SpiritLevelingDataGenerator"
@@ -32,6 +34,20 @@
 		"fabric-api": "*"
 	},
 	"suggests": {
-		"another-mod": "*"
+		"modmenu-badge-lib": "*",
+		"modmenu": "7.2.2"
+	},
+	"custom": {
+		"modmenu": {
+			"update_checker": true
+		},
+		"mcb": [
+			{
+				"name": "RPG",
+				"labelColor": -10220268,
+				"fillColor": -5429199,
+				"outlineColor": -8385005
+			}
+		]
 	}
 }
