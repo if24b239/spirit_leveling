@@ -1,6 +1,9 @@
 package com.rain.spiritleveling;
 
+import com.rain.spiritleveling.effects.SpiritEffects;
+import com.rain.spiritleveling.events.ModEvents;
 import com.rain.spiritleveling.items.SpiritItems;
+import com.rain.spiritleveling.networking.ModMessages;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
@@ -13,12 +16,20 @@ public class SpiritLeveling implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-		// register and apply new attributes
-		SpiritAttributes.bootstrap();
+		LOGGER.info("Init Mod");
 
+		// register all Items
 		SpiritItems.initialize();
 
-		LOGGER.info("Hello Fabric world!");
+		// register networking
+		ModMessages.registerC2SPackets();
+
+		// register events
+		ModEvents.initialize();
+
+		// register effects
+		SpiritEffects.initialize();
+
 	}
 
 	// get a registry Identifier for SpiritLeveling

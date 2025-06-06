@@ -3,7 +3,7 @@
 	"package": "com.rain.spiritleveling.mixin",
 	"compatibilityLevel": "JAVA_17",
 	"mixins": [
-		"ExampleMixin"
+      "ClientDataTrackerMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

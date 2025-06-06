@@ -6,9 +6,6 @@ import org.jetbrains.annotations.NotNull;
 
 public class SpiritEnergyData {
 
-    // the starting max SE of players
-    public static int BASIC_SPIRIT_ENERGY = 100;
-
     // increase Max SE
     public static int addMaxSpiritEnergy(@NotNull IPersistentDataHolder player, int amount) {
         NbtCompound nbt = player.faux$getPersistentData();
@@ -21,6 +18,7 @@ public class SpiritEnergyData {
         // update the data on the ServerPlayerEntity
         player.faux$setPersistentData(nbt);
         // sync the data to client
+        ((ISpiritEnergyPlayer) player).spirit_leveling$setMaxData(currentMax);
 
         return currentMax;
     }
@@ -38,6 +36,7 @@ public class SpiritEnergyData {
         // update the data on the ServerPlayerEntity
         player.faux$setPersistentData(nbt);
         // sync the data to client
+        ((ISpiritEnergyPlayer) player).spirit_leveling$setCurrentData(currentEnergy);
 
         return currentEnergy;
     }
@@ -52,13 +51,15 @@ public class SpiritEnergyData {
         if ( amount > currentEnergy ) return -1;
 
         currentEnergy -= amount;
-
         nbt.putInt("currentSpiritEnergy", currentEnergy);
 
         // update the data on the ServerPlayerEntity
         player.faux$setPersistentData(nbt);
         // sync the data to client
+        ((ISpiritEnergyPlayer) player).spirit_leveling$setCurrentData(currentEnergy);
 
         return currentEnergy;
     }
+
+
 }
