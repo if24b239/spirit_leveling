@@ -21,6 +21,8 @@ public abstract class ClientDataTrackerMixin extends LivingEntity implements ISp
 	private static final TrackedData<Integer> MAX_SPIRIT_ENERGY = DataTracker.registerData(ClientDataTrackerMixin.class, TrackedDataHandlerRegistry.INTEGER);
 	@Unique
 	private static final TrackedData<Integer> CURRENT_SPIRIT_ENERGY = DataTracker.registerData(ClientDataTrackerMixin.class, TrackedDataHandlerRegistry.INTEGER);
+	@Unique
+	private static final TrackedData<Integer> SPIRIT_LEVEL = DataTracker.registerData(ClientDataTrackerMixin.class, TrackedDataHandlerRegistry.INTEGER);
 
 	protected ClientDataTrackerMixin(EntityType<? extends LivingEntity> entityType, World world) {
 		super(entityType, world);
@@ -30,6 +32,7 @@ public abstract class ClientDataTrackerMixin extends LivingEntity implements ISp
 	private void initCustomDataTrackers(CallbackInfo info) {
 		this.dataTracker.startTracking(MAX_SPIRIT_ENERGY, 0);
 		this.dataTracker.startTracking(CURRENT_SPIRIT_ENERGY, 0);
+		this.dataTracker.startTracking(SPIRIT_LEVEL, 0);
 	}
 
 	@Override
@@ -41,11 +44,19 @@ public abstract class ClientDataTrackerMixin extends LivingEntity implements ISp
 		this.dataTracker.set(CURRENT_SPIRIT_ENERGY, amount);
 	}
 
+	public void spirit_leveling$setLevelData(int amount) {
+		this.dataTracker.set(SPIRIT_LEVEL, amount);
+	}
+
 	public int spirit_leveling$getMaxData() {
 		return this.dataTracker.get(MAX_SPIRIT_ENERGY);
 	}
 
 	public int spirit_leveling$getCurrentData() {
 		return this.dataTracker.get(CURRENT_SPIRIT_ENERGY);
+	}
+
+	public int spirit_leveling$getLevelData() {
+		return this.dataTracker.get(SPIRIT_LEVEL);
 	}
 }

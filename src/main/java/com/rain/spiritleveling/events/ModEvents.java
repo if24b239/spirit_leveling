@@ -2,8 +2,10 @@ package com.rain.spiritleveling.events;
 
 import com.faux.customentitydata.api.IPersistentDataHolder;
 import com.rain.spiritleveling.util.ISpiritEnergyPlayer;
+import com.rain.spiritleveling.api.SpiritEnergyData;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
 
 public class ModEvents {
@@ -19,11 +21,16 @@ public class ModEvents {
             ((ISpiritEnergyPlayer)newPlayer).spirit_leveling$setCurrentData(currentSpiritEnergy);
         });
 
+        // player joins event
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
             ServerPlayerEntity player = handler.player;
 
-            int maxSpiritEnergy = ((IPersistentDataHolder)player).faux$getPersistentData().getInt("maxSpiritEnergy");
-            int currentSpiritEnergy= ((IPersistentDataHolder)player).faux$getPersistentData().getInt("currentSpiritEnergy");
+            NbtCompound nbt = ((IPersistentDataHolder)player).faux$getPersistentData();
+
+            SpiritEnergyData.updateSpiritLevel((IPersistentDataHolder) player);
+
+            int maxSpiritEnergy = nbt.getInt("maxSpiritEnergy");
+            int currentSpiritEnergy= nbt.getInt("currentSpiritEnergy");
 
             ((ISpiritEnergyPlayer)player).spirit_leveling$setMaxData(maxSpiritEnergy);
             ((ISpiritEnergyPlayer)player).spirit_leveling$setCurrentData(currentSpiritEnergy);

@@ -1,7 +1,6 @@
 package com.rain.spiritleveling.effects;
 
-import com.faux.customentitydata.api.IPersistentDataHolder;
-import com.rain.spiritleveling.util.SpiritEnergyData;
+import com.rain.spiritleveling.api.SpiritEnergyData;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectCategory;
@@ -16,7 +15,7 @@ public class ActiveSoul extends StatusEffect {
     @Override
     public void applyUpdateEffect(LivingEntity entity, int amplifier) {
         if (entity instanceof ServerPlayerEntity) {
-            SpiritEnergyData.addCurrentSpiritEnergy((IPersistentDataHolder) entity, (int)Math.pow(2, amplifier));
+            SpiritEnergyData.addCurrentSpiritEnergy((ServerPlayerEntity) entity, (int)Math.pow(2, amplifier));
         }
     }
 
