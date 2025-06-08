@@ -97,6 +97,9 @@ public class SpiritEnergyData {
 
         nbt.putBoolean("minorBottleneck", false);
 
+        //sync data with client
+        ((ISpiritEnergyPlayer)player).spirit_leveling$setMinorBottleneck(false);
+
         player.faux$setPersistentData(nbt);
 
         SpiritLeveling.LOGGER.info("MINOR BOTTLENECK BROKEN!");
@@ -128,17 +131,24 @@ public class SpiritEnergyData {
     private static void minorBottleneck(@NotNull IPersistentDataHolder player) {
         NbtCompound nbt = player.faux$getPersistentData();
         nbt.putBoolean("minorBottleneck", true);
+
+        //sync data to client
+        ((ISpiritEnergyPlayer)player).spirit_leveling$setMinorBottleneck(true);
+
         player.faux$setPersistentData(nbt);
     }
 
     private static void majorBottleneck(@NotNull IPersistentDataHolder player) {
         NbtCompound nbt = player.faux$getPersistentData();
         nbt.putBoolean("majorBottleneck", true);
+
+        //sync data to client
+
         player.faux$setPersistentData(nbt);
     }
 
     // updates spirit power based on current spirit energy
-    private static void updateSpiritPower(@NotNull IPersistentDataHolder player) {
+    public static void updateSpiritPower(@NotNull IPersistentDataHolder player) {
         NbtCompound nbt = player.faux$getPersistentData();
         int currentSE = nbt.getInt("currentSpiritEnergy");
 

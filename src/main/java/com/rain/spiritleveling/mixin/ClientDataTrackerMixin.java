@@ -25,6 +25,8 @@ public abstract class ClientDataTrackerMixin extends LivingEntity implements ISp
 	private static final TrackedData<Integer> SPIRIT_LEVEL = DataTracker.registerData(ClientDataTrackerMixin.class, TrackedDataHandlerRegistry.INTEGER);
 	@Unique
 	private static final TrackedData<Integer> SPIRIT_POWER = DataTracker.registerData(ClientDataTrackerMixin.class, TrackedDataHandlerRegistry.INTEGER);
+	@Unique
+	private static final TrackedData<Boolean> MINOR_BOTTLENECK = DataTracker.registerData(ClientDataTrackerMixin.class, TrackedDataHandlerRegistry.BOOLEAN);
 
 	protected ClientDataTrackerMixin(EntityType<? extends LivingEntity> entityType, World world) {
 		super(entityType, world);
@@ -36,6 +38,7 @@ public abstract class ClientDataTrackerMixin extends LivingEntity implements ISp
 		this.dataTracker.startTracking(CURRENT_SPIRIT_ENERGY, 0);
 		this.dataTracker.startTracking(SPIRIT_LEVEL, 0);
 		this.dataTracker.startTracking(SPIRIT_POWER, 0);
+		this.dataTracker.startTracking(MINOR_BOTTLENECK, false);
 	}
 
 	@Override
@@ -59,6 +62,11 @@ public abstract class ClientDataTrackerMixin extends LivingEntity implements ISp
 	}
 
 	@Override
+	public void spirit_leveling$setMinorBottleneck(boolean bool) {
+		this.dataTracker.set(MINOR_BOTTLENECK, bool);
+	}
+
+	@Override
 	public int spirit_leveling$getMaxData() {
 		return this.dataTracker.get(MAX_SPIRIT_ENERGY);
 	}
@@ -76,5 +84,10 @@ public abstract class ClientDataTrackerMixin extends LivingEntity implements ISp
 	@Override
 	public int spirit_leveling$getPowerData() {
 		return this.dataTracker.get(SPIRIT_POWER);
+	}
+
+	@Override
+	public boolean spirit_leveling$getMinorBottleneck() {
+		return this.dataTracker.get(MINOR_BOTTLENECK);
 	}
 }

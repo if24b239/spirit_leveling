@@ -22,7 +22,7 @@ public class SpiritItems {
     // item creative tab
     public static final ItemGroup SPIRIT_ITEM_GROUP = FabricItemGroup.builder()
             .icon(() -> new ItemStack(SPIRIT_PILL))
-            .displayName(Text.translatable("itemGroup.spirit_leveling.item_group"))
+            .displayName(Text.translatable("itemGroup.spiritleveling.item_group"))
             .entries((context, entries) -> {
                 entries.add(SPIRIT_PILL);
                 entries.add(S_SPIRIT_PILL);

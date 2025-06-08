@@ -27,6 +27,8 @@ public class SpiritEnergyHudOverlay implements HudRenderCallback {
     private static final Identifier SLOT_COVER_STRONG = SpiritLeveling.loc("textures/spirit_energy/slot_cover_strong.png");
     private static final Identifier SLOT_COVER_WEAK = SpiritLeveling.loc("textures/spirit_energy/slot_cover_weak.png");
 
+    private static final Identifier CHAINS = SpiritLeveling.loc("textures/spirit_energy/chains.png");
+
     private static final ArrayList<Identifier> SLOT_LIST = new ArrayList<>() {
         {
             add(ENERGY_SLOTS_1);
@@ -74,6 +76,7 @@ public class SpiritEnergyHudOverlay implements HudRenderCallback {
         int maxEnergy = ((ISpiritEnergyPlayer)player).spirit_leveling$getMaxData();
         int spiritLevel = ((ISpiritEnergyPlayer)player).spirit_leveling$getLevelData();
         int spiritPower = ((ISpiritEnergyPlayer)player).spirit_leveling$getPowerData();
+        boolean minorBottleneck = ((ISpiritEnergyPlayer)player).spirit_leveling$getMinorBottleneck();
         boolean isMaxEnergy = maxEnergy == currentEnergy;
 
         // set spiritPower to 6 (corresponding to ENERGY_SLOTS_7) to continue drawing it above spiritPower 6
@@ -83,12 +86,13 @@ public class SpiritEnergyHudOverlay implements HudRenderCallback {
         currentEnergy /= (int)Math.pow(10, spiritPower);
         if (isMaxEnergy && currentEnergy < 10 && maxEnergy > 10) currentEnergy++;
 
+        int offset = (10 - currentEnergy) * 10;
+
         drawContext.drawTexture(
                 SLOT_LIST.get(spiritPower),
-                slots_x, slots_y,
-                slotsWidth, (currentEnergy * 10) + 1,
-                0, 0,
-                slotsWidth, (currentEnergy * 10) + 1,
+                slots_x, slots_y + offset,
+                0, offset,
+                slotsWidth, slotsHeight - offset,
                 slotsWidth, slotsHeight);
 
         // get minor level and percentage until minor level is complete
@@ -103,27 +107,45 @@ public class SpiritEnergyHudOverlay implements HudRenderCallback {
         int coverHeight = 11;
         int coverWidth = 5;
 
+        // chains position
+        int chains_x = bar_x - 5;
+        int chains_y = bar_y - 2;
+        int chainsHeight = 16;
+        int chainsWidth = 20;
+
         // only draw covers if spiritPower is equal to spiritLevel
         if (spiritLevel != spiritPower) return;
 
         // logic for slot covers
         for (int i = 0; i <= 9; i++) {
             Identifier drawTarget = SLOT_COVER_FULL;
-            if (i < currentMinorLevel) continue;
-            if (i == currentMinorLevel) {
+            boolean drawChains = spiritLevel != 0;
+            if (i > 9 - currentMinorLevel) continue;
+            if (i == 9 - currentMinorLevel) {
                 if (ratioNextLevel >= 0.66F) {
                     drawTarget = SLOT_COVER_WEAK;
                 } else if (ratioNextLevel >= 0.33F) {
                     drawTarget = SLOT_COVER_STRONG;
                 }
+
+                drawChains = minorBottleneck;
             }
             //draw the cover
             drawContext.drawTexture(
                     drawTarget,
-                    cover_x, cover_y + ((coverHeight - 1) * i),
+                    cover_x, cover_y + (10 * i),
                     0,0,
                     coverWidth, coverHeight,
                     coverWidth, coverHeight);
+
+            //draw chains
+            if (!drawChains) continue;
+            drawContext.drawTexture(
+                    CHAINS,
+                    chains_x, chains_y + (10 * i),
+                    0, 0,
+                    chainsWidth, chainsHeight,
+                    chainsWidth, chainsHeight);
         }
     }
 }

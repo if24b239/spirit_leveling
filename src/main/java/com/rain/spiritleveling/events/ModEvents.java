@@ -29,13 +29,15 @@ public class ModEvents {
 
             // also updates client side data
             SpiritEnergyData.updateSpiritLevel((IPersistentDataHolder) player);
-            SpiritEnergyData.updateSpiritLevel((IPersistentDataHolder) player);
+            SpiritEnergyData.updateSpiritPower((IPersistentDataHolder) player);
 
             int maxSpiritEnergy = nbt.getInt("maxSpiritEnergy");
             int currentSpiritEnergy= nbt.getInt("currentSpiritEnergy");
+            boolean minorBottleneck = nbt.getBoolean("minorBottleneck");
 
             ((ISpiritEnergyPlayer)player).spirit_leveling$setMaxData(maxSpiritEnergy);
             ((ISpiritEnergyPlayer)player).spirit_leveling$setCurrentData(currentSpiritEnergy);
+            ((ISpiritEnergyPlayer)player).spirit_leveling$setMinorBottleneck(minorBottleneck);
         });
     }
 }

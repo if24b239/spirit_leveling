@@ -1,5 +1,7 @@
 {
   "item.spiritleveling.spirit_pill": "Spirit Pill",
 
-  "effect.spiritleveling.active_soul": "Active Soul"
+  "effect.spiritleveling.active_soul": "Active Soul",
+
+  "itemGroup.spiritleveling.item_group": "Spirit Leveling Items"
 }
