@@ -15,9 +15,13 @@ public class SpiritEnergyHudOverlay implements HudRenderCallback {
 
     private static final Identifier ENERGY_BAR = SpiritLeveling.loc("textures/spirit_energy/hud_bar.png");
 
-    private static final Identifier ENERGY_SLOTS_1 = SpiritLeveling.loc("textures/spirit_energy/energy_10.png");
-    private static final Identifier ENERGY_SLOTS_2 = SpiritLeveling.loc("textures/spirit_energy/energy_100.png");
-    private static final Identifier ENERGY_SLOTS_3 = SpiritLeveling.loc("textures/spirit_energy/energy_1000.png");
+    private static final Identifier ENERGY_SLOTS_1 = SpiritLeveling.loc("textures/spirit_energy/energy_10_1.png");
+    private static final Identifier ENERGY_SLOTS_2 = SpiritLeveling.loc("textures/spirit_energy/energy_10_2.png");
+    private static final Identifier ENERGY_SLOTS_3 = SpiritLeveling.loc("textures/spirit_energy/energy_10_3.png");
+    private static final Identifier ENERGY_SLOTS_4 = SpiritLeveling.loc("textures/spirit_energy/energy_10_4.png");
+    private static final Identifier ENERGY_SLOTS_5 = SpiritLeveling.loc("textures/spirit_energy/energy_10_5.png");
+    private static final Identifier ENERGY_SLOTS_6 = SpiritLeveling.loc("textures/spirit_energy/energy_10_6.png");
+    private static final Identifier ENERGY_SLOTS_7 = SpiritLeveling.loc("textures/spirit_energy/energy_10_7.png");
 
     private static final Identifier SLOT_COVER_FULL = SpiritLeveling.loc("textures/spirit_energy/slot_cover_full.png");
     private static final Identifier SLOT_COVER_STRONG = SpiritLeveling.loc("textures/spirit_energy/slot_cover_strong.png");
@@ -28,6 +32,10 @@ public class SpiritEnergyHudOverlay implements HudRenderCallback {
             add(ENERGY_SLOTS_1);
             add(ENERGY_SLOTS_2);
             add(ENERGY_SLOTS_3);
+            add(ENERGY_SLOTS_4);
+            add(ENERGY_SLOTS_5);
+            add(ENERGY_SLOTS_6);
+            add(ENERGY_SLOTS_7);
         }
     };
 
@@ -65,17 +73,18 @@ public class SpiritEnergyHudOverlay implements HudRenderCallback {
         int currentEnergy = ((ISpiritEnergyPlayer)player).spirit_leveling$getCurrentData();
         int maxEnergy = ((ISpiritEnergyPlayer)player).spirit_leveling$getMaxData();
         int spiritLevel = ((ISpiritEnergyPlayer)player).spirit_leveling$getLevelData();
+        int spiritPower = ((ISpiritEnergyPlayer)player).spirit_leveling$getPowerData();
         boolean isMaxEnergy = maxEnergy == currentEnergy;
 
-        // stop function if level is higher than length of array
-        if (SLOT_LIST.size() - 1 < spiritLevel) return;
+        // set spiritPower to 6 (corresponding to ENERGY_SLOTS_7) to continue drawing it above spiritPower 6
+        if (SLOT_LIST.size() - 1 < spiritPower) spiritPower = 6;
 
         // only draw as many slots as current energy allows
-        currentEnergy /= (int)Math.pow(10, spiritLevel);
-        if (isMaxEnergy && currentEnergy < 10) currentEnergy++;
+        currentEnergy /= (int)Math.pow(10, spiritPower);
+        if (isMaxEnergy && currentEnergy < 10 && maxEnergy > 10) currentEnergy++;
 
         drawContext.drawTexture(
-                SLOT_LIST.get(spiritLevel),
+                SLOT_LIST.get(spiritPower),
                 slots_x, slots_y,
                 slotsWidth, (currentEnergy * 10) + 1,
                 0, 0,
@@ -94,10 +103,13 @@ public class SpiritEnergyHudOverlay implements HudRenderCallback {
         int coverHeight = 11;
         int coverWidth = 5;
 
+        // only draw covers if spiritPower is equal to spiritLevel
+        if (spiritLevel != spiritPower) return;
+
         // logic for slot covers
         for (int i = 0; i <= 9; i++) {
             Identifier drawTarget = SLOT_COVER_FULL;
-            if (i < currentMinorLevel || spiritLevel == 0) continue;
+            if (i < currentMinorLevel) continue;
             if (i == currentMinorLevel) {
                 if (ratioNextLevel >= 0.66F) {
                     drawTarget = SLOT_COVER_WEAK;
@@ -113,7 +125,5 @@ public class SpiritEnergyHudOverlay implements HudRenderCallback {
                     coverWidth, coverHeight,
                     coverWidth, coverHeight);
         }
-
-
     }
 }

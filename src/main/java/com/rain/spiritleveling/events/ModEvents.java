@@ -27,6 +27,8 @@ public class ModEvents {
 
             NbtCompound nbt = ((IPersistentDataHolder)player).faux$getPersistentData();
 
+            // also updates client side data
+            SpiritEnergyData.updateSpiritLevel((IPersistentDataHolder) player);
             SpiritEnergyData.updateSpiritLevel((IPersistentDataHolder) player);
 
             int maxSpiritEnergy = nbt.getInt("maxSpiritEnergy");

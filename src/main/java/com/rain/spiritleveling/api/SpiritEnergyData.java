@@ -56,7 +56,7 @@ public class SpiritEnergyData {
         nbt.putInt("currentSpiritEnergy", currentEnergy);
 
         // update Spirit Power based on new currentEnergy
-        updateSpiritPower((IPersistentDataHolder)player, currentEnergy, nbt);
+        updateSpiritPower((IPersistentDataHolder)player);
 
         // update the data on the ServerPlayerEntity
         ((IPersistentDataHolder)player).faux$setPersistentData(nbt);
@@ -78,7 +78,7 @@ public class SpiritEnergyData {
         nbt.putInt("currentSpiritEnergy", currentEnergy);
 
         // update Spirit Power based on new currentEnergy
-        updateSpiritPower((IPersistentDataHolder)player, currentEnergy, nbt);
+        updateSpiritPower((IPersistentDataHolder)player);
 
         // update the data on the ServerPlayerEntity
         ((IPersistentDataHolder)player).faux$setPersistentData(nbt);
@@ -138,11 +138,19 @@ public class SpiritEnergyData {
     }
 
     // updates spirit power based on current spirit energy
-    private static void updateSpiritPower(@NotNull IPersistentDataHolder player, int currentSE, NbtCompound nbt) {
+    private static void updateSpiritPower(@NotNull IPersistentDataHolder player) {
+        NbtCompound nbt = player.faux$getPersistentData();
+        int currentSE = nbt.getInt("currentSpiritEnergy");
+
         // prevent problems with negative and 0 log10()
         if (currentSE < 2) currentSE = 2;
 
-        nbt.putInt("spiritPower", (int)Math.log10(currentSE - 1));
+        int power = (int)Math.log10(currentSE - 1);
+
+        nbt.putInt("spiritPower", power);
+
+        // sync with client
+        ((ISpiritEnergyPlayer)player).spirit_leveling$setPowerData(power);
 
         player.faux$setPersistentData(nbt);
     }
