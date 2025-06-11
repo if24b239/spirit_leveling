@@ -27,7 +27,7 @@ public class SpiritPill extends Item {
                 .snack()
                 .statusEffect(new StatusEffectInstance(SpiritEffects.ACTIVE_SOUL, 1200, strength), 1.0F)
                 .build()));
-
+    
         PILL_LEVEL = strength;
     }
 

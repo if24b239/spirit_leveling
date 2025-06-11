@@ -3,6 +3,7 @@ package com.rain.spiritleveling.events;
 import com.faux.customentitydata.api.IPersistentDataHolder;
 import com.rain.spiritleveling.util.ISpiritEnergyPlayer;
 import com.rain.spiritleveling.api.SpiritEnergyData;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.nbt.NbtCompound;
@@ -27,7 +28,7 @@ public class ModEvents {
 
             NbtCompound nbt = ((IPersistentDataHolder)player).faux$getPersistentData();
 
-            // also updates client side data
+            // update client side data
             SpiritEnergyData.updateSpiritLevel((IPersistentDataHolder) player);
             SpiritEnergyData.updateSpiritPower((IPersistentDataHolder) player);
 
@@ -37,7 +38,7 @@ public class ModEvents {
 
             ((ISpiritEnergyPlayer)player).spirit_leveling$setMaxData(maxSpiritEnergy);
             ((ISpiritEnergyPlayer)player).spirit_leveling$setCurrentData(currentSpiritEnergy);
-            ((ISpiritEnergyPlayer)player).spirit_leveling$setMinorBottleneck(minorBottleneck);
+            ((ISpiritEnergyPlayer)player).spirit_leveling$setDrawLastChain(minorBottleneck);
         });
     }
 }

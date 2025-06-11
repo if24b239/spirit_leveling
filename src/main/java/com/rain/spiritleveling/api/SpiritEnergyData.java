@@ -2,8 +2,13 @@ package com.rain.spiritleveling.api;
 
 import com.faux.customentitydata.api.IPersistentDataHolder;
 import com.rain.spiritleveling.SpiritLeveling;
+import com.rain.spiritleveling.client.SpiritEnergyHudOverlay;
+import com.rain.spiritleveling.networking.ModMessages;
 import com.rain.spiritleveling.util.ISpiritEnergyPlayer;
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.network.ServerPlayerEntity;
 import org.jetbrains.annotations.NotNull;
 
@@ -34,6 +39,35 @@ public class SpiritEnergyData {
             if (!minorBreakthrough((IPersistentDataHolder) player)) {
                 SpiritLeveling.LOGGER.info("MINOR BOTTLENECK RETURNED FALSE");
             }
+        }
+
+        // trigger animation
+        int diffBetweenMinorLevel = (int)Math.pow(10, currentLevel);
+        float currentPercentToNextMinorLevel = (float) (currentMax - (diffBetweenMinorLevel * minorLevel)) / diffBetweenMinorLevel;
+        float nextPercentToNextMinorLevel = (float) (newMax - (diffBetweenMinorLevel * minorLevel)) / diffBetweenMinorLevel;
+
+        if (newMax <= 10) {
+            PacketByteBuf buf = PacketByteBufs.create();
+            buf.writeInt(3);
+            ServerPlayNetworking.send(player, ModMessages.HUD_ANIMATION, buf);
+        }
+        // trigger ANIMATION COVER TO STRONG (same condition as in SpiritEnergyHudOverlay)
+        else if (currentPercentToNextMinorLevel < 0.33F && nextPercentToNextMinorLevel >= 0.33F) {
+            PacketByteBuf buf = PacketByteBufs.create();
+            buf.writeInt(0);
+            ServerPlayNetworking.send(player, ModMessages.HUD_ANIMATION, buf);
+        }
+        // trigger ANIMATION COVER TO WEAK (same condition as in SpiritEnergyHudOverlay)
+        else if (currentPercentToNextMinorLevel < 0.66F && nextPercentToNextMinorLevel >= 0.66F) {
+            PacketByteBuf buf = PacketByteBufs.create();
+            buf.writeInt(1);
+            ServerPlayNetworking.send(player, ModMessages.HUD_ANIMATION, buf);
+        }
+        // trigger ANIMATION COVER TO NONE
+        else if (currentPercentToNextMinorLevel < 1F && nextPercentToNextMinorLevel == 1F) {
+            PacketByteBuf buf = PacketByteBufs.create();
+            buf.writeInt(2);
+            ServerPlayNetworking.send(player, ModMessages.HUD_ANIMATION, buf);
         }
 
         nbt.putInt("maxSpiritEnergy", newMax);
@@ -98,7 +132,7 @@ public class SpiritEnergyData {
         nbt.putBoolean("minorBottleneck", false);
 
         //sync data with client
-        ((ISpiritEnergyPlayer)player).spirit_leveling$setMinorBottleneck(false);
+        ((ISpiritEnergyPlayer)player).spirit_leveling$setDrawLastChain(false);
 
         player.faux$setPersistentData(nbt);
 
@@ -133,7 +167,7 @@ public class SpiritEnergyData {
         nbt.putBoolean("minorBottleneck", true);
 
         //sync data to client
-        ((ISpiritEnergyPlayer)player).spirit_leveling$setMinorBottleneck(true);
+        ((ISpiritEnergyPlayer)player).spirit_leveling$setDrawLastChain(true);
 
         player.faux$setPersistentData(nbt);
     }
