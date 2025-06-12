@@ -2,6 +2,7 @@ package com.rain.spiritleveling.mixin;
 
 import com.faux.customentitydata.api.IPersistentDataHolder;
 import com.mojang.authlib.GameProfile;
+import com.rain.spiritleveling.SpiritLeveling;
 import com.rain.spiritleveling.util.ISpiritEnergyPlayer;
 import com.rain.spiritleveling.util.ServerSpiritEnergyLevels;
 import net.minecraft.nbt.NbtCompound;
@@ -22,14 +23,7 @@ public abstract class SpiritEnergyPlayer implements ISpiritEnergyPlayer {
 
     @Inject(method= "<init>", at = @At("RETURN"))
     private void onSpiritEnergyPlayerConstruct(MinecraftServer server, ServerWorld world, GameProfile profile, CallbackInfo ci) {
-        NbtCompound nbt = ServerSpiritEnergyLevels.getNbt((IPersistentDataHolder)this);
-
-        int currentEnergy = nbt.getInt("currentEnergy");
-        int maxEnergy = nbt.getInt("maxEnergy");
-        int spiritLevel = nbt.getInt("spiritLevel");
-        boolean minorBottleneck = nbt.getBoolean("minorBottleneck");
-
-        spiritLevelingSystem = new ServerSpiritEnergyLevels(currentEnergy, maxEnergy, spiritLevel, minorBottleneck);
+        spiritLevelingSystem = new ServerSpiritEnergyLevels(0,0,0,false);
     }
 
     @Override
@@ -53,9 +47,33 @@ public abstract class SpiritEnergyPlayer implements ISpiritEnergyPlayer {
 
         if (!spiritLevelingSystem.removeCurrentEnergy(amount)) {
             // do something
-
         }
 
         spiritLevelingSystem.updateNbT((IPersistentDataHolder)this);
     }
+
+    @Override
+    public void spirit_leveling$minorBreakthrough() {
+        spiritLevelingSystem.minorBreakthrough();
+    }
+
+    @Override
+    public void spirit_leveling$majorBreakthrough() {
+        spiritLevelingSystem.majorBreakthrough();
+    }
+
+    @Override
+    public void spirit_leveling$initSpiritEnergy(NbtCompound nbt) {
+
+        int currentEnergy = nbt.getInt("currentEnergy");
+        int maxEnergy = nbt.getInt("maxEnergy");
+        int spiritLevel = nbt.getInt("spiritLevel");
+        boolean minorBottleneck = nbt.getBoolean("minorBottleneck");
+
+        SpiritLeveling.LOGGER.info("currentEnergy: {}, maxEnergy: {}, spiritLevel: {}, minorBottleneck: {}", currentEnergy, maxEnergy, spiritLevel, minorBottleneck);
+
+        spiritLevelingSystem = new ServerSpiritEnergyLevels(currentEnergy, maxEnergy, spiritLevel, minorBottleneck);
+    }
+
+
 }

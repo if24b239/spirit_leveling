@@ -1,5 +1,6 @@
 package com.rain.spiritleveling.items.custom;
 
+import com.rain.spiritleveling.SpiritLeveling;
 import com.rain.spiritleveling.effects.SpiritEffects;
 import com.rain.spiritleveling.api.SpiritEnergyData;
 import com.rain.spiritleveling.util.ISpiritEnergyPlayer;
@@ -39,10 +40,16 @@ public class SpiritPill extends Item {
         ItemStack resultingStack = super.finishUsing(stack, world, user);
 
         // check if user is a player on the server (maybe have to use !world.isClient())?
-        if (user instanceof ServerPlayerEntity)
+        if (user instanceof ServerPlayerEntity) {
             // increase the max spirit energy of player
-            SpiritEnergyData.addMaxSpiritEnergy((ServerPlayerEntity) user, getSpiritEnergyIncrease());
-        
+            SpiritLeveling.LOGGER.info("getSpiritEnergyIncrease {}", getSpiritEnergyIncrease());
+            ((ISpiritEnergyPlayer) user).spirit_leveling$addMaxSpiritEnergy(getSpiritEnergyIncrease());
+        }
+
+        // TEMP
+        if (user instanceof ServerPlayerEntity)
+            ((ISpiritEnergyPlayer)user).spirit_leveling$majorBreakthrough();
+
         return resultingStack;
     }
 }

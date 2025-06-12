@@ -1,6 +1,7 @@
 package com.rain.spiritleveling.util;
 
 import com.rain.spiritleveling.SpiritLeveling;
+import com.rain.spiritleveling.SpiritLevelingClient;
 
 import java.util.ArrayList;
 
@@ -27,11 +28,16 @@ public class MajorSpiritLevel {
 
         if (minorBottleneck) return;
 
-        if (completed_minor_levels < 10)
-            levels.get(completed_minor_levels + 1).minorBreakthrough();
+        if (completed_minor_levels < 10) {
+            // set breakthrough state correctly
+            levels.get(completed_minor_levels).minorBreakthrough();
+
+            // set progress to correct state
+            levels.get(completed_minor_levels).addProgress(max_energy - (level_size * completed_minor_levels));
+        }
     }
 
-    // returns the number of completed minor levels
+    // returns the number of completed minor levels which equals either the index of the next not completed minorLevel or 10
     public int getMinorLevel() {
         int completedMinorLevels = 0;
         for (MinorSpiritLevel l : levels) {
@@ -48,8 +54,9 @@ public class MajorSpiritLevel {
         int minorLevel = getMinorLevel();
 
         // add the amount to the current minor level
-        assert minorLevel < 10;
-        int newAmount = levels.get(minorLevel).addProgress(amount);
+        int newAmount = amount;
+        if (minorLevel < 10)
+            newAmount = levels.get(minorLevel).addProgress(amount);
 
         // set the major level to complete if after adding the progress all 10 minor levels are complete
         if (getMinorLevel() >= 10) isComplete = true;
@@ -58,13 +65,20 @@ public class MajorSpiritLevel {
     }
 
     // increases spiritLevel and remakes the minor levels as long as the current major level is complete
-    public void majorBreakthrough() {
-        if (!isComplete) return;
+    public boolean majorBreakthrough() {
+        if (!isComplete) return false;
 
         spiritLevel++;
 
         levels.clear();
         createMinorLevels(spiritLevel);
+
+        isComplete = false;
+
+        // unlock the second minor level of the new spirit level
+        minorBreakthrough();
+
+        return true;
     }
 
     // will remove chains off the next minor level

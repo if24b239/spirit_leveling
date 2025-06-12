@@ -282,4 +282,6 @@ public class SpiritEnergyHudOverlay implements HudRenderCallback {
                     chainsWidth, chainsHeight);
         }
     }
+
+    
 }

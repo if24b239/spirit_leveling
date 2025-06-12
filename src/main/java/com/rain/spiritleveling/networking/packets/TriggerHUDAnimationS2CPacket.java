@@ -9,7 +9,7 @@ import net.minecraft.network.PacketByteBuf;
 public class TriggerHUDAnimationS2CPacket  {
     public static void receive(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
 
-        switch (buf.readInt()) {
+        /*switch (buf.readInt()) {
             case 0:
                 client.execute(SpiritEnergyHudOverlay.SLOT_COVER_ANIMATION_TO_STRONG::trigger);
                 break;
@@ -22,6 +22,6 @@ public class TriggerHUDAnimationS2CPacket  {
             case 3:
                 client.execute(SpiritEnergyHudOverlay.SLOT_COVER_ANIMATION_ALL::trigger);
                 break;
-        }
+        }*/
     }
 }

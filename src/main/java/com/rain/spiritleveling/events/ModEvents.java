@@ -15,11 +15,9 @@ public class ModEvents {
 
         // load current and max spirit energy after respawn
         ServerPlayerEvents.AFTER_RESPAWN.register((oldPlayer, newPlayer, alive) -> {
-            int maxSpiritEnergy = ((ISpiritEnergyPlayer)oldPlayer).spirit_leveling$getMaxData();
-            int currentSpiritEnergy = ((ISpiritEnergyPlayer)oldPlayer).spirit_leveling$getCurrentData();
+            NbtCompound nbt = ((IPersistentDataHolder)newPlayer).faux$getPersistentData();
 
-            ((ISpiritEnergyPlayer)newPlayer).spirit_leveling$setMaxData(maxSpiritEnergy);
-            ((ISpiritEnergyPlayer)newPlayer).spirit_leveling$setCurrentData(currentSpiritEnergy);
+            ((ISpiritEnergyPlayer)newPlayer).spirit_leveling$initSpiritEnergy(nbt);
         });
 
         // player joins event
@@ -28,17 +26,8 @@ public class ModEvents {
 
             NbtCompound nbt = ((IPersistentDataHolder)player).faux$getPersistentData();
 
-            // update client side data
-            SpiritEnergyData.updateSpiritLevel((IPersistentDataHolder) player);
-            SpiritEnergyData.updateSpiritPower((IPersistentDataHolder) player);
-
-            int maxSpiritEnergy = nbt.getInt("maxSpiritEnergy");
-            int currentSpiritEnergy= nbt.getInt("currentSpiritEnergy");
-            boolean minorBottleneck = nbt.getBoolean("minorBottleneck");
-
-            ((ISpiritEnergyPlayer)player).spirit_leveling$setMaxData(maxSpiritEnergy);
-            ((ISpiritEnergyPlayer)player).spirit_leveling$setCurrentData(currentSpiritEnergy);
-            ((ISpiritEnergyPlayer)player).spirit_leveling$setDrawLastChain(minorBottleneck);
+            // initialize the spirit energy system
+            ((ISpiritEnergyPlayer)player).spirit_leveling$initSpiritEnergy(nbt);
         });
     }
 }

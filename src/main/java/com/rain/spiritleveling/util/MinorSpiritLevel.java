@@ -1,5 +1,7 @@
 package com.rain.spiritleveling.util;
 
+import com.rain.spiritleveling.SpiritLeveling;
+
 public class MinorSpiritLevel {
 
     private final int levelSize;
@@ -58,7 +60,7 @@ public class MinorSpiritLevel {
 
         progress += amount;
         state = getCoverState();
-        return progress;
+        return amount;
     }
 
     public void setToComplete() {

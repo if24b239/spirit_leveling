@@ -3,6 +3,7 @@ package com.rain.spiritleveling.util;
 import com.faux.customentitydata.api.IPersistentDataHolder;
 import com.rain.spiritleveling.SpiritLeveling;
 import net.minecraft.nbt.NbtCompound;
+import org.jetbrains.annotations.NotNull;
 
 public class ServerSpiritEnergyLevels  extends MajorSpiritLevel {
 
@@ -55,16 +56,31 @@ public class ServerSpiritEnergyLevels  extends MajorSpiritLevel {
     public void updateNbT(IPersistentDataHolder player) {
         NbtCompound nbt = new NbtCompound();
 
+        int minorLevel = getMinorLevel();
+
         nbt.putInt("maxEnergy", maxEnergy);
         nbt.putInt("currentEnergy", currentEnergy);
         nbt.putInt("spiritLevel", getSpiritLevel());
-        nbt.putBoolean("minorBottleneck", levels.get(getMinorLevel()).getIsChained());
+
+        SpiritLeveling.LOGGER.info("minorLevel: {}", minorLevel);
+        if (minorLevel < 10) {
+            nbt.putBoolean("minorBottleneck", levels.get(minorLevel).getIsChained());
+        }
 
         player.faux$setPersistentData(nbt);
     }
 
-    public static NbtCompound getNbt(IPersistentDataHolder player) {
+    public static NbtCompound getNbt(@NotNull IPersistentDataHolder player) {
         return player.faux$getPersistentData();
+    }
+
+    @Override
+    public boolean majorBreakthrough() {
+         if (!super.majorBreakthrough()) return false;
+
+        // add one max energy to sync up spiritLevel calculations with MajorSpiritLevel state
+        addMaxEnergy(1);
+        return true;
     }
 
     private void updateSpiritPower() {
