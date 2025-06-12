@@ -15,4 +15,10 @@ public interface ISpiritEnergyPlayer {
     int spirit_leveling$getPowerData();
     boolean spirit_leveling$getDrawLastChain();
 
+
+    // new!!!!!!!!!
+    void spirit_leveling$addMaxSpiritEnergy(int amount);
+    void spirit_leveling$addCurrentSpiritEnergy(int amount);
+    void spirit_leveling$removeCurrentSpiritEnergy(int amount);
+
 }

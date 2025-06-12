@@ -1,5 +1,7 @@
 package com.rain.spiritleveling.util;
 
+import com.rain.spiritleveling.SpiritLeveling;
+
 import java.util.ArrayList;
 
 public class MajorSpiritLevel {
@@ -9,10 +11,24 @@ public class MajorSpiritLevel {
 
     ArrayList<MinorSpiritLevel> levels = new ArrayList<>();
 
-    public MajorSpiritLevel(int sLevel) {
-        spiritLevel = sLevel;
+    public MajorSpiritLevel(int s_level, int max_energy, boolean minorBottleneck) {
+        spiritLevel = s_level;
 
-        createMinorLevels(sLevel);
+        createMinorLevels(s_level);
+
+        int level_size = MinorSpiritLevel.getLevelSize(s_level);
+
+        int completed_minor_levels = max_energy / level_size;
+        int progress_next = max_energy % level_size;
+
+        for (int i = 0; i < completed_minor_levels; i++) {
+            levels.get(i).setToComplete();
+        }
+
+        if (minorBottleneck) return;
+
+        if (completed_minor_levels < 10)
+            levels.get(completed_minor_levels + 1).minorBreakthrough();
     }
 
     // returns the number of completed minor levels
@@ -58,6 +74,10 @@ public class MajorSpiritLevel {
         levels.get(getMinorLevel()).minorBreakthrough();
     }
 
+    public int getSpiritLevel() {
+        return spiritLevel;
+    }
+
     // should only be called outside of constructor if levels.clear() was called before
     private void createMinorLevels(int sLevel) {
         for (int i = 0; i <= 9; i++) {
@@ -65,12 +85,11 @@ public class MajorSpiritLevel {
             // create minorLevel instance that is chained only if it's not the first element and not spirit level 0
             MinorSpiritLevel minorLevel = MinorSpiritLevel.createMinorSpiritLevel(sLevel, !(i == 0 || sLevel == 0));
 
-            // complete the first level on any spirit Level above 0 since they are already unlocked
-            if (i == 0 && sLevel != 0) {
-                minorLevel.addProgress(MinorSpiritLevel.getLevelSize(sLevel));
-            }
-
             levels.add(minorLevel);
+
+            if (i == 0 && sLevel != 0) {
+                levels.get(i).setToComplete();
+            }
         }
     }
 }

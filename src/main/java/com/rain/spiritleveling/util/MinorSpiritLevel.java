@@ -61,6 +61,10 @@ public class MinorSpiritLevel {
         return progress;
     }
 
+    public void setToComplete() {
+        isComplete = true;
+    }
+
     // unlock minor level to progress it
     public void minorBreakthrough() {
         if (isChained) {
@@ -70,6 +74,7 @@ public class MinorSpiritLevel {
     }
 
     public boolean getIsComplete() { return isComplete; }
+    public boolean getIsChained() { return isChained; }
 
     // TODO will call the packet to draw the animation
     private void updateState(COVER_STATE oldState, COVER_STATE newState) {

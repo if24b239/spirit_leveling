@@ -54,9 +54,6 @@ public class ClientHUDAnimation {
 
         int currentFrameIndex = Math.min((int)(progress / getTickPerFrame()), frames - 1);
 
-
-        SpiritLeveling.LOGGER.info("INDEX: {}", currentFrameIndex);
-
         drawContext.drawTexture( FRAME_TEXTURES.get(currentFrameIndex),
                 posX, posY,
                 0,0,
