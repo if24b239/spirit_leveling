@@ -1,20 +1,18 @@
-package com.rain.spiritleveling.util;
+package com.rain.spiritleveling.energymanager;
 
 import com.faux.customentitydata.api.IPersistentDataHolder;
-import com.rain.spiritleveling.SpiritLeveling;
 import com.rain.spiritleveling.client.IClientSpiritEnergyPlayer;
+import com.rain.spiritleveling.util.ServerMinorSpiritLevelFactory;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.server.network.ServerPlayerEntity;
-import org.jetbrains.annotations.NotNull;
 
-public class ServerSpiritEnergyManager extends MajorSpiritLevel {
+public class ServerSpiritEnergyManager extends MajorSpiritLevel<ServerMinorSpiritLevel> {
 
     private int currentEnergy;
     private int maxEnergy;
     private int spiritPower;
 
     public ServerSpiritEnergyManager(int current_energy, int max_energy, int spirit_level, boolean minorBottleneck) {
-        super(spirit_level, max_energy, minorBottleneck);
+        super(spirit_level, max_energy, minorBottleneck, new ServerMinorSpiritLevelFactory());
         spiritPower = calculateSpiritStrength(current_energy);
         currentEnergy = current_energy;
         maxEnergy = max_energy;

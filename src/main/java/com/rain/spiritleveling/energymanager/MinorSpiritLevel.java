@@ -1,10 +1,4 @@
-package com.rain.spiritleveling.util;
-
-import com.rain.spiritleveling.networking.ModMessages;
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.server.network.ServerPlayerEntity;
+package com.rain.spiritleveling.energymanager;
 
 public class MinorSpiritLevel {
 
@@ -14,14 +8,10 @@ public class MinorSpiritLevel {
     private boolean isChained;
     public COVER_STATE state;
 
-    private MinorSpiritLevel(int spiritLevel, boolean chains) {
+    public MinorSpiritLevel(int spiritLevel, boolean chains) {
         levelSize = getLevelSize(spiritLevel);
         state = getCoverState();
         isChained = chains;
-    }
-
-    public static MinorSpiritLevel createMinorSpiritLevel(int spiritLevel, boolean chains) {
-        return new MinorSpiritLevel(spiritLevel, chains);
     }
 
     // calculates how much total spirit power is needed to complete the minor level
@@ -41,15 +31,6 @@ public class MinorSpiritLevel {
         else if (ratio >= 0.33F) newState = COVER_STATE.STRONG;
 
         else newState = COVER_STATE.FULL;
-
-        return newState;
-    }
-
-    public COVER_STATE getCoverState(ServerPlayerEntity player) {
-        COVER_STATE newState = getCoverState();
-        
-        if (state != newState)
-                updateState(state, newState);
 
         return newState;
     }
@@ -79,25 +60,17 @@ public class MinorSpiritLevel {
         isComplete = true;
     }
 
-    // unlock minor level to progress it
-    public void minorBreakthrough() {
+    // unlock minor level to progress it (return true if successful false if not)
+    public boolean minorBreakthrough() {
         if (isChained) {
             isChained = false;
-            updateChains();
+            return true;
         }
+
+        return false;
     }
 
     public boolean getIsComplete() { return isComplete; }
     public boolean getIsChained() { return isChained; }
 
-    // TODO will call the packet to draw the animation
-    private void updateState(COVER_STATE oldState, COVER_STATE newState) {
-        // packet call here!
-
-    }
-
-    // TODO will call the packet to play the chains removal animation
-    private void updateChains() {
-        // packet call here!
-    }
 }

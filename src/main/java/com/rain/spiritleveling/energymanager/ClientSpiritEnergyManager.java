@@ -1,15 +1,16 @@
-package com.rain.spiritleveling.util;
+package com.rain.spiritleveling.energymanager;
 
 import com.rain.spiritleveling.SpiritLeveling;
 import com.rain.spiritleveling.client.ClientHUDAnimation;
 import com.rain.spiritleveling.client.HUDAnimationStruct;
+import com.rain.spiritleveling.util.ClientMinorSpiritLevelFactory;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 
-public class ClientSpiritEnergyManager extends MajorSpiritLevel {
+public class ClientSpiritEnergyManager extends MajorSpiritLevel<MinorSpiritLevel> {
 
     private final int posX;
     private final int posY;
@@ -118,7 +119,7 @@ public class ClientSpiritEnergyManager extends MajorSpiritLevel {
     };
 
     public ClientSpiritEnergyManager(@NotNull DrawContext draw_context, int s_level, int max_energy, boolean minorBottleneck, int pos_x, int pos_y) {
-        super(s_level, max_energy, minorBottleneck);
+        super(s_level, max_energy, minorBottleneck, new ClientMinorSpiritLevelFactory());
         posX = pos_x;
         posY = pos_y;
         drawContext = draw_context;
@@ -175,8 +176,6 @@ public class ClientSpiritEnergyManager extends MajorSpiritLevel {
         }
 
         // TEMP
-
-
         HUDAnimationStruct test = new HUDAnimationStruct(30, 30, 11, 17, COVER_ANIMATION_TO_STRONG_TEXTURES);
         if (COVER_ANIMATOR.getIsEmpty())
             COVER_ANIMATOR.addQueue(test);

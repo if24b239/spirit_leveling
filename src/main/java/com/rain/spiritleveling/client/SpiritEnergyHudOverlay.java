@@ -1,12 +1,11 @@
 package com.rain.spiritleveling.client;
 
 import com.rain.spiritleveling.SpiritLeveling;
-import com.rain.spiritleveling.util.ClientSpiritEnergyManager;
-import com.rain.spiritleveling.util.MajorSpiritLevel;
+import com.rain.spiritleveling.energymanager.ClientSpiritEnergyManager;
+import com.rain.spiritleveling.energymanager.MajorSpiritLevel;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
 
 import java.util.ArrayList;

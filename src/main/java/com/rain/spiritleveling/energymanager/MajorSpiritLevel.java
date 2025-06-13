@@ -1,23 +1,28 @@
-package com.rain.spiritleveling.util;
+package com.rain.spiritleveling.energymanager;
 
-import com.rain.spiritleveling.SpiritLeveling;
+import com.rain.spiritleveling.util.MinorSpiritLevelFactory;
 
 import java.util.ArrayList;
 
-public class MajorSpiritLevel {
+public class MajorSpiritLevel<minorLevelType extends MinorSpiritLevel> {
+    private final MinorSpiritLevelFactory<minorLevelType> factory;
 
     private int spiritLevel;
     private boolean isComplete = false;
 
-    ArrayList<MinorSpiritLevel> levels = new ArrayList<>();
+    ArrayList<minorLevelType> levels = new ArrayList<>();
 
-    public MajorSpiritLevel(int s_level, int max_energy, boolean minorBottleneck) {
+    public MajorSpiritLevel(int s_level, int max_energy, boolean minorBottleneck, MinorSpiritLevelFactory<minorLevelType> factory) {
+
+        //initialize the factory
+        this.factory = factory;
+
         spiritLevel = s_level;
 
         createMinorLevels(s_level);
 
+        // update minor levels to fit with data given in constructor
         int level_size = MinorSpiritLevel.getLevelSize(s_level);
-
         int completed_minor_levels = max_energy / level_size;
         int progress_next = max_energy % level_size;
 
@@ -104,7 +109,7 @@ public class MajorSpiritLevel {
         for (int i = 0; i <= 9; i++) {
 
             // create minorLevel instance that is chained only if it's not the first element and not spirit level 0
-            MinorSpiritLevel minorLevel = MinorSpiritLevel.createMinorSpiritLevel(sLevel, !(i == 0 || sLevel == 0));
+            minorLevelType minorLevel = factory.createInstance(sLevel, !(i == 0 || sLevel == 0));
 
             levels.add(minorLevel);
 
