@@ -18,6 +18,6 @@ public class SpiritLevelingClient implements ClientModInitializer {
         ModMessages.registerS2CPackets();
 
         // energy bar hud overlay
-        //HudRenderCallback.EVENT.register(new SpiritEnergyHudOverlay());
+        HudRenderCallback.EVENT.register(new SpiritEnergyHudOverlay());
     }
 }

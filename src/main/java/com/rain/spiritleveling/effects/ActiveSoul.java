@@ -1,7 +1,6 @@
 package com.rain.spiritleveling.effects;
 
-import com.rain.spiritleveling.api.SpiritEnergyData;
-import com.rain.spiritleveling.util.ISpiritEnergyPlayer;
+import com.rain.spiritleveling.api.ISpiritEnergyPlayer;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectCategory;

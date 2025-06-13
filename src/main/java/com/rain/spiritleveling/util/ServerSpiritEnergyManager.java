@@ -2,24 +2,22 @@ package com.rain.spiritleveling.util;
 
 import com.faux.customentitydata.api.IPersistentDataHolder;
 import com.rain.spiritleveling.SpiritLeveling;
+import com.rain.spiritleveling.client.IClientSpiritEnergyPlayer;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.server.network.ServerPlayerEntity;
 import org.jetbrains.annotations.NotNull;
 
-public class ServerSpiritEnergyLevels  extends MajorSpiritLevel {
+public class ServerSpiritEnergyManager extends MajorSpiritLevel {
 
     private int currentEnergy;
     private int maxEnergy;
     private int spiritPower;
 
-    public ServerSpiritEnergyLevels(int current_energy, int max_energy, int spirit_level, boolean minorBottleneck) {
+    public ServerSpiritEnergyManager(int current_energy, int max_energy, int spirit_level, boolean minorBottleneck) {
         super(spirit_level, max_energy, minorBottleneck);
-        spiritPower = getSpiritLevel(current_energy);
+        spiritPower = calculateSpiritStrength(current_energy);
         currentEnergy = current_energy;
         maxEnergy = max_energy;
-    }
-
-    public static int getSpiritLevel(int spiritEnergy) {
-        return (int)Math.log(spiritEnergy - 1);
     }
 
     // called to increase the maximum spirit energy while taking care of all bottlenecks
@@ -43,16 +41,6 @@ public class ServerSpiritEnergyLevels  extends MajorSpiritLevel {
         return true;
     }
 
-    public int getCurrentEnergy() {
-        return currentEnergy;
-    }
-    public int getMaxEnergy() {
-        return maxEnergy;
-    }
-    public int getSpiritPower() {
-        return spiritPower;
-    }
-
     public void updateNbT(IPersistentDataHolder player) {
         NbtCompound nbt = new NbtCompound();
 
@@ -62,16 +50,22 @@ public class ServerSpiritEnergyLevels  extends MajorSpiritLevel {
         nbt.putInt("currentEnergy", currentEnergy);
         nbt.putInt("spiritLevel", getSpiritLevel());
 
-        SpiritLeveling.LOGGER.info("minorLevel: {}", minorLevel);
-        if (minorLevel < 10) {
+        if (minorLevel < 10)
             nbt.putBoolean("minorBottleneck", levels.get(minorLevel).getIsChained());
-        }
+
 
         player.faux$setPersistentData(nbt);
     }
 
-    public static NbtCompound getNbt(@NotNull IPersistentDataHolder player) {
-        return player.faux$getPersistentData();
+    public void updateClientData(IClientSpiritEnergyPlayer player) {
+        int minorLevel = getMinorLevel();
+
+        player.spirit_leveling$setDataMaxEnergy(maxEnergy);
+        player.spirit_leveling$setDataCurrentEnergy(currentEnergy);
+        player.spirit_leveling$setDataSpiritLevel(getSpiritLevel());
+
+        if (minorLevel < 10)
+            player.spirit_leveling$setDataMinorBottleneck(levels.get(minorLevel).getIsChained());
     }
 
     @Override
@@ -84,7 +78,7 @@ public class ServerSpiritEnergyLevels  extends MajorSpiritLevel {
     }
 
     private void updateSpiritPower() {
-        spiritPower = getSpiritLevel(currentEnergy);
+        spiritPower = calculateSpiritStrength(currentEnergy);
     }
 
 }

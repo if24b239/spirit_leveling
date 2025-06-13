@@ -1,7 +1,6 @@
 package com.rain.spiritleveling.util;
 
 import com.rain.spiritleveling.SpiritLeveling;
-import com.rain.spiritleveling.SpiritLevelingClient;
 
 import java.util.ArrayList;
 
@@ -24,6 +23,7 @@ public class MajorSpiritLevel {
 
         for (int i = 0; i < completed_minor_levels; i++) {
             levels.get(i).setToComplete();
+            levels.get(i).minorBreakthrough();
         }
 
         if (minorBottleneck) return;
@@ -33,7 +33,7 @@ public class MajorSpiritLevel {
             levels.get(completed_minor_levels).minorBreakthrough();
 
             // set progress to correct state
-            levels.get(completed_minor_levels).addProgress(max_energy - (level_size * completed_minor_levels));
+            levels.get(completed_minor_levels).addProgress(progress_next);
         }
     }
 
@@ -90,6 +90,13 @@ public class MajorSpiritLevel {
 
     public int getSpiritLevel() {
         return spiritLevel;
+    }
+
+    public static int calculateSpiritStrength(int spiritEnergy) {
+        if (spiritEnergy <= 1)
+            return 0;
+
+        return (int)Math.log10(spiritEnergy - 1);
     }
 
     // should only be called outside of constructor if levels.clear() was called before

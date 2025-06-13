@@ -1,9 +1,8 @@
 package com.rain.spiritleveling.events;
 
 import com.faux.customentitydata.api.IPersistentDataHolder;
-import com.rain.spiritleveling.util.ISpiritEnergyPlayer;
-import com.rain.spiritleveling.api.SpiritEnergyData;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import com.rain.spiritleveling.api.ISpiritEnergyPlayer;
+import com.rain.spiritleveling.client.IClientSpiritEnergyPlayer;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.nbt.NbtCompound;
@@ -28,6 +27,14 @@ public class ModEvents {
 
             // initialize the spirit energy system
             ((ISpiritEnergyPlayer)player).spirit_leveling$initSpiritEnergy(nbt);
+
+            // set client data on join
+            IClientSpiritEnergyPlayer clientPlayer = (IClientSpiritEnergyPlayer)player;
+
+            clientPlayer.spirit_leveling$setDataMaxEnergy(nbt.getInt("maxEnergy"));
+            clientPlayer.spirit_leveling$setDataCurrentEnergy(nbt.getInt("currentEnergy"));
+            clientPlayer.spirit_leveling$setDataSpiritLevel(nbt.getInt("spiritLevel"));
+            clientPlayer.spirit_leveling$setDataMinorBottleneck(nbt.getBoolean("minorBottleneck"));
         });
     }
 }

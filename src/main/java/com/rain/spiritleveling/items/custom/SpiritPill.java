@@ -2,8 +2,7 @@ package com.rain.spiritleveling.items.custom;
 
 import com.rain.spiritleveling.SpiritLeveling;
 import com.rain.spiritleveling.effects.SpiritEffects;
-import com.rain.spiritleveling.api.SpiritEnergyData;
-import com.rain.spiritleveling.util.ISpiritEnergyPlayer;
+import com.rain.spiritleveling.api.ISpiritEnergyPlayer;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.item.FoodComponent;
@@ -42,7 +41,6 @@ public class SpiritPill extends Item {
         // check if user is a player on the server (maybe have to use !world.isClient())?
         if (user instanceof ServerPlayerEntity) {
             // increase the max spirit energy of player
-            SpiritLeveling.LOGGER.info("getSpiritEnergyIncrease {}", getSpiritEnergyIncrease());
             ((ISpiritEnergyPlayer) user).spirit_leveling$addMaxSpiritEnergy(getSpiritEnergyIncrease());
         }
 

@@ -1,6 +1,10 @@
 package com.rain.spiritleveling.util;
 
-import com.rain.spiritleveling.SpiritLeveling;
+import com.rain.spiritleveling.networking.ModMessages;
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.network.PacketByteBuf;
+import net.minecraft.server.network.ServerPlayerEntity;
 
 public class MinorSpiritLevel {
 
@@ -8,7 +12,7 @@ public class MinorSpiritLevel {
     private int progress = 0;
     private boolean isComplete = false;
     private boolean isChained;
-    private COVER_STATE state;
+    public COVER_STATE state;
 
     private MinorSpiritLevel(int spiritLevel, boolean chains) {
         levelSize = getLevelSize(spiritLevel);
@@ -28,16 +32,24 @@ public class MinorSpiritLevel {
     public COVER_STATE getCoverState() {
         float ratio = (float) progress / levelSize;
 
-        COVER_STATE newState = COVER_STATE.NONE;
+        COVER_STATE newState;
 
-        if (ratio < 0.33F) newState = COVER_STATE.FULL;
+        if (ratio >= 1F) newState = COVER_STATE.NONE;
 
-        if (ratio < 0.66F) newState = COVER_STATE.STRONG;
+        else if (ratio >= 0.66F) newState = COVER_STATE.WEAK;
 
-        if (ratio < 1F) newState = COVER_STATE.WEAK;
+        else if (ratio >= 0.33F) newState = COVER_STATE.STRONG;
 
+        else newState = COVER_STATE.FULL;
+
+        return newState;
+    }
+
+    public COVER_STATE getCoverState(ServerPlayerEntity player) {
+        COVER_STATE newState = getCoverState();
+        
         if (state != newState)
-            updateState(state, newState);
+                updateState(state, newState);
 
         return newState;
     }
@@ -81,6 +93,7 @@ public class MinorSpiritLevel {
     // TODO will call the packet to draw the animation
     private void updateState(COVER_STATE oldState, COVER_STATE newState) {
         // packet call here!
+
     }
 
     // TODO will call the packet to play the chains removal animation

@@ -3,8 +3,10 @@ package com.rain.spiritleveling.mixin;
 import com.faux.customentitydata.api.IPersistentDataHolder;
 import com.mojang.authlib.GameProfile;
 import com.rain.spiritleveling.SpiritLeveling;
-import com.rain.spiritleveling.util.ISpiritEnergyPlayer;
-import com.rain.spiritleveling.util.ServerSpiritEnergyLevels;
+import com.rain.spiritleveling.api.ISpiritEnergyPlayer;
+import com.rain.spiritleveling.client.IClientSpiritEnergyPlayer;
+import com.rain.spiritleveling.util.ServerSpiritEnergyManager;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -19,11 +21,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class SpiritEnergyPlayer implements ISpiritEnergyPlayer {
 
     @Unique
-    private ServerSpiritEnergyLevels spiritLevelingSystem;
+    private ServerSpiritEnergyManager spiritLevelingSystem;
 
     @Inject(method= "<init>", at = @At("RETURN"))
     private void onSpiritEnergyPlayerConstruct(MinecraftServer server, ServerWorld world, GameProfile profile, CallbackInfo ci) {
-        spiritLevelingSystem = new ServerSpiritEnergyLevels(0,0,0,false);
+        spiritLevelingSystem = new ServerSpiritEnergyManager(0,0,0,false);
     }
 
     @Override
@@ -31,6 +33,7 @@ public abstract class SpiritEnergyPlayer implements ISpiritEnergyPlayer {
 
         spiritLevelingSystem.addMaxEnergy(amount);
 
+        spiritLevelingSystem.updateClientData((IClientSpiritEnergyPlayer)this);
         spiritLevelingSystem.updateNbT((IPersistentDataHolder)this);
     }
 
@@ -39,6 +42,7 @@ public abstract class SpiritEnergyPlayer implements ISpiritEnergyPlayer {
 
         spiritLevelingSystem.addCurrentEnergy(amount);
 
+        spiritLevelingSystem.updateClientData((IClientSpiritEnergyPlayer)this);
         spiritLevelingSystem.updateNbT((IPersistentDataHolder)this);
     }
 
@@ -47,8 +51,10 @@ public abstract class SpiritEnergyPlayer implements ISpiritEnergyPlayer {
 
         if (!spiritLevelingSystem.removeCurrentEnergy(amount)) {
             // do something
+            return;
         }
 
+        spiritLevelingSystem.updateClientData((IClientSpiritEnergyPlayer)this);
         spiritLevelingSystem.updateNbT((IPersistentDataHolder)this);
     }
 
@@ -70,9 +76,7 @@ public abstract class SpiritEnergyPlayer implements ISpiritEnergyPlayer {
         int spiritLevel = nbt.getInt("spiritLevel");
         boolean minorBottleneck = nbt.getBoolean("minorBottleneck");
 
-        SpiritLeveling.LOGGER.info("currentEnergy: {}, maxEnergy: {}, spiritLevel: {}, minorBottleneck: {}", currentEnergy, maxEnergy, spiritLevel, minorBottleneck);
-
-        spiritLevelingSystem = new ServerSpiritEnergyLevels(currentEnergy, maxEnergy, spiritLevel, minorBottleneck);
+        spiritLevelingSystem = new ServerSpiritEnergyManager(currentEnergy, maxEnergy, spiritLevel, minorBottleneck);
     }
 
 

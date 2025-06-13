@@ -4,77 +4,66 @@ import com.rain.spiritleveling.SpiritLeveling;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.util.Identifier;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class ClientHUDAnimation {
-    private boolean isPlaying = false;
-    private float progress = 0.0f;
-    private int posX = 0;
-    private int posY = 0;
 
+    private final int ticksPerFrame;
+    private final ArrayList<HUDAnimationStruct> animationQueue = new ArrayList<>();
 
-    private final int frames;
-    private final float duration;
-    private final ArrayList<Identifier> FRAME_TEXTURES;
-    private final int width;
-    private final int height;
+    private float progress = 0;
+    private int currentFrame = 0;
+    private HUDAnimationStruct currentAnimation = null;
 
-
-    private ClientHUDAnimation(float tickPerFrame, ArrayList<Identifier> frameTextures, int textureWidth, int textureHeight) {
-        this.frames = frameTextures.size();
-        this.duration = tickPerFrame * frames;
-        this.FRAME_TEXTURES = frameTextures;
-        this.width = textureWidth;
-        this.height = textureHeight;
+    private ClientHUDAnimation(int ticks_per_frame) {
+        ticksPerFrame = ticks_per_frame;
     }
 
-
-    public static ClientHUDAnimation createClientHUDAnimation(float tickPerFrame, ArrayList<Identifier> frameTextures, int textureWidth, int textureHeight) {
-        return new ClientHUDAnimation(tickPerFrame, frameTextures, textureWidth, textureHeight);
+    public static ClientHUDAnimation createClientHUDAnimation(int ticks_per_frame) {
+        return new ClientHUDAnimation(ticks_per_frame);
     }
 
-    // start the animation (make sure to call setPosition() before rendering)
-    public void trigger() {
-        isPlaying = true;
-        progress = 0;
-    }
-
-    // progress the animation
-    private void update() {
-
-        progress += 1f;
-
-        if (progress >= duration) {
-            isPlaying = false;
-        }
+    public void addQueue(HUDAnimationStruct animation) {
+        animationQueue.add(animation);
     }
 
     public void render(DrawContext drawContext) {
-        if (!isPlaying) return;
+        if (currentAnimation == null)
+            updateCurrentAnimation();
 
-        int currentFrameIndex = Math.min((int)(progress / getTickPerFrame()), frames - 1);
+        if (currentAnimation != null)
+            currentAnimation.draw(drawContext, currentFrame);
 
-        drawContext.drawTexture( FRAME_TEXTURES.get(currentFrameIndex),
-                posX, posY,
-                0,0,
-                width, height,
-                width, height
-        );
-
-        update();
+        increaseProgress();
     }
 
-    // returns the float value of how many ticks each frame should be displayed
-    private float getTickPerFrame() {
-        return duration / frames;
+    // increases current frame in ticksPerFrame intervals and resets the currentAnimation and member variables if currentFrame is bigger than the frames in the animation
+    private void increaseProgress() {
+        if (currentAnimation == null) return;
+
+        progress++;
+        if (progress >= ticksPerFrame)
+            currentFrame++;
+        progress %= ticksPerFrame;
+
+        if (currentFrame >= currentAnimation.frameTextures.size()) {
+            currentAnimation = null;
+            currentFrame = 0;
+            progress = 0;
+        }
     }
 
-    public void setPosition(int x, int y) {
-        posX = x;
-        posY = y;
+    private void updateCurrentAnimation() {
+        assert currentAnimation == null;
+        if (animationQueue.isEmpty())
+            return;
+
+        currentAnimation = animationQueue.remove(0);
+
     }
 
-    public boolean getIsPlaying() {
-        return isPlaying;
+    public boolean getIsEmpty() {
+        return animationQueue.isEmpty();
     }
 }
