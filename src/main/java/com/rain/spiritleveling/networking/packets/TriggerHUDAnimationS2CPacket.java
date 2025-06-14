@@ -2,7 +2,6 @@ package com.rain.spiritleveling.networking.packets;
 
 import com.rain.spiritleveling.SpiritLeveling;
 import com.rain.spiritleveling.client.HUDAnimationStruct;
-import com.rain.spiritleveling.energymanager.COVER_STATE;
 import com.rain.spiritleveling.energymanager.ClientSpiritEnergyManager;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.client.MinecraftClient;
@@ -15,19 +14,31 @@ import java.util.ArrayList;
 public class TriggerHUDAnimationS2CPacket  {
     public static void receive(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
 
+
+        boolean bool = buf.readBoolean();
+        SpiritLeveling.LOGGER.info("BOOLEAN: {}", bool);
+
+        // clear only the animator queue
+        if (bool) {
+            ClientSpiritEnergyManager.COVER_ANIMATOR.clearQueue();
+            ClientSpiritEnergyManager.CHAINS_ANIMATOR.clearQueue();
+            return;
+        }
+
         int[] data = buf.readIntArray();
+
+        SpiritLeveling.LOGGER.info("DATA: {}", data);
 
         int index = data[0];
 
         if (data.length == 3) {
             // cover animation was called
-
             for (int i = data[1]; i > data[2]; i--) {
                 // setup animation structure
                 int relative_x = 0;
                 int relative_y = index * 10;
 
-                ArrayList<Identifier> textures = ClientSpiritEnergyManager.COVER_ANIMATION_TO_NONE_TEXTURES;;
+                ArrayList<Identifier> textures = ClientSpiritEnergyManager.COVER_ANIMATION_TO_NONE_TEXTURES;
 
                 if (i == 2) {
                     textures = ClientSpiritEnergyManager.COVER_ANIMATION_TO_WEAK_TEXTURES;
@@ -35,7 +46,7 @@ public class TriggerHUDAnimationS2CPacket  {
                     textures = ClientSpiritEnergyManager.COVER_ANIMATION_TO_STRONG_TEXTURES;
                 }
 
-                HUDAnimationStruct animation = new HUDAnimationStruct(relative_x, relative_y, 11, 17, textures);
+                HUDAnimationStruct animation = new HUDAnimationStruct(relative_x, relative_y, 11, 14, textures);
 
                 // add animation to queue
                 client.execute(() -> ClientSpiritEnergyManager.COVER_ANIMATOR.addQueue(animation));

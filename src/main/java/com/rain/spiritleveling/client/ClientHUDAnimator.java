@@ -63,12 +63,18 @@ public class ClientHUDAnimator {
 
     }
 
-    public boolean getIsEmpty() {
-        return animationQueue.isEmpty();
-    }
-
     public void setPosition(int pos_x, int pos_y) {
         posX = pos_x;
         posY = pos_y;
+    }
+
+    public HUDAnimationStruct getCurrentAnimation() {
+        return currentAnimation;
+    }
+
+    // instantly stops all animations
+    public void clearQueue() {
+        animationQueue.clear();
+        currentAnimation = null;
     }
 }

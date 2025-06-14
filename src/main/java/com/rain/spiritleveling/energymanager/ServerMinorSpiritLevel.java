@@ -38,22 +38,25 @@ public class ServerMinorSpiritLevel extends MinorSpiritLevel{
         return result;
     }
 
-    // TODO will call the packet to draw the animation
+    // call the packet to draw the animation
     private void updateState(COVER_STATE oldState, COVER_STATE newState) {
         if (player == null) return;
         // packet call here!
 
-        SpiritLeveling.LOGGER.info("{}",index);
-
         PacketByteBuf buf = PacketByteBufs.create();
+        buf.writeBoolean(false);
         buf.writeIntArray(new int[]{index, oldState.getValue(), newState.getValue()});
         ServerPlayNetworking.send(player, ModMessages.HUD_ANIMATION, buf);
     }
 
-    // TODO will call the packet to play the chains removal animation
+    // call the packet to play the chains removal animation
     private void updateChains() {
         if (player == null) return;
         // packet call here!
+        PacketByteBuf buf = PacketByteBufs.create();
+        buf.writeBoolean(false);
+        buf.writeIntArray(new int[]{index});
+        ServerPlayNetworking.send(player, ModMessages.HUD_ANIMATION, buf);
     }
 
     public void setPlayer(ServerPlayerEntity player) {

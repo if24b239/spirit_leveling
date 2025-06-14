@@ -1,10 +1,7 @@
 package com.rain.spiritleveling.mixin;
 
-import com.faux.customentitydata.api.IPersistentDataHolder;
 import com.mojang.authlib.GameProfile;
-import com.rain.spiritleveling.SpiritLeveling;
 import com.rain.spiritleveling.api.ISpiritEnergyPlayer;
-import com.rain.spiritleveling.client.IClientSpiritEnergyPlayer;
 import com.rain.spiritleveling.energymanager.ServerSpiritEnergyManager;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.MinecraftServer;

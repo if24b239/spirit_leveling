@@ -1,6 +1,5 @@
 package com.rain.spiritleveling.client;
 
-import com.rain.spiritleveling.SpiritLeveling;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.util.Identifier;
 
@@ -29,5 +28,13 @@ public class HUDAnimationStruct {
                 0, 0,
                 textureWidth, textureHeight,
                 textureWidth, textureHeight);
+    }
+
+    public int getX() {
+        return posX;
+    }
+
+    public int getY() {
+        return posY;
     }
 }

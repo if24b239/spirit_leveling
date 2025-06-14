@@ -1,7 +1,10 @@
 package com.rain.spiritleveling.energymanager;
 
-import com.rain.spiritleveling.util.MinorSpiritLevelFactory;
+import com.rain.spiritleveling.networking.ModMessages;
 import com.rain.spiritleveling.util.ServerMinorSpiritLevelFactory;
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.network.ServerPlayerEntity;
 
 public class ServerMajorSpiritLevel extends MajorSpiritLevel<ServerMinorSpiritLevel> {
@@ -24,11 +27,30 @@ public class ServerMajorSpiritLevel extends MajorSpiritLevel<ServerMinorSpiritLe
         updateServerLevels();
     }
 
+    @Override
+    public boolean majorBreakthrough() {
+        boolean success = super.majorBreakthrough();
+
+        if (success) {
+            clearAnimators();
+        }
+
+        return success;
+    }
+
     private void updateServerLevels() {
         int index = 9;
         for (ServerMinorSpiritLevel l : levels) {
             l.setPlayer(player);
             l.setIndex(index--);
         }
+    }
+
+    private void clearAnimators() {
+        if (player == null) return;
+
+        PacketByteBuf buf = PacketByteBufs.create();
+        buf.writeBoolean(true);
+        ServerPlayNetworking.send(player, ModMessages.HUD_ANIMATION, buf);
     }
 }

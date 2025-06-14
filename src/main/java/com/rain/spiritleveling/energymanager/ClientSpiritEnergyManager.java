@@ -15,9 +15,10 @@ public class ClientSpiritEnergyManager extends MajorSpiritLevel<MinorSpiritLevel
     private final int posY;
     private final DrawContext drawContext;
     private COVER_STATE lastCoverState;
+    private int drawn_covers = 0;
 
-    public static ClientHUDAnimator CHAINS_ANIMATOR = ClientHUDAnimator.createClientHUDAnimation(3);
-    public static ClientHUDAnimator COVER_ANIMATOR = ClientHUDAnimator.createClientHUDAnimation(3);
+    public static ClientHUDAnimator CHAINS_ANIMATOR = ClientHUDAnimator.createClientHUDAnimation(4);
+    public static ClientHUDAnimator COVER_ANIMATOR = ClientHUDAnimator.createClientHUDAnimation(4);
 
     public static Identifier ENERGY_BAR = SpiritLeveling.loc("textures/spirit_energy/hud_bar.png");
 
@@ -158,9 +159,21 @@ public class ClientSpiritEnergyManager extends MajorSpiritLevel<MinorSpiritLevel
         // render animations
         COVER_ANIMATOR.render(drawContext);
 
-        if (spirit_power < spirit_level) return this;
-
+        // choose the number of covers either based on the number of complete minor levels or based on the position of currently running animation
+        // to avoid rendering issues if the animation is far behind
         int num = getCoversNumber();
+        int animation_num = 0;
+
+        if (COVER_ANIMATOR.getCurrentAnimation() != null)
+            animation_num = COVER_ANIMATOR.getCurrentAnimation().getY() / 10;
+
+        // avoid holes in cover rendering when animation is behind
+        if (num < animation_num)
+            num = animation_num;
+
+        // don't draw covers when spirit power is too low (cover animation is reset upon spirit level increase)
+        if (spirit_power < spirit_level)
+            return this;
 
         int relX = 3;
         int relY = 0;
