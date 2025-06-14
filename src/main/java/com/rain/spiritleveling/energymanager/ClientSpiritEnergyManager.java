@@ -1,8 +1,7 @@
 package com.rain.spiritleveling.energymanager;
 
 import com.rain.spiritleveling.SpiritLeveling;
-import com.rain.spiritleveling.client.ClientHUDAnimation;
-import com.rain.spiritleveling.client.HUDAnimationStruct;
+import com.rain.spiritleveling.client.ClientHUDAnimator;
 import com.rain.spiritleveling.util.ClientMinorSpiritLevelFactory;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.util.Identifier;
@@ -17,8 +16,8 @@ public class ClientSpiritEnergyManager extends MajorSpiritLevel<MinorSpiritLevel
     private final DrawContext drawContext;
     private COVER_STATE lastCoverState;
 
-    public static ClientHUDAnimation CHAINS_ANIMATOR = ClientHUDAnimation.createClientHUDAnimation(4);;
-    public static ClientHUDAnimation COVER_ANIMATOR = ClientHUDAnimation.createClientHUDAnimation(4);
+    public static ClientHUDAnimator CHAINS_ANIMATOR = ClientHUDAnimator.createClientHUDAnimation(3);
+    public static ClientHUDAnimator COVER_ANIMATOR = ClientHUDAnimator.createClientHUDAnimation(3);
 
     public static Identifier ENERGY_BAR = SpiritLeveling.loc("textures/spirit_energy/hud_bar.png");
 
@@ -120,14 +119,22 @@ public class ClientSpiritEnergyManager extends MajorSpiritLevel<MinorSpiritLevel
 
     public ClientSpiritEnergyManager(@NotNull DrawContext draw_context, int s_level, int max_energy, boolean minorBottleneck, int pos_x, int pos_y) {
         super(s_level, max_energy, minorBottleneck, new ClientMinorSpiritLevelFactory());
+        drawContext = draw_context;
         posX = pos_x;
         posY = pos_y;
-        drawContext = draw_context;
+
+        // set animator rel positions
+        COVER_ANIMATOR.setPosition(pos_x, pos_y);
+        CHAINS_ANIMATOR.setPosition(pos_x, pos_y);
     }
 
     // draw the chains and render the animation over it if needed
     public void drawChains(int spirit_power, int spirit_level) {
+        // render the animations
+        CHAINS_ANIMATOR.render(drawContext);
+
         if (spirit_power < spirit_level) return;
+
         int num = getChainNumber();
 
         int relX = -5;
@@ -145,12 +152,12 @@ public class ClientSpiritEnergyManager extends MajorSpiritLevel<MinorSpiritLevel
                 chainsWidth, chainsHeight
             );
         }
-
-        // render the animations
-        CHAINS_ANIMATOR.render(drawContext);
     }
 
     public ClientSpiritEnergyManager drawCovers(int spirit_power, int spirit_level) {
+        // render animations
+        COVER_ANIMATOR.render(drawContext);
+
         if (spirit_power < spirit_level) return this;
 
         int num = getCoversNumber();
@@ -174,14 +181,6 @@ public class ClientSpiritEnergyManager extends MajorSpiritLevel<MinorSpiritLevel
                         coversWidth, coversHeight
                 );
         }
-
-        // TEMP
-        HUDAnimationStruct test = new HUDAnimationStruct(30, 30, 11, 17, COVER_ANIMATION_TO_STRONG_TEXTURES);
-        if (COVER_ANIMATOR.getIsEmpty())
-            COVER_ANIMATOR.addQueue(test);
-
-        // render animations
-        COVER_ANIMATOR.render(drawContext);
 
         return this;
     }

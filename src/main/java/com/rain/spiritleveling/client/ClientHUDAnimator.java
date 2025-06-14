@@ -1,39 +1,39 @@
 package com.rain.spiritleveling.client;
 
-import com.rain.spiritleveling.SpiritLeveling;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.util.Identifier;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
-public class ClientHUDAnimation {
+public class ClientHUDAnimator {
 
     private final int ticksPerFrame;
     private final ArrayList<HUDAnimationStruct> animationQueue = new ArrayList<>();
+    private int posX = 0;
+    private int posY = 0;
 
     private float progress = 0;
     private int currentFrame = 0;
     private HUDAnimationStruct currentAnimation = null;
 
-    private ClientHUDAnimation(int ticks_per_frame) {
+    private ClientHUDAnimator(int ticks_per_frame) {
         ticksPerFrame = ticks_per_frame;
     }
 
-    public static ClientHUDAnimation createClientHUDAnimation(int ticks_per_frame) {
-        return new ClientHUDAnimation(ticks_per_frame);
+    public static ClientHUDAnimator createClientHUDAnimation(int ticks_per_frame) {
+        return new ClientHUDAnimator(ticks_per_frame);
     }
 
     public void addQueue(HUDAnimationStruct animation) {
         animationQueue.add(animation);
     }
 
+    // draw the animation with relative position of the animator
     public void render(DrawContext drawContext) {
         if (currentAnimation == null)
             updateCurrentAnimation();
 
         if (currentAnimation != null)
-            currentAnimation.draw(drawContext, currentFrame);
+            currentAnimation.draw(drawContext, currentFrame, posX, posY);
 
         increaseProgress();
     }
@@ -65,5 +65,10 @@ public class ClientHUDAnimation {
 
     public boolean getIsEmpty() {
         return animationQueue.isEmpty();
+    }
+
+    public void setPosition(int pos_x, int pos_y) {
+        posX = pos_x;
+        posY = pos_y;
     }
 }

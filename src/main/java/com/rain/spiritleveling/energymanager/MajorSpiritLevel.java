@@ -1,5 +1,6 @@
 package com.rain.spiritleveling.energymanager;
 
+import com.rain.spiritleveling.SpiritLeveling;
 import com.rain.spiritleveling.util.MinorSpiritLevelFactory;
 
 import java.util.ArrayList;
@@ -81,6 +82,7 @@ public class MajorSpiritLevel<minorLevelType extends MinorSpiritLevel> {
         isComplete = false;
 
         // unlock the second minor level of the new spirit level
+        SpiritLeveling.LOGGER.info("MAJOR BREAKTHROUGH:");
         minorBreakthrough();
 
         return true;
@@ -90,7 +92,9 @@ public class MajorSpiritLevel<minorLevelType extends MinorSpiritLevel> {
     public void minorBreakthrough() {
         if (isComplete) return;
 
-        levels.get(getMinorLevel()).minorBreakthrough();
+        if (!levels.get(getMinorLevel()).minorBreakthrough()) {
+            SpiritLeveling.LOGGER.info("MINOR BREAKTHROUGH FAILED!");
+        }
     }
 
     public int getSpiritLevel() {
@@ -105,7 +109,7 @@ public class MajorSpiritLevel<minorLevelType extends MinorSpiritLevel> {
     }
 
     // should only be called outside of constructor if levels.clear() was called before
-    private void createMinorLevels(int sLevel) {
+    protected void createMinorLevels(int sLevel) {
         for (int i = 0; i <= 9; i++) {
 
             // create minorLevel instance that is chained only if it's not the first element and not spirit level 0

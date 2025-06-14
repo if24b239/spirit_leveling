@@ -47,6 +47,8 @@ public class SpiritPill extends Item {
         // TEMP
         if (user instanceof ServerPlayerEntity)
             ((ISpiritEnergyPlayer)user).spirit_leveling$majorBreakthrough();
+        if (user instanceof ServerPlayerEntity)
+            ((ISpiritEnergyPlayer)user).spirit_leveling$minorBreakthrough();
 
         return resultingStack;
     }

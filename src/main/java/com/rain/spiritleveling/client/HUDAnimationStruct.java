@@ -22,10 +22,10 @@ public class HUDAnimationStruct {
 
     }
 
-    public void draw(DrawContext drawContext, int current_frame) {
+    public void draw(DrawContext drawContext, int current_frame, int relX, int relY) {
         drawContext.drawTexture(
                 frameTextures.get(current_frame),
-                posX, posY,
+                posX + relX, posY + relY,
                 0, 0,
                 textureWidth, textureHeight,
                 textureWidth, textureHeight);
