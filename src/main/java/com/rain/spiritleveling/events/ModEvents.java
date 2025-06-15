@@ -17,6 +17,13 @@ public class ModEvents {
             NbtCompound nbt = ((IPersistentDataHolder)newPlayer).faux$getPersistentData();
 
             ((ISpiritEnergyPlayer)newPlayer).spirit_leveling$initSpiritEnergy(nbt);
+
+            IClientSpiritEnergyPlayer clientPlayer = (IClientSpiritEnergyPlayer)newPlayer;
+
+            clientPlayer.spirit_leveling$setDataMaxEnergy(nbt.getInt("maxEnergy"));
+            clientPlayer.spirit_leveling$setDataCurrentEnergy(nbt.getInt("currentEnergy"));
+            clientPlayer.spirit_leveling$setDataSpiritLevel(nbt.getInt("spiritLevel"));
+            clientPlayer.spirit_leveling$setDataMinorBottleneck(nbt.getBoolean("minorBottleneck"));
         });
 
         // player joins event

@@ -158,10 +158,10 @@ public class ClientSpiritEnergyManager extends MajorSpiritLevel<MinorSpiritLevel
 
     // draw the chains and render the animation over it if needed
     public void drawChains(int spirit_power, int spirit_level) {
+        if (spirit_power < spirit_level) return;
+
         // render the animations
         CHAINS_ANIMATOR.render(drawContext);
-
-        if (spirit_power < spirit_level) return;
 
         int num = getChainNumber();
 
