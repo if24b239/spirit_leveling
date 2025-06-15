@@ -55,6 +55,13 @@ public class TriggerHUDAnimationS2CPacket  {
         } else {
             // chains animation was called
 
+            int relative_x = -12;
+            int relative_y = (index * 10) - 2;
+
+            HUDAnimationStruct animation = new HUDAnimationStruct(relative_x, relative_y, 27, 26, ClientSpiritEnergyManager.REMOVE_CHAINS_ANIMATION);
+
+            //add animation to queue
+            client.execute(() -> ClientSpiritEnergyManager.CHAINS_ANIMATOR.addQueue(animation));
         }
 
     }

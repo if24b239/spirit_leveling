@@ -17,7 +17,7 @@ public class ClientSpiritEnergyManager extends MajorSpiritLevel<MinorSpiritLevel
     private COVER_STATE lastCoverState;
     private int drawn_covers = 0;
 
-    public static ClientHUDAnimator CHAINS_ANIMATOR = ClientHUDAnimator.createClientHUDAnimation(4);
+    public static ClientHUDAnimator CHAINS_ANIMATOR = ClientHUDAnimator.createClientHUDAnimation(8);
     public static ClientHUDAnimator COVER_ANIMATOR = ClientHUDAnimator.createClientHUDAnimation(4);
 
     public static Identifier ENERGY_BAR = SpiritLeveling.loc("textures/spirit_energy/hud_bar.png");
@@ -78,6 +78,18 @@ public class ClientSpiritEnergyManager extends MajorSpiritLevel<MinorSpiritLevel
     private static final Identifier COVER_TO_NONE_8 = SpiritLeveling.loc("textures/animation/cover_to_none/frame_8.png");
     private static final Identifier COVER_TO_NONE_9 = SpiritLeveling.loc("textures/animation/cover_to_none/frame_9.png");
 
+    private static final Identifier REMOVE_CHAINS_1 = SpiritLeveling.loc("textures/animation/remove_chain/frame_1.png");
+    private static final Identifier REMOVE_CHAINS_2 = SpiritLeveling.loc("textures/animation/remove_chain/frame_2.png");
+    private static final Identifier REMOVE_CHAINS_3 = SpiritLeveling.loc("textures/animation/remove_chain/frame_3.png");
+    private static final Identifier REMOVE_CHAINS_4 = SpiritLeveling.loc("textures/animation/remove_chain/frame_4.png");
+    private static final Identifier REMOVE_CHAINS_5 = SpiritLeveling.loc("textures/animation/remove_chain/frame_5.png");
+    private static final Identifier REMOVE_CHAINS_6 = SpiritLeveling.loc("textures/animation/remove_chain/frame_6.png");
+    private static final Identifier REMOVE_CHAINS_7 = SpiritLeveling.loc("textures/animation/remove_chain/frame_7.png");
+    private static final Identifier REMOVE_CHAINS_8 = SpiritLeveling.loc("textures/animation/remove_chain/frame_8.png");
+    private static final Identifier REMOVE_CHAINS_9 = SpiritLeveling.loc("textures/animation/remove_chain/frame_9.png");
+    private static final Identifier REMOVE_CHAINS_10 = SpiritLeveling.loc("textures/animation/remove_chain/frame_10.png");
+    private static final Identifier REMOVE_CHAINS_11 = SpiritLeveling.loc("textures/animation/remove_chain/frame_11.png");
+
     public static final ArrayList<Identifier> COVER_ANIMATION_TO_STRONG_TEXTURES = new ArrayList<>() {
         {
             add(COVER_TO_STRONG_1);
@@ -115,6 +127,21 @@ public class ClientSpiritEnergyManager extends MajorSpiritLevel<MinorSpiritLevel
             add(COVER_TO_NONE_7);
             add(COVER_TO_NONE_8);
             add(COVER_TO_NONE_9);
+        }
+    };
+    public static final ArrayList<Identifier> REMOVE_CHAINS_ANIMATION = new ArrayList<>() {
+        {
+            add(REMOVE_CHAINS_1);
+            add(REMOVE_CHAINS_2);
+            add(REMOVE_CHAINS_3);
+            add(REMOVE_CHAINS_4);
+            add(REMOVE_CHAINS_5);
+            add(REMOVE_CHAINS_6);
+            add(REMOVE_CHAINS_7);
+            add(REMOVE_CHAINS_8);
+            add(REMOVE_CHAINS_9);
+            add(REMOVE_CHAINS_10);
+            add(REMOVE_CHAINS_11);
         }
     };
 
