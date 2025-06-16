@@ -1,7 +1,7 @@
 package com.rain.spiritleveling.energymanager;
 
 import com.faux.customentitydata.api.IPersistentDataHolder;
-import com.rain.spiritleveling.client.IClientSpiritEnergyPlayer;
+import com.rain.spiritleveling.client.hud.IClientSpiritEnergyPlayer;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
 

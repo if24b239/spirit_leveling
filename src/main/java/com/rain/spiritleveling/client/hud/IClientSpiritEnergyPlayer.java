@@ -1,4 +1,4 @@
-package com.rain.spiritleveling.client;
+package com.rain.spiritleveling.client.hud;
 
 public interface IClientSpiritEnergyPlayer {
     // PlayerEntity mixin functions to sync data

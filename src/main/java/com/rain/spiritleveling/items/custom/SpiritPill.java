@@ -1,7 +1,6 @@
 package com.rain.spiritleveling.items.custom;
 
-import com.rain.spiritleveling.SpiritLeveling;
-import com.rain.spiritleveling.effects.SpiritEffects;
+import com.rain.spiritleveling.effects.AllEffects;
 import com.rain.spiritleveling.api.ISpiritEnergyPlayer;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -26,7 +25,7 @@ public class SpiritPill extends Item {
                 .alwaysEdible()
                 .saturationModifier(2)
                 .snack()
-                .statusEffect(new StatusEffectInstance(SpiritEffects.ACTIVE_SOUL, 1200, strength), 1.0F)
+                .statusEffect(new StatusEffectInstance(AllEffects.ACTIVE_SOUL, 1200, strength), 1.0F)
                 .build()));
     
         PILL_LEVEL = strength;

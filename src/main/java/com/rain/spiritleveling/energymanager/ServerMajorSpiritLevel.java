@@ -1,6 +1,6 @@
 package com.rain.spiritleveling.energymanager;
 
-import com.rain.spiritleveling.networking.ModMessages;
+import com.rain.spiritleveling.networking.AllMessages;
 import com.rain.spiritleveling.util.ServerMinorSpiritLevelFactory;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -51,6 +51,6 @@ public class ServerMajorSpiritLevel extends MajorSpiritLevel<ServerMinorSpiritLe
 
         PacketByteBuf buf = PacketByteBufs.create();
         buf.writeBoolean(true);
-        ServerPlayNetworking.send(player, ModMessages.HUD_ANIMATION, buf);
+        ServerPlayNetworking.send(player, AllMessages.HUD_ANIMATION, buf);
     }
 }

@@ -5,7 +5,7 @@ import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 
-public class SpiritEffects {
+public class AllEffects {
 
     public static final StatusEffect ACTIVE_SOUL = new ActiveSoul();
 

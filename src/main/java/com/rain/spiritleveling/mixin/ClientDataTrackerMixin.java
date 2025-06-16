@@ -1,6 +1,6 @@
 package com.rain.spiritleveling.mixin;
 
-import com.rain.spiritleveling.client.IClientSpiritEnergyPlayer;
+import com.rain.spiritleveling.client.hud.IClientSpiritEnergyPlayer;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.data.DataTracker;

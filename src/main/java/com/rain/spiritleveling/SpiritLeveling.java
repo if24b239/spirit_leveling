@@ -1,9 +1,12 @@
 package com.rain.spiritleveling;
 
-import com.rain.spiritleveling.effects.SpiritEffects;
-import com.rain.spiritleveling.events.ModEvents;
-import com.rain.spiritleveling.items.SpiritItems;
-import com.rain.spiritleveling.networking.ModMessages;
+import com.rain.spiritleveling.blocks.AllBlockEntities;
+import com.rain.spiritleveling.blocks.AllBlocks;
+import com.rain.spiritleveling.effects.AllEffects;
+import com.rain.spiritleveling.entities.AllEntities;
+import com.rain.spiritleveling.events.AllEvents;
+import com.rain.spiritleveling.items.AllItems;
+import com.rain.spiritleveling.networking.AllMessages;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
@@ -18,17 +21,14 @@ public class SpiritLeveling implements ModInitializer {
 	public void onInitialize() {
 		LOGGER.info("Init Mod");
 
-		// register all Items
-		SpiritItems.initialize();
-
-		// register networking
-		ModMessages.registerC2SPackets();
-
-		// register events
-		ModEvents.initialize();
-
-		// register effects
-		SpiritEffects.initialize();
+		// register Mod content
+		AllItems.initialize();
+		AllBlocks.initialize();
+		AllBlockEntities.initialize();
+		AllMessages.registerC2SPackets();
+		AllEvents.initialize();
+		AllEffects.initialize();
+		AllEntities.initialize();
 
 	}
 

@@ -1,6 +1,7 @@
 package com.rain.spiritleveling.items;
 
 import com.rain.spiritleveling.SpiritLeveling;
+import com.rain.spiritleveling.blocks.AllBlocks;
 import com.rain.spiritleveling.items.custom.SpiritPill;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.minecraft.item.Item;
@@ -10,14 +11,14 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.text.Text;
 
-public class SpiritItems {
+public class AllItems {
 
-    private SpiritItems() {}
+    private AllItems() {}
 
     // all item instances
     public static final SpiritPill SPIRIT_PILL = register("spirit_pill", new SpiritPill(new Item.Settings(), 0));
     public static final SpiritPill S_SPIRIT_PILL = register("s_spirit_pill", new SpiritPill(new Item.Settings(), 4));
-
+    public static final Item MEDITATION_MAT = AllBlocks.registerBlockItem("meditation_mat", AllBlocks.MEDITATION_MAT);
 
     // item creative tab
     public static final ItemGroup SPIRIT_ITEM_GROUP = FabricItemGroup.builder()
@@ -26,6 +27,7 @@ public class SpiritItems {
             .entries((context, entries) -> {
                 entries.add(SPIRIT_PILL);
                 entries.add(S_SPIRIT_PILL);
+                entries.add(MEDITATION_MAT);
             })
             .build();
 

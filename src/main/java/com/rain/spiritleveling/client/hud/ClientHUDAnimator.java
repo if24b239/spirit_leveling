@@ -1,4 +1,4 @@
-package com.rain.spiritleveling.client;
+package com.rain.spiritleveling.client.hud;
 
 import net.minecraft.client.gui.DrawContext;
 

@@ -1,11 +1,16 @@
 package com.rain.spiritleveling.datagen;
 
-import com.rain.spiritleveling.items.SpiritItems;
+import com.rain.spiritleveling.SpiritLeveling;
+import com.rain.spiritleveling.blocks.AllBlocks;
+import com.rain.spiritleveling.items.AllItems;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricModelProvider;
 import net.minecraft.data.client.BlockStateModelGenerator;
 import net.minecraft.data.client.ItemModelGenerator;
+import net.minecraft.data.client.Model;
 import net.minecraft.data.client.Models;
+
+import java.util.Optional;
 
 public class ModModelProvider extends FabricModelProvider {
     public ModModelProvider(FabricDataOutput output) {
@@ -19,6 +24,8 @@ public class ModModelProvider extends FabricModelProvider {
 
     @Override
     public void generateItemModels(ItemModelGenerator itemModelGenerator) {
-        itemModelGenerator.register(SpiritItems.SPIRIT_PILL, Models.GENERATED);
+
+        itemModelGenerator.register(AllItems.SPIRIT_PILL, Models.GENERATED);
+        itemModelGenerator.register(AllBlocks.MEDITATION_MAT.asItem(), new Model(Optional.of(SpiritLeveling.loc("block/meditation_mat")), Optional.empty()));
     }
 }

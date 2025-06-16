@@ -1,7 +1,6 @@
 package com.rain.spiritleveling.energymanager;
 
-import com.rain.spiritleveling.SpiritLeveling;
-import com.rain.spiritleveling.networking.ModMessages;
+import com.rain.spiritleveling.networking.AllMessages;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.network.PacketByteBuf;
@@ -46,7 +45,7 @@ public class ServerMinorSpiritLevel extends MinorSpiritLevel{
         PacketByteBuf buf = PacketByteBufs.create();
         buf.writeBoolean(false);
         buf.writeIntArray(new int[]{index, oldState.getValue(), newState.getValue()});
-        ServerPlayNetworking.send(player, ModMessages.HUD_ANIMATION, buf);
+        ServerPlayNetworking.send(player, AllMessages.HUD_ANIMATION, buf);
     }
 
     // call the packet to play the chains removal animation
@@ -56,7 +55,7 @@ public class ServerMinorSpiritLevel extends MinorSpiritLevel{
         PacketByteBuf buf = PacketByteBufs.create();
         buf.writeBoolean(false);
         buf.writeIntArray(new int[]{index});
-        ServerPlayNetworking.send(player, ModMessages.HUD_ANIMATION, buf);
+        ServerPlayNetworking.send(player, AllMessages.HUD_ANIMATION, buf);
     }
 
     public void setPlayer(ServerPlayerEntity player) {

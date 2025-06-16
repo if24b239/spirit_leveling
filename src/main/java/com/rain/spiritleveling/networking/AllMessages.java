@@ -5,7 +5,7 @@ import com.rain.spiritleveling.networking.packets.TriggerHUDAnimationS2CPacket;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.util.Identifier;
 
-public class ModMessages {
+public class AllMessages {
 
     public static final Identifier HUD_ANIMATION = SpiritLeveling.loc("hud_animation");
 

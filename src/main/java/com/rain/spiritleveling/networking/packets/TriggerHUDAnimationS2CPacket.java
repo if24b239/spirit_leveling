@@ -1,7 +1,7 @@
 package com.rain.spiritleveling.networking.packets;
 
 import com.rain.spiritleveling.SpiritLeveling;
-import com.rain.spiritleveling.client.HUDAnimationStruct;
+import com.rain.spiritleveling.client.hud.HUDAnimationStruct;
 import com.rain.spiritleveling.energymanager.ClientSpiritEnergyManager;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.client.MinecraftClient;

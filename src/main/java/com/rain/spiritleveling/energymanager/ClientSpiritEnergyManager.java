@@ -1,7 +1,7 @@
 package com.rain.spiritleveling.energymanager;
 
 import com.rain.spiritleveling.SpiritLeveling;
-import com.rain.spiritleveling.client.ClientHUDAnimator;
+import com.rain.spiritleveling.client.hud.ClientHUDAnimator;
 import com.rain.spiritleveling.util.ClientMinorSpiritLevelFactory;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.util.Identifier;
@@ -17,7 +17,7 @@ public class ClientSpiritEnergyManager extends MajorSpiritLevel<MinorSpiritLevel
     private COVER_STATE lastCoverState;
     private int drawn_covers = 0;
 
-    public static ClientHUDAnimator CHAINS_ANIMATOR = ClientHUDAnimator.createClientHUDAnimation(8);
+    public static ClientHUDAnimator CHAINS_ANIMATOR = ClientHUDAnimator.createClientHUDAnimation(10);
     public static ClientHUDAnimator COVER_ANIMATOR = ClientHUDAnimator.createClientHUDAnimation(4);
 
     public static Identifier ENERGY_BAR = SpiritLeveling.loc("textures/spirit_energy/hud_bar.png");
@@ -158,12 +158,21 @@ public class ClientSpiritEnergyManager extends MajorSpiritLevel<MinorSpiritLevel
 
     // draw the chains and render the animation over it if needed
     public void drawChains(int spirit_power, int spirit_level) {
-        if (spirit_power < spirit_level) return;
+        if (spirit_power < spirit_level)
+            return;
 
         // render the animations
         CHAINS_ANIMATOR.render(drawContext);
 
         int num = getChainNumber();
+        int animation_num = 0;
+
+        if (CHAINS_ANIMATOR.getCurrentAnimation() != null)
+            animation_num = (CHAINS_ANIMATOR.getCurrentAnimation().getY() + 2) / 10;
+
+        // avoid holes in cover rendering when animation is behind
+        if (num < animation_num)
+            num = animation_num;
 
         int relX = -5;
         int relY = -2;
@@ -186,8 +195,11 @@ public class ClientSpiritEnergyManager extends MajorSpiritLevel<MinorSpiritLevel
         // render animations
         COVER_ANIMATOR.render(drawContext);
 
+        // don't draw covers when spirit power is too low (cover animation is reset upon spirit level increase)
+        if (spirit_power < spirit_level)
+            return this;
+
         // choose the number of covers either based on the number of complete minor levels or based on the position of currently running animation
-        // to avoid rendering issues if the animation is far behind
         int num = getCoversNumber();
         int animation_num = 0;
 
@@ -197,10 +209,6 @@ public class ClientSpiritEnergyManager extends MajorSpiritLevel<MinorSpiritLevel
         // avoid holes in cover rendering when animation is behind
         if (num < animation_num)
             num = animation_num;
-
-        // don't draw covers when spirit power is too low (cover animation is reset upon spirit level increase)
-        if (spirit_power < spirit_level)
-            return this;
 
         int relX = 3;
         int relY = 0;
