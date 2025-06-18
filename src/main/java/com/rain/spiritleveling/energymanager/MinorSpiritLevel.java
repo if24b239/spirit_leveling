@@ -60,7 +60,7 @@ public class MinorSpiritLevel {
         isComplete = true;
     }
 
-    // unlock minor level to progress it (return true if successful false if not)
+    // unlock minor level to progress it (return true if successful false when not)
     public boolean minorBreakthrough() {
         if (isChained) {
             isChained = false;

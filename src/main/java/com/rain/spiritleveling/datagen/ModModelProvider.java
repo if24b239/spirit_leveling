@@ -19,7 +19,10 @@ public class ModModelProvider extends FabricModelProvider {
 
     @Override
     public void generateBlockStateModels(BlockStateModelGenerator blockStateModelGenerator) {
+        blockStateModelGenerator.registerSimpleCubeAll(AllBlocks.JADE_STONE_BLOCK);
+        blockStateModelGenerator.registerSimpleCubeAll(AllBlocks.JADE_DEEPSLATE_BLOCK);
 
+        //blockStateModelGenerator.registerAxisRotated(AllBlocks.MEDITATION_MAT, );
     }
 
     @Override
@@ -27,5 +30,6 @@ public class ModModelProvider extends FabricModelProvider {
 
         itemModelGenerator.register(AllItems.SPIRIT_PILL, Models.GENERATED);
         itemModelGenerator.register(AllBlocks.MEDITATION_MAT.asItem(), new Model(Optional.of(SpiritLeveling.loc("block/meditation_mat")), Optional.empty()));
+        itemModelGenerator.register(AllItems.JADE_CHUNK, Models.GENERATED);
     }
 }

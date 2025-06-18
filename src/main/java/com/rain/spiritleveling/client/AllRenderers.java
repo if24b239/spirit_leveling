@@ -2,6 +2,7 @@ package com.rain.spiritleveling.client;
 
 import com.rain.spiritleveling.client.renderer.MeditationMatSitRenderer;
 import com.rain.spiritleveling.entities.AllEntities;
+import com.rain.spiritleveling.entities.custom.MeditationMatSitEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;

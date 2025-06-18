@@ -1,7 +1,6 @@
 package com.rain.spiritleveling.client.hud;
 
 import net.minecraft.client.gui.DrawContext;
-
 import java.util.ArrayList;
 
 public class ClientHUDAnimator {

@@ -1,6 +1,10 @@
 {
   "item.spiritleveling.spirit_pill": "Spirit Pill",
+  "item.spiritleveling.jade_chunk": "Jade Chunk",
+
   "block.spiritleveling.meditation_mat": "Jade Meditation Mat",
+  "block.spiritleveling.jade_stone_block": "Jade Stone Block",
+  "block.spiritleveling.jade_deepslate_block": "Jade Deepslate Block",
 
   "effect.spiritleveling.active_soul": "Active Soul",
 

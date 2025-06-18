@@ -12,7 +12,7 @@ import net.minecraft.util.Identifier;
 import java.util.ArrayList;
 
 public class TriggerHUDAnimationS2CPacket  {
-    public static void receive(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
+    public static void receive(MinecraftClient client, ClientPlayNetworkHandler ignoredHandler, PacketByteBuf buf, PacketSender ignoredSender) {
 
 
         boolean bool = buf.readBoolean();

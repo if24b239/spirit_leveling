@@ -12,7 +12,7 @@ public enum COVER_STATE {
     private final int value;
     private static final Map<Integer, COVER_STATE> map = new HashMap<>();
 
-    private COVER_STATE(int value) {
+    COVER_STATE(int value) {
         this.value = value;
     }
 
