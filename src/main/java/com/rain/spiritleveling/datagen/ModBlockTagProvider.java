@@ -1,6 +1,5 @@
 package com.rain.spiritleveling.datagen;
 
-import com.mojang.datafixers.TypeRewriteRule;
 import com.rain.spiritleveling.blocks.AllBlocks;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;

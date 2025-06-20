@@ -1,8 +1,8 @@
 package com.rain.spiritleveling.items;
 
-import com.mojang.datafixers.TypeRewriteRule;
 import com.rain.spiritleveling.SpiritLeveling;
 import com.rain.spiritleveling.blocks.AllBlocks;
+import com.rain.spiritleveling.items.custom.BowAndDrill;
 import com.rain.spiritleveling.items.custom.SpiritPill;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.minecraft.item.Item;
@@ -19,9 +19,13 @@ public class AllItems {
     // all custom item instances
     public static final SpiritPill SPIRIT_PILL = register("spirit_pill", new SpiritPill(new Item.Settings(), 0));
     public static final SpiritPill S_SPIRIT_PILL = register("s_spirit_pill", new SpiritPill(new Item.Settings(), 4));
+    public static final BowAndDrill BOW_AND_DRILL = register("bow_and_drill", new BowAndDrill(new Item.Settings().maxDamage(16)));
 
     // all basic item instances
     public static final Item JADE_CHUNK = register("jade_chunk", new Item(new Item.Settings()));
+    public static final Item IMPERIAL_JADE = register("imperial_jade", new Item(new Item.Settings()));
+    public static final Item ABRASION_SAND = register("abrasion_sand", new Item(new Item.Settings()));
+    public static final Item DRILL = register("drill", new Item(new Item.Settings()));
 
     // all block item instances
     public static final Item MEDITATION_MAT = AllBlocks.registerBlockItem("meditation_mat", AllBlocks.MEDITATION_MAT);
@@ -33,14 +37,16 @@ public class AllItems {
             .icon(() -> new ItemStack(SPIRIT_PILL))
             .displayName(Text.translatable("itemGroup.spiritleveling.item_group"))
             .entries((context, entries) -> {
-                //custom
                 entries.add(SPIRIT_PILL);
                 entries.add(S_SPIRIT_PILL);
 
-                //item
                 entries.add(JADE_CHUNK);
+                entries.add(IMPERIAL_JADE);
 
-                //block
+                entries.add(ABRASION_SAND);
+                entries.add(DRILL);
+                entries.add(BOW_AND_DRILL);
+
                 entries.add(MEDITATION_MAT);
                 entries.add(JADE_STONE_BLOCK);
                 entries.add(JADE_DEEPSLATE_BLOCK);
