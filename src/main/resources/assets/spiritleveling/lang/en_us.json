@@ -12,5 +12,7 @@
 
   "effect.spiritleveling.active_soul": "Active Soul",
 
-  "itemGroup.spiritleveling.item_group": "Spirit Leveling Items"
+  "itemGroup.spiritleveling.item_group": "Spirit Leveling Items",
+
+  "gui.spiritleveling.meditation_mat": "Spirit Crafting"
 }

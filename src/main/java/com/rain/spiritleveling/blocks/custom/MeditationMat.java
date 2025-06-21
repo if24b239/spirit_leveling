@@ -1,19 +1,23 @@
 package com.rain.spiritleveling.blocks.custom;
 
+import com.rain.spiritleveling.blocks.AllBlockEntities;
 import com.rain.spiritleveling.blocks.entity.MeditationMatEntity;
 import com.rain.spiritleveling.entities.AllEntities;
 import com.rain.spiritleveling.entities.custom.MeditationMatSitEntity;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.BlockEntityTicker;
+import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.state.StateManager;
-import net.minecraft.state.property.Properties;
+import net.minecraft.state.property.DirectionProperty;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -23,7 +27,9 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 import org.jetbrains.annotations.Nullable;
 
-public class MeditationMat extends HorizontalFacingBlock implements BlockEntityProvider {
+public class MeditationMat extends BlockWithEntity implements BlockEntityProvider {
+
+    public static final DirectionProperty FACING = HorizontalFacingBlock.FACING;
 
     private static final VoxelShape SHAPE = Block.createCuboidShape(1, 0, 1, 15, 3.05, 15);
 
@@ -35,18 +41,18 @@ public class MeditationMat extends HorizontalFacingBlock implements BlockEntityP
                 .requiresTool()
                 .sounds(BlockSoundGroup.STONE)
         );
-        setDefaultState(getDefaultState().with(Properties.HORIZONTAL_FACING, Direction.NORTH));
+        setDefaultState(getDefaultState().with(FACING, Direction.NORTH));
     }
 
     @Override
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        builder.add(Properties.HORIZONTAL_FACING);
+        builder.add(FACING);
     }
 
     @Override
     public @Nullable BlockState getPlacementState(ItemPlacementContext ctx) {
         return this.getDefaultState()
-                .with(Properties.HORIZONTAL_FACING, ctx.getHorizontalPlayerFacing());
+                .with(FACING, ctx.getHorizontalPlayerFacing().getOpposite());
     }
 
     @Override
@@ -69,7 +75,29 @@ public class MeditationMat extends HorizontalFacingBlock implements BlockEntityP
     @Override
     @SuppressWarnings("deprecation")
     public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState, WorldAccess world, BlockPos pos, BlockPos neighborPos) {
+
         return super.getStateForNeighborUpdate(state, direction, neighborState, world, pos, neighborPos);
+    }
+
+    @Override
+    @SuppressWarnings("deprecation")
+    // get all the items in the inventory and spawn them into the world
+    public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
+        if (state.getBlock() != newState.getBlock()) {
+            BlockEntity blockEntity = world.getBlockEntity(pos);
+
+            if (blockEntity instanceof MeditationMatEntity) {
+                ItemScatterer.spawn(world, pos, (MeditationMatEntity) blockEntity);
+                world.updateComparators(pos, this);
+            }
+
+            super.onStateReplaced(state, world, pos, newState, moved);
+        }
+    }
+
+    @Override
+    public BlockRenderType getRenderType(BlockState state) {
+        return BlockRenderType.MODEL;
     }
 
     // overwrite on use to let player sit on mat and link the sit entity to the block entity
@@ -89,8 +117,8 @@ public class MeditationMat extends HorizontalFacingBlock implements BlockEntityP
         if (linkedEntity == null || !linkedEntity.isAlive()) {
              linkedEntity = AllEntities.MAT_SIT_ENTITY.spawn((ServerWorld) world, pos.add(0, -1, 0), SpawnReason.TRIGGERED);
 
-             assert blockEntity != null;
-             blockEntity.setLinkedSitEntity(linkedEntity);
+            assert blockEntity != null;
+            blockEntity.setLinkedSitEntity(linkedEntity);
 
              assert linkedEntity != null;
              linkedEntity.setBlockEntity(blockEntity);
@@ -111,5 +139,11 @@ public class MeditationMat extends HorizontalFacingBlock implements BlockEntityP
 
         if (blockEntity != null)
             blockEntity.killSitEntity();
+    }
+
+    @Override
+    public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
+        return checkType(type, AllBlockEntities.MEDITATION_MAT_ENTITY,
+                (world1, pos, state1, blockEntity) -> blockEntity.tick(world1, pos, state1));
     }
 }

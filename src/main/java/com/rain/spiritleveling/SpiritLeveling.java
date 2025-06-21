@@ -7,6 +7,7 @@ import com.rain.spiritleveling.entities.AllEntities;
 import com.rain.spiritleveling.events.AllEvents;
 import com.rain.spiritleveling.items.AllItems;
 import com.rain.spiritleveling.networking.AllMessages;
+import com.rain.spiritleveling.screens.AllScreenHandlers;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
@@ -29,6 +30,7 @@ public class SpiritLeveling implements ModInitializer {
 		AllEvents.initialize();
 		AllEffects.initialize();
 		AllEntities.initialize();
+		AllScreenHandlers.initialize();
 
 	}
 

@@ -1,6 +1,5 @@
 package com.rain.spiritleveling.entities.custom;
 
-import com.rain.spiritleveling.SpiritLeveling;
 import com.rain.spiritleveling.blocks.entity.MeditationMatEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -8,6 +7,8 @@ import net.minecraft.entity.MovementType;
 import net.minecraft.entity.RideableInventory;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.screen.NamedScreenHandlerFactory;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
@@ -49,8 +50,16 @@ public class MeditationMatSitEntity extends Entity implements RideableInventory 
     @Override
     public void openInventory(PlayerEntity player) {
 
-        // open blockEntity inventory
-        blockEntity.openCraftingInventory();
+        if (!(player instanceof ServerPlayerEntity)) return;
+
+        NamedScreenHandlerFactory screenHandlerFactory = blockEntity;
+
+        if (screenHandlerFactory == null) {
+
+            return;
+        }
+
+        player.openHandledScreen(screenHandlerFactory);
     }
 
     public void setBlockEntity(MeditationMatEntity entity) {
