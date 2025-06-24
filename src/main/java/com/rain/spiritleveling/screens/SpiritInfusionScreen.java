@@ -16,12 +16,14 @@ import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 
-public class MeditationMatScreen extends HandledScreen<MeditationMatScreenHandler> {
+public class SpiritInfusionScreen extends HandledScreen<SpiritInfusionScreenHandler> {
 
-    private static final Identifier TEXTURE = SpiritLeveling.loc("textures/gui/meditation_mat.png");
+    private static final Identifier TEXTURE = SpiritLeveling.loc("textures/gui/spirit_infusion.png");
 
-    public MeditationMatScreen(MeditationMatScreenHandler handler, PlayerInventory inventory, Text title) {
+    public SpiritInfusionScreen(SpiritInfusionScreenHandler handler, PlayerInventory inventory, Text title) {
         super(handler, inventory, title);
+        backgroundWidth = 176;
+        backgroundHeight = 191;
     }
 
     @Override
@@ -42,13 +44,12 @@ public class MeditationMatScreen extends HandledScreen<MeditationMatScreenHandle
         super.render(context, mouseX, mouseY, delta);
         drawMouseoverTooltip(context, mouseX, mouseY);
 
+        int entityX = this.x + 88;
+        int entityY = this.y + 73;
+
         assert this.client != null;
         assert this.client.player != null;
-
-
-        int entityX = this.x + 100;
-        int entityY = this.y + 100;
-        drawEntity(context, entityX, entityY, 15, entityX - mouseX, entityY - 35 - mouseY, this.client.player);
+        drawEntity(context, entityX, entityY, 15, entityX - mouseX, entityY - 15 - mouseY, this.client.player);
     }
 
     @Override
@@ -85,7 +86,7 @@ public class MeditationMatScreen extends HandledScreen<MeditationMatScreenHandle
     @SuppressWarnings("deprecation")
     public static void drawEntity(DrawContext context, int x, int y, int size, Quaternionf quaternionf, @Nullable Quaternionf quaternionf2, LivingEntity entity) {
         context.getMatrices().push();
-        context.getMatrices().translate((double)x, (double)y, 50.0);
+        context.getMatrices().translate(x, y, 50.0);
         context.getMatrices().multiplyPositionMatrix(new Matrix4f().scaling(size, size, -size));
         context.getMatrices().multiply(quaternionf);
         DiffuseLighting.method_34742();

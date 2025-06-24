@@ -1,8 +1,10 @@
 package com.rain.spiritleveling.blocks.entity;
 
+import com.rain.spiritleveling.SpiritLeveling;
 import com.rain.spiritleveling.blocks.AllBlockEntities;
 import com.rain.spiritleveling.entities.custom.MeditationMatSitEntity;
-import com.rain.spiritleveling.screens.MeditationMatScreenHandler;
+import com.rain.spiritleveling.items.recipe.ShapedSpiritInfusionRecipe;
+import com.rain.spiritleveling.screens.SpiritInfusionScreenHandler;
 import com.rain.spiritleveling.util.ImplementedInventory;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.block.BlockState;
@@ -10,6 +12,7 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventories;
+import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
@@ -22,17 +25,19 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Optional;
+
 public class MeditationMatEntity extends BlockEntity implements ExtendedScreenHandlerFactory, ImplementedInventory {
 
     private MeditationMatSitEntity linkedSitEntity;
 
     private final DefaultedList<ItemStack> inventory = DefaultedList.ofSize(6, ItemStack.EMPTY);
-    private static final int CENTRE_SLOT = 0;
-    private static final int WOOD_SLOT = 1;
-    private static final int FIRE_SLOT = 2;
-    private static final int EARTH_SLOT = 3;
-    private static final int METAL_SLOT = 4;
-    private static final int WATER_SLOT = 5;
+    public static final int CENTRE_SLOT = 0;
+    public static final int WOOD_SLOT = 1;
+    public static final int FIRE_SLOT = 2;
+    public static final int EARTH_SLOT = 3;
+    public static final int METAL_SLOT = 4;
+    public static final int WATER_SLOT = 5;
 
     protected final PropertyDelegate propertyDelegate;
     private int progress = 0;
@@ -100,7 +105,7 @@ public class MeditationMatEntity extends BlockEntity implements ExtendedScreenHa
 
     @Override
     public Text getDisplayName() {
-        return Text.translatable("gui.spiritleveling.meditation_mat");
+        return Text.translatable("gui.spiritleveling.spirit_infusion");
     }
 
     @Override
@@ -123,12 +128,38 @@ public class MeditationMatEntity extends BlockEntity implements ExtendedScreenHa
 
     @Override
     public @Nullable ScreenHandler createMenu(int syncId, PlayerInventory playerInventory, PlayerEntity player) {
-        return new MeditationMatScreenHandler(syncId, playerInventory, this, this.propertyDelegate);
+        return new SpiritInfusionScreenHandler(syncId, playerInventory, this, this.propertyDelegate);
     }
 
     public void tick(World world, BlockPos pos, BlockState state) {
         if (world.isClient()) return;
 
-
+        if (hasRecipe()) {
+            SpiritLeveling.LOGGER.info("WORKS");
+        }
     }
+
+    private boolean hasRecipe() {
+        Optional<ShapedSpiritInfusionRecipe> recipe = getCurrentRecipe();
+
+        return recipe.isPresent() && canInsertItemIntoOutputSlot(recipe.get().getOutput(null));
+    }
+
+    private boolean canInsertItemIntoOutputSlot(ItemStack output) {
+
+        return (this.getStack(CENTRE_SLOT).getItem() == output.getItem()
+                && this.getStack(CENTRE_SLOT).getCount() + output.getCount() <= this.getStack(CENTRE_SLOT).getMaxCount())
+                || this.getStack(CENTRE_SLOT).isEmpty();
+    }
+
+    private Optional<ShapedSpiritInfusionRecipe> getCurrentRecipe() {
+        SimpleInventory inv = new SimpleInventory(this.size());
+        for (int i = 0; i < inv.size(); i++) {
+            inv.setStack(i, this.getStack(i));
+        }
+
+        assert getWorld() != null;
+        return getWorld().getRecipeManager().getFirstMatch(ShapedSpiritInfusionRecipe.Type.INSTANCE, inv, getWorld());
+    }
+
 }

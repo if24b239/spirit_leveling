@@ -1,5 +1,6 @@
 package com.rain.spiritleveling.screens;
 
+import com.rain.spiritleveling.SpiritLeveling;
 import com.rain.spiritleveling.blocks.entity.MeditationMatEntity;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -7,23 +8,27 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.recipe.Recipe;
+import net.minecraft.recipe.RecipeMatcher;
+import net.minecraft.recipe.book.RecipeBookCategory;
+import net.minecraft.recipe.book.RecipeCategory;
+import net.minecraft.screen.AbstractRecipeScreenHandler;
 import net.minecraft.screen.ArrayPropertyDelegate;
 import net.minecraft.screen.PropertyDelegate;
-import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
 
-public class MeditationMatScreenHandler extends ScreenHandler {
+public class SpiritInfusionScreenHandler extends AbstractRecipeScreenHandler<Inventory> {
     private final Inventory inventory;
     private final PropertyDelegate propertyDelegate;
     public final MeditationMatEntity blockEntity;
 
-    public MeditationMatScreenHandler(int syncID, PlayerInventory inventory, PacketByteBuf buf) {
+    public SpiritInfusionScreenHandler(int syncID, PlayerInventory inventory, PacketByteBuf buf) {
         this(syncID, inventory, inventory.player.getWorld().getBlockEntity(buf.readBlockPos()),
                 new ArrayPropertyDelegate(4));
     }
 
-    public MeditationMatScreenHandler(int syncID, PlayerInventory playerInventory, BlockEntity blockEntity, PropertyDelegate propertyDelegate) {
-        super(AllScreenHandlers.MEDITATION_MAT, syncID);
+    public SpiritInfusionScreenHandler(int syncID, PlayerInventory playerInventory, BlockEntity blockEntity, PropertyDelegate propertyDelegate) {
+        super(AllScreenHandlers.SPIRIT_INFUSION, syncID);
         checkSize((Inventory)blockEntity, 6);
 
         this.inventory = ((Inventory) blockEntity);
@@ -33,13 +38,17 @@ public class MeditationMatScreenHandler extends ScreenHandler {
 
 
         // set the slots
-        this.addSlot(new Slot(inventory, 0, 0,0)); // CENTRE_SLOT
-        this.addSlot(new Slot(inventory, 1, 0,0)); // WOOD_SLOT
-        this.addSlot(new Slot(inventory, 2, 0,0)); // FIRE_SLOT
-        this.addSlot(new Slot(inventory, 3, 0,0)); // EARTH_SLOT
-        this.addSlot(new Slot(inventory, 4, 0,0)); // METAL_SLOT
-        this.addSlot(new Slot(inventory, 5, 0,0)); // WATER_SLOT
-
+        this.addSlot(new Slot(inventory, MeditationMatEntity.CENTRE_SLOT, 80,48) {
+            @Override
+            public boolean canInsert(ItemStack stack) {
+                return false;
+            }
+        }); // CENTRE_SLOT
+        this.addSlot(new Slot(inventory, MeditationMatEntity.WOOD_SLOT, 80,8)); // WOOD_SLOT
+        this.addSlot(new Slot(inventory, MeditationMatEntity.FIRE_SLOT, 122,39)); // FIRE_SLOT
+        this.addSlot(new Slot(inventory, MeditationMatEntity.EARTH_SLOT, 106,87)); // EARTH_SLOT
+        this.addSlot(new Slot(inventory, MeditationMatEntity.METAL_SLOT, 54,87)); // METAL_SLOT
+        this.addSlot(new Slot(inventory, MeditationMatEntity.WATER_SLOT, 38,39)); // WATER_SLOT
 
         addPlayerInventory(playerInventory);
         addPlayerHotbar(playerInventory);
@@ -51,7 +60,7 @@ public class MeditationMatScreenHandler extends ScreenHandler {
     public ItemStack quickMove(PlayerEntity player, int invSlot) {
         ItemStack newStack = ItemStack.EMPTY;
         Slot slot = this.slots.get(invSlot);
-        if (slot != null && slot.hasStack()) {
+        if (slot.hasStack()) {
             ItemStack originalStack = slot.getStack();
             newStack = originalStack.copy();
             if (invSlot < this.inventory.size()) {
@@ -77,17 +86,62 @@ public class MeditationMatScreenHandler extends ScreenHandler {
         return this.inventory.canPlayerUse(player);
     }
 
+    @Override
+    public void populateRecipeFinder(RecipeMatcher finder) {
+
+    }
+
+    @Override
+    public void clearCraftingSlots() {
+
+    }
+
+    @Override
+    public boolean matches(Recipe<? super Inventory> recipe) {
+        return recipe.matches(this.inventory, this.blockEntity.getWorld());
+    }
+
+    @Override
+    public int getCraftingResultSlotIndex() {
+        return MeditationMatEntity.CENTRE_SLOT;
+    }
+
+    @Override
+    public int getCraftingWidth() {
+        return 1;
+    }
+
+    @Override
+    public int getCraftingHeight() {
+        return 1;
+    }
+
+    @Override
+    public int getCraftingSlotCount() {
+        return 6;
+    }
+
+    @Override
+    public RecipeBookCategory getCategory() {
+        return RecipeBookCategory.CRAFTING;
+    }
+
+    @Override
+    public boolean canInsertIntoSlot(int index) {
+        return index != MeditationMatEntity.CENTRE_SLOT;
+    }
+
     private void addPlayerInventory(PlayerInventory inventory) {
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 9; j++) {
-                this.addSlot(new Slot(inventory, j + i * 9 + 9, 8 + j * 18, 84 + i * 18));
+                this.addSlot(new Slot(inventory, j + i * 9 + 9, 8 + j * 18, 109  + i * 18));
             }
         }
     }
 
     private void addPlayerHotbar(PlayerInventory inventory) {
         for (int i = 0; i < 9; i++) {
-            this.addSlot(new Slot(inventory, i, 8 + i * 18, 142));
+            this.addSlot(new Slot(inventory, i, 8 + i * 18, 167));
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.rain.spiritleveling.datagen;
 
+import com.rain.spiritleveling.datagen.recipes.ShapedSpiritInfusionRecipeJsonBuilder;
 import com.rain.spiritleveling.items.AllItems;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
@@ -10,6 +11,7 @@ import net.minecraft.data.server.recipe.SmithingTransformRecipeJsonBuilder;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
 import net.minecraft.recipe.Ingredient;
+import net.minecraft.recipe.book.CraftingRecipeCategory;
 import net.minecraft.recipe.book.RecipeCategory;
 import net.minecraft.registry.tag.ItemTags;
 
@@ -50,7 +52,22 @@ public class ModRecipeProvider extends FabricRecipeProvider {
                 .pattern("s  ")
                 .pattern(" s ")
                 .pattern("  i")
-                .offerTo(exporter, getItemPath(AllItems.DRILL) + "_shaped");
+                .offerTo(exporter, getItemPath(AllItems.DRILL) + "_ld_shaped");
+        createShapedRecipe(RecipeCategory.TOOLS, drill_ingredients, AllItems.DRILL)
+                .pattern("  s")
+                .pattern(" s ")
+                .pattern("i  ")
+                .offerTo(exporter, getItemPath(AllItems.DRILL) + "_rd_shaped");
+        createShapedRecipe(RecipeCategory.TOOLS, drill_ingredients, AllItems.DRILL)
+                .pattern("s")
+                .pattern("s")
+                .pattern("i")
+                .offerTo(exporter, getItemPath(AllItems.DRILL) + "_down_shaped");
+        createShapedRecipe(RecipeCategory.TOOLS, drill_ingredients, AllItems.DRILL)
+                .pattern("i")
+                .pattern("s")
+                .pattern("s")
+                .offerTo(exporter, getItemPath(AllItems.DRILL) + "_left_shaped");
 
         // meditation mat
         Map<Character, Item> meditation_mat_ingredients = Map.of(
@@ -62,7 +79,23 @@ public class ModRecipeProvider extends FabricRecipeProvider {
                 .pattern("jtj")
                 .pattern("jjj")
                 .offerTo(exporter, getItemPath(AllItems.MEDITATION_MAT) + "_shaped");
+
+        // first test infusion recipe
+        Map<Character, Item> test_ingredients = Map.of(
+                'w', Items.OAK_LOG,
+                'f', Items.COAL,
+                'e', AllItems.JADE_CHUNK,
+                'm', Items.IRON_INGOT,
+                'a', Items.WATER_BUCKET
+        );
+        offerShapedInfusionRecipe(exporter, AllItems.SPIRIT_PILL, test_ingredients, 4, AllItems.MEDITATION_MAT);
     }
+
+    ///
+    ///
+    /// HELPER FUNCTIONS
+    ///
+    ///
 
     private static void offerSmithingTableRecipe(Consumer<RecipeJsonProvider> exporter, Item left, Item input, Item right, RecipeCategory category, Item result) {
         SmithingTransformRecipeJsonBuilder.create(
@@ -92,7 +125,7 @@ public class ModRecipeProvider extends FabricRecipeProvider {
         builder.offerTo(exporter, getItemPath(AllItems.BOW_AND_DRILL) + "_shapeless");
     }
 
-    private static ShapedRecipeJsonBuilder createShapedRecipe(RecipeCategory category,Map<Character, Item> ingredients, Item output) {
+    private static ShapedRecipeJsonBuilder createShapedRecipe(RecipeCategory category, Map<Character, Item> ingredients, Item output) {
         ShapedRecipeJsonBuilder builder = ShapedRecipeJsonBuilder.create(category, output, 1);
 
         assert ingredients.size() <= 9;
@@ -102,5 +135,13 @@ public class ModRecipeProvider extends FabricRecipeProvider {
         }
 
         return builder;
+    }
+
+    private static void offerShapedInfusionRecipe(Consumer<RecipeJsonProvider> exporter, Item output, Map<Character, Item> ingredients, int cost, Item criterion) {
+        ShapedSpiritInfusionRecipeJsonBuilder.create(output, RecipeCategory.FOOD)
+                .allIngredients(ingredients)
+                .setEnergyCost(cost)
+                .criterion("has_" + getItemPath(criterion), conditionsFromItem(criterion))
+                .offerTo(exporter, getItemPath(output) + "_spirit_infusion");
     }
 }

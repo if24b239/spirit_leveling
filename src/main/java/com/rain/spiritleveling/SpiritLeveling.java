@@ -6,9 +6,12 @@ import com.rain.spiritleveling.effects.AllEffects;
 import com.rain.spiritleveling.entities.AllEntities;
 import com.rain.spiritleveling.events.AllEvents;
 import com.rain.spiritleveling.items.AllItems;
+import com.rain.spiritleveling.items.AllRecipes;
 import com.rain.spiritleveling.networking.AllMessages;
 import com.rain.spiritleveling.screens.AllScreenHandlers;
 import net.fabricmc.api.ModInitializer;
+import net.minecraft.recipe.book.RecipeBookCategory;
+import net.minecraft.recipe.book.RecipeCategory;
 import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +34,7 @@ public class SpiritLeveling implements ModInitializer {
 		AllEffects.initialize();
 		AllEntities.initialize();
 		AllScreenHandlers.initialize();
+		AllRecipes.registerRecipes();
 
 	}
 

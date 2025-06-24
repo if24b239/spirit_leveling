@@ -4,7 +4,7 @@ import com.rain.spiritleveling.client.AllRenderers;
 import com.rain.spiritleveling.client.hud.SpiritEnergyHudOverlay;
 import com.rain.spiritleveling.networking.AllMessages;
 import com.rain.spiritleveling.screens.AllScreenHandlers;
-import com.rain.spiritleveling.screens.MeditationMatScreen;
+import com.rain.spiritleveling.screens.SpiritInfusionScreen;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -27,6 +27,6 @@ public class SpiritLevelingClient implements ClientModInitializer {
         HudRenderCallback.EVENT.register(new SpiritEnergyHudOverlay());
 
         // screen linking
-        HandledScreens.register(AllScreenHandlers.MEDITATION_MAT, MeditationMatScreen::new);
+        HandledScreens.register(AllScreenHandlers.SPIRIT_INFUSION, SpiritInfusionScreen::new);
     }
 }

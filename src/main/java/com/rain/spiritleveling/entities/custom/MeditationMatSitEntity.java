@@ -24,7 +24,6 @@ public class MeditationMatSitEntity extends Entity implements RideableInventory 
         super(type, world);
         this.setNoGravity(true);
         this.setInvulnerable(true);
-        SpiritLeveling.LOGGER.info("SIT ENTITY CREATED!!!!!!");
     }
 
     @Override

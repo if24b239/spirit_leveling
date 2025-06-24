@@ -8,8 +8,8 @@ import net.minecraft.screen.ScreenHandlerType;
 
 public class AllScreenHandlers {
 
-    public static ScreenHandlerType<MeditationMatScreenHandler> MEDITATION_MAT = Registry.register(Registries.SCREEN_HANDLER, SpiritLeveling.loc("meditation_mat"),
-            new ExtendedScreenHandlerType<>(MeditationMatScreenHandler::new));
+    public static ScreenHandlerType<SpiritInfusionScreenHandler> SPIRIT_INFUSION = Registry.register(Registries.SCREEN_HANDLER, SpiritLeveling.loc("spirit_infusion"),
+            new ExtendedScreenHandlerType<>(SpiritInfusionScreenHandler::new));
 
     public static void initialize() {
         SpiritLeveling.LOGGER.info("Initializing Screens Handlers");
