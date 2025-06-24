@@ -1,5 +1,6 @@
 package com.rain.spiritleveling.datagen.recipes;
 
+import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonObject;
 import com.rain.spiritleveling.items.recipe.ShapedSpiritInfusionRecipe;
 import net.minecraft.advancement.Advancement;
@@ -20,6 +21,7 @@ import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -128,7 +130,7 @@ public class ShapedSpiritInfusionRecipeJsonBuilder extends RecipeJsonBuilder imp
 
     @Override
     public void offerTo(Consumer<RecipeJsonProvider> exporter, Identifier recipeId) {
-
+        this.validate(recipeId);
         this.advancementBuilder
                 .parent(ROOT)
                 .criterion("has_the_recipe", RecipeUnlockedCriterion.create(recipeId))
@@ -146,6 +148,22 @@ public class ShapedSpiritInfusionRecipeJsonBuilder extends RecipeJsonBuilder imp
                         this.group == null ? "" : this.group
                 )
         );
+    }
+
+    private void validate(Identifier recipeId) {
+        if (this.energyCost < 0)
+            throw new IllegalStateException("Negative Energy Cost not allowed in recipe: '" + recipeId + "'");
+
+        List<Character> tokens = ImmutableList.of('w', 'f', 'e', 'm', 'a');
+
+        boolean atLeastOneIngredient = false;
+        for (Character t : tokens) {
+            if (inputs.get(t) != Ingredient.ofItems(Items.AIR))
+                atLeastOneIngredient = true;
+        }
+
+        if (!atLeastOneIngredient)
+            throw new IllegalStateException("At least one ingredient for recipe: '" + recipeId + "'");
     }
 
     static class ShapedRecipeJsonProvider extends RecipeJsonBuilder.CraftingRecipeJsonProvider {

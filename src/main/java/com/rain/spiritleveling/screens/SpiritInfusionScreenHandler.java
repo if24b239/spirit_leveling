@@ -8,16 +8,12 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.recipe.Recipe;
-import net.minecraft.recipe.RecipeMatcher;
-import net.minecraft.recipe.book.RecipeBookCategory;
-import net.minecraft.recipe.book.RecipeCategory;
-import net.minecraft.screen.AbstractRecipeScreenHandler;
 import net.minecraft.screen.ArrayPropertyDelegate;
 import net.minecraft.screen.PropertyDelegate;
+import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
 
-public class SpiritInfusionScreenHandler extends AbstractRecipeScreenHandler<Inventory> {
+public class SpiritInfusionScreenHandler extends ScreenHandler {
     private final Inventory inventory;
     private final PropertyDelegate propertyDelegate;
     public final MeditationMatEntity blockEntity;
@@ -84,51 +80,6 @@ public class SpiritInfusionScreenHandler extends AbstractRecipeScreenHandler<Inv
     @Override
     public boolean canUse(PlayerEntity player) {
         return this.inventory.canPlayerUse(player);
-    }
-
-    @Override
-    public void populateRecipeFinder(RecipeMatcher finder) {
-
-    }
-
-    @Override
-    public void clearCraftingSlots() {
-
-    }
-
-    @Override
-    public boolean matches(Recipe<? super Inventory> recipe) {
-        return recipe.matches(this.inventory, this.blockEntity.getWorld());
-    }
-
-    @Override
-    public int getCraftingResultSlotIndex() {
-        return MeditationMatEntity.CENTRE_SLOT;
-    }
-
-    @Override
-    public int getCraftingWidth() {
-        return 1;
-    }
-
-    @Override
-    public int getCraftingHeight() {
-        return 1;
-    }
-
-    @Override
-    public int getCraftingSlotCount() {
-        return 6;
-    }
-
-    @Override
-    public RecipeBookCategory getCategory() {
-        return RecipeBookCategory.CRAFTING;
-    }
-
-    @Override
-    public boolean canInsertIntoSlot(int index) {
-        return index != MeditationMatEntity.CENTRE_SLOT;
     }
 
     private void addPlayerInventory(PlayerInventory inventory) {

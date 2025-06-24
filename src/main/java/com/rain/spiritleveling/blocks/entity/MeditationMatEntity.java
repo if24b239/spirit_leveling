@@ -1,8 +1,8 @@
 package com.rain.spiritleveling.blocks.entity;
 
-import com.rain.spiritleveling.SpiritLeveling;
 import com.rain.spiritleveling.blocks.AllBlockEntities;
 import com.rain.spiritleveling.entities.custom.MeditationMatSitEntity;
+import com.rain.spiritleveling.items.AllItems;
 import com.rain.spiritleveling.items.recipe.ShapedSpiritInfusionRecipe;
 import com.rain.spiritleveling.screens.SpiritInfusionScreenHandler;
 import com.rain.spiritleveling.util.ImplementedInventory;
@@ -14,6 +14,7 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventories;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.PropertyDelegate;
@@ -41,9 +42,10 @@ public class MeditationMatEntity extends BlockEntity implements ExtendedScreenHa
 
     protected final PropertyDelegate propertyDelegate;
     private int progress = 0;
-    private int maxProgress = 10; //TODO: CHANGE TO ACTUAL MAX PROGRESS
+    private int maxProgress = 1; // TODO: temp 256
     private int spiritEnergy = 0;
     private int maxSpiritEnergy;
+    private boolean isReceiving = false;
 
     public MeditationMatEntity(BlockPos pos, BlockState state) {
         super(AllBlockEntities.MEDITATION_MAT_ENTITY, pos, state);
@@ -55,6 +57,7 @@ public class MeditationMatEntity extends BlockEntity implements ExtendedScreenHa
                     case 1 -> MeditationMatEntity.this.maxProgress;
                     case 2 -> MeditationMatEntity.this.spiritEnergy;
                     case 3 -> MeditationMatEntity.this.maxSpiritEnergy;
+                    case 4 -> (MeditationMatEntity.this.isReceiving) ? 1 : 0;
                     default -> throw new IllegalStateException("Unexpected value: " + index);
                 };
             }
@@ -66,6 +69,7 @@ public class MeditationMatEntity extends BlockEntity implements ExtendedScreenHa
                     case 1 -> MeditationMatEntity.this.maxProgress = value;
                     case 2 -> MeditationMatEntity.this.spiritEnergy = value;
                     case 3 -> MeditationMatEntity.this.maxSpiritEnergy = value;
+                    case 4 -> MeditationMatEntity.this.isReceiving = value != 0;
                     default -> throw new IllegalStateException("Unexpected value: " + index);
                 }
             }
@@ -130,19 +134,90 @@ public class MeditationMatEntity extends BlockEntity implements ExtendedScreenHa
     public @Nullable ScreenHandler createMenu(int syncId, PlayerInventory playerInventory, PlayerEntity player) {
         return new SpiritInfusionScreenHandler(syncId, playerInventory, this, this.propertyDelegate);
     }
+    
+    public void flipIsReceiving() {
+        this.isReceiving = !isReceiving;
+    }
 
     public void tick(World world, BlockPos pos, BlockState state) {
         if (world.isClient()) return;
 
-        if (hasRecipe()) {
-            SpiritLeveling.LOGGER.info("WORKS");
+        /// CRAFTING LOGIC
+        Optional<ShapedSpiritInfusionRecipe> recipe = getCurrentRecipe();
+        
+        if (recipe.isPresent() && hasRecipe(recipe.get())) {
+
+            if (increaseProgress() && hasEnoughEnergy(recipe.get())) {
+                craftItem(recipe.get());
+                resetProgress();
+            }
+        } else {
+            resetProgress();
+        }
+
+        /// SPIRIT POWER LOGIC
+        if (linkedSitEntity != null) {
+
+        }
+
+        // save both the increased progress and the crafted item
+        markDirty(world, pos, state);
+    }
+
+    private void craftItem(ShapedSpiritInfusionRecipe recipe) {
+
+        // remove item from stack only if they aren't air
+        for (int i = WOOD_SLOT; i < inventory.size(); i++) {
+            if (this.getStack(i).getItem() != Items.AIR)
+                decrementStack(i);
+        }
+
+        // add the recipe result into the output slot
+        increaseStack(recipe);
+    }
+
+    private void increaseStack(ShapedSpiritInfusionRecipe recipe) {
+        ItemStack stack = this.getStack(CENTRE_SLOT).copy();
+
+        ItemStack output = recipe.craft(new SimpleInventory(), null);
+
+        if (!canInsertItemIntoOutputSlot(output))
+            throw new IllegalStateException("Can't insert crafting result into output slot in spirit infusion");
+
+        if (stack.isEmpty()) {
+            this.setStack(CENTRE_SLOT, output);
+        } else {
+            stack.increment(output.getCount());
+            this.setStack(CENTRE_SLOT, stack);
         }
     }
 
-    private boolean hasRecipe() {
-        Optional<ShapedSpiritInfusionRecipe> recipe = getCurrentRecipe();
+    // make sure the items with remainder keep it in the slots
+    private void decrementStack(int slot) {
+        ItemStack stack = this.inventory.get(slot).copy();
+        if (stack.getItem().hasRecipeRemainder()) {
+            this.setStack(slot, stack.getRecipeRemainder());
+            return;
+        }
 
-        return recipe.isPresent() && canInsertItemIntoOutputSlot(recipe.get().getOutput(null));
+        this.removeStack(slot, 1);
+    }
+
+    private void resetProgress() {
+        progress = 0;
+    }
+
+    private boolean hasEnoughEnergy(ShapedSpiritInfusionRecipe recipe) {
+        //return spiritEnergy >= recipe.getCost();
+        return true; // TODO: temporary
+    }
+
+    private boolean increaseProgress() {
+        return progress++ >= maxProgress;
+    }
+
+    private boolean hasRecipe(ShapedSpiritInfusionRecipe recipe) {
+        return canInsertItemIntoOutputSlot(recipe.getOutput(null));
     }
 
     private boolean canInsertItemIntoOutputSlot(ItemStack output) {

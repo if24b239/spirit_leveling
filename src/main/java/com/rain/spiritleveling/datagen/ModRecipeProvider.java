@@ -11,7 +11,6 @@ import net.minecraft.data.server.recipe.SmithingTransformRecipeJsonBuilder;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
 import net.minecraft.recipe.Ingredient;
-import net.minecraft.recipe.book.CraftingRecipeCategory;
 import net.minecraft.recipe.book.RecipeCategory;
 import net.minecraft.registry.tag.ItemTags;
 
@@ -89,6 +88,13 @@ public class ModRecipeProvider extends FabricRecipeProvider {
                 'a', Items.WATER_BUCKET
         );
         offerShapedInfusionRecipe(exporter, AllItems.SPIRIT_PILL, test_ingredients, 4, AllItems.MEDITATION_MAT);
+
+        // second test infusion recipe
+        ShapedSpiritInfusionRecipeJsonBuilder.create(Items.DIAMOND, RecipeCategory.MISC)
+                .setEnergyCost(100)
+                .fireIngredient(Ingredient.ofItems(Items.COAL))
+                .criterion("has_" + getItemPath(Items.COAL), conditionsFromItem(Items.COAL))
+                .offerTo(exporter, getItemPath(Items.DIAMOND) + "_shaped_infusion");
     }
 
     ///

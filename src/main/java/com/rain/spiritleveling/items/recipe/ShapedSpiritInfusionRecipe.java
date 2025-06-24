@@ -56,7 +56,7 @@ public class ShapedSpiritInfusionRecipe implements Recipe<SimpleInventory> {
 
     @Override
     public ItemStack craft(SimpleInventory inventory, DynamicRegistryManager registryManager) {
-        return null;
+        return output.copy();
     }
 
     @Override
@@ -103,6 +103,10 @@ public class ShapedSpiritInfusionRecipe implements Recipe<SimpleInventory> {
 
     public CraftingRecipeCategory getCategory() {
         return category;
+    }
+
+    public int getCost() {
+        return cost;
     }
 
     public static class Type implements RecipeType<ShapedSpiritInfusionRecipe> {
@@ -185,7 +189,7 @@ public class ShapedSpiritInfusionRecipe implements Recipe<SimpleInventory> {
                 ingredient.write(buf);
             }
 
-            buf.writeInt(recipe.cost);
+            buf.writeInt(recipe.getCost());
 
             buf.writeItemStack(recipe.getOutput(null));
         }
