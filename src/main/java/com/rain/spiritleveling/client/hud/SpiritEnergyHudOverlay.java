@@ -6,15 +6,8 @@ import com.rain.spiritleveling.energymanager.MajorSpiritLevel;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.util.Identifier;
-
-import java.util.ArrayList;
 
 public class SpiritEnergyHudOverlay implements HudRenderCallback {
-
-
-
-    private static final ArrayList<Identifier> CHAINS_ANIMATION_TEXTURES = new ArrayList<>();
 
     @Override
     public void onHudRender(DrawContext drawContext, float tickDelta) {
@@ -48,7 +41,7 @@ public class SpiritEnergyHudOverlay implements HudRenderCallback {
 
         ClientSpiritEnergyManager SE_manager = new ClientSpiritEnergyManager(drawContext, sLevel, maxEnergy, minorBottleneck, positionX, positionY);
 
-        SE_manager.drawBar(sLevel)
+        SE_manager.drawBar()
                 .drawSlots(sPower, currentEnergy, maxEnergy)
                 .drawCovers(sPower, sLevel)
                 .drawChains(sPower, sLevel);

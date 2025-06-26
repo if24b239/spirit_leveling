@@ -1,6 +1,5 @@
 package com.rain.spiritleveling.entities.custom;
 
-import com.rain.spiritleveling.SpiritLeveling;
 import com.rain.spiritleveling.blocks.entity.MeditationMatEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;

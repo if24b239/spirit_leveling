@@ -15,7 +15,6 @@ public class ClientSpiritEnergyManager extends MajorSpiritLevel<MinorSpiritLevel
     private final int posY;
     private final DrawContext drawContext;
     private COVER_STATE lastCoverState;
-    private int drawn_covers = 0;
 
     public static ClientHUDAnimator CHAINS_ANIMATOR = ClientHUDAnimator.createClientHUDAnimation(10);
     public static ClientHUDAnimator COVER_ANIMATOR = ClientHUDAnimator.createClientHUDAnimation(4);
@@ -257,7 +256,7 @@ public class ClientSpiritEnergyManager extends MajorSpiritLevel<MinorSpiritLevel
         return this;
     }
 
-    public ClientSpiritEnergyManager drawBar(int spirit_level) {     // TODO ADD MULTIPLE BAR DESIGNS TO REPRESENT EACH MAJOR LEVEL
+    public ClientSpiritEnergyManager drawBar() {     // TODO ADD MULTIPLE BAR DESIGNS TO REPRESENT EACH MAJOR LEVEL
 
         int barHeight = 104;
         int barWidth = 11;

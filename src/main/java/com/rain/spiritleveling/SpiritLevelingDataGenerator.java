@@ -6,7 +6,6 @@ import com.rain.spiritleveling.datagen.ModModelProvider;
 import com.rain.spiritleveling.datagen.ModRecipeProvider;
 import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
-import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 
 public class SpiritLevelingDataGenerator implements DataGeneratorEntrypoint {
 

@@ -1,6 +1,5 @@
 package com.rain.spiritleveling.blocks.entity;
 
-import com.rain.spiritleveling.SpiritLeveling;
 import com.rain.spiritleveling.api.ISpiritEnergyPlayer;
 import com.rain.spiritleveling.blocks.AllBlockEntities;
 import com.rain.spiritleveling.entities.custom.MeditationMatSitEntity;

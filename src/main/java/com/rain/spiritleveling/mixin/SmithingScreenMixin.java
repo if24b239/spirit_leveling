@@ -1,6 +1,5 @@
 package com.rain.spiritleveling.mixin;
 
-import net.fabricmc.fabric.api.item.v1.FabricItemStack;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.ForgingScreenHandler;
