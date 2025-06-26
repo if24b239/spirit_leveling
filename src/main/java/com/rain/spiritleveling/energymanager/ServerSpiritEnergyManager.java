@@ -79,4 +79,11 @@ public class ServerSpiritEnergyManager extends ServerMajorSpiritLevel {
         spiritPower = calculateSpiritStrength(currentEnergy);
     }
 
+    public int getSpiritPower() {
+        return spiritPower;
+    }
+
+    public boolean isAtMax() {
+        return this.currentEnergy >= this.maxEnergy;
+    }
 }

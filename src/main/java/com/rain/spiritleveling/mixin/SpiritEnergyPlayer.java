@@ -43,15 +43,17 @@ public abstract class SpiritEnergyPlayer implements ISpiritEnergyPlayer {
     }
 
     @Override
-    public void spirit_leveling$removeCurrentSpiritEnergy(int amount) {
+    public boolean spirit_leveling$removeCurrentSpiritEnergy(int amount) {
 
         if (!spiritLevelingSystem.removeCurrentEnergy(amount)) {
             // do something
-            return;
+            return false;
         }
 
         spiritLevelingSystem.updateClientData();
         spiritLevelingSystem.updateNbT();
+
+        return true;
     }
 
     @Override
@@ -80,6 +82,21 @@ public abstract class SpiritEnergyPlayer implements ISpiritEnergyPlayer {
 
 
         spiritLevelingSystem = new ServerSpiritEnergyManager((ServerPlayerEntity) (Object) this,currentEnergy, maxEnergy, spiritLevel, minorBottleneck);
+    }
+
+    @Override
+    public int spirit_leveling$getSpiritPower() {
+        return spiritLevelingSystem.getSpiritPower();
+    }
+
+    @Override
+    public int spirit_leveling$getSpiritLevel() {
+        return spiritLevelingSystem.getSpiritLevel();
+    }
+
+    @Override
+    public boolean spirit_leveling$isAtMax() {
+        return spiritLevelingSystem.isAtMax();
     }
 
 

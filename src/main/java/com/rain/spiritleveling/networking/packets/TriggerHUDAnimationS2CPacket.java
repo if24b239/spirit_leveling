@@ -14,7 +14,6 @@ import java.util.ArrayList;
 public class TriggerHUDAnimationS2CPacket  {
     public static void receive(MinecraftClient client, ClientPlayNetworkHandler ignoredHandler, PacketByteBuf buf, PacketSender ignoredSender) {
 
-
         boolean bool = buf.readBoolean();
         SpiritLeveling.LOGGER.info("BOOLEAN: {}", bool);
 

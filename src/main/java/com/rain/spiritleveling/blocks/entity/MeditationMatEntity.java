@@ -1,14 +1,16 @@
 package com.rain.spiritleveling.blocks.entity;
 
+import com.rain.spiritleveling.SpiritLeveling;
+import com.rain.spiritleveling.api.ISpiritEnergyPlayer;
 import com.rain.spiritleveling.blocks.AllBlockEntities;
 import com.rain.spiritleveling.entities.custom.MeditationMatSitEntity;
-import com.rain.spiritleveling.items.AllItems;
 import com.rain.spiritleveling.items.recipe.ShapedSpiritInfusionRecipe;
 import com.rain.spiritleveling.screens.SpiritInfusionScreenHandler;
 import com.rain.spiritleveling.util.ImplementedInventory;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventories;
@@ -26,6 +28,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
 import java.util.Optional;
 
 public class MeditationMatEntity extends BlockEntity implements ExtendedScreenHandlerFactory, ImplementedInventory {
@@ -41,11 +44,13 @@ public class MeditationMatEntity extends BlockEntity implements ExtendedScreenHa
     public static final int WATER_SLOT = 5;
 
     protected final PropertyDelegate propertyDelegate;
-    private int progress = 0;
-    private int maxProgress = 1; // TODO: temp 256
+    private int generationProgress = 0;
+    private int infusionProgress = 0;
+    private int maxInfusionProgress = 0;
     private int spiritEnergy = 0;
-    private int maxSpiritEnergy;
+    private int maxSpiritEnergy = 10;
     private boolean isReceiving = false;
+    private int receivingCooldown = 0;
 
     public MeditationMatEntity(BlockPos pos, BlockState state) {
         super(AllBlockEntities.MEDITATION_MAT_ENTITY, pos, state);
@@ -53,11 +58,12 @@ public class MeditationMatEntity extends BlockEntity implements ExtendedScreenHa
             @Override
             public int get(int index) {
                 return switch (index) {
-                    case 0 -> MeditationMatEntity.this.progress;
-                    case 1 -> MeditationMatEntity.this.maxProgress;
+                    case 0 -> MeditationMatEntity.this.infusionProgress;
+                    case 1 -> MeditationMatEntity.this.maxInfusionProgress;
                     case 2 -> MeditationMatEntity.this.spiritEnergy;
                     case 3 -> MeditationMatEntity.this.maxSpiritEnergy;
                     case 4 -> (MeditationMatEntity.this.isReceiving) ? 1 : 0;
+                    case 5 -> ((ISpiritEnergyPlayer) Objects.requireNonNull(MeditationMatEntity.this.getLinkedSitEntity().getFirstPassenger())).spirit_leveling$getSpiritPower();
                     default -> throw new IllegalStateException("Unexpected value: " + index);
                 };
             }
@@ -65,8 +71,8 @@ public class MeditationMatEntity extends BlockEntity implements ExtendedScreenHa
             @Override
             public void set(int index, int value) {
                 switch (index) {
-                    case 0 -> MeditationMatEntity.this.progress = value;
-                    case 1 -> MeditationMatEntity.this.maxProgress = value;
+                    case 0 -> MeditationMatEntity.this.infusionProgress = value;
+                    case 1 -> MeditationMatEntity.this.maxInfusionProgress = value;
                     case 2 -> MeditationMatEntity.this.spiritEnergy = value;
                     case 3 -> MeditationMatEntity.this.maxSpiritEnergy = value;
                     case 4 -> MeditationMatEntity.this.isReceiving = value != 0;
@@ -76,7 +82,7 @@ public class MeditationMatEntity extends BlockEntity implements ExtendedScreenHa
 
             @Override
             public int size() {
-                return 4;
+                return 6;
             }
         };
     }
@@ -116,27 +122,25 @@ public class MeditationMatEntity extends BlockEntity implements ExtendedScreenHa
     protected void writeNbt(NbtCompound nbt) {
         super.writeNbt(nbt);
         Inventories.writeNbt(nbt, inventory);
-        nbt.putInt("meditation_inventory.progress", progress);
+        nbt.putInt("meditation_inventory.infusionProgress", infusionProgress);
         nbt.putInt("meditation_inventory.spiritEnergy", spiritEnergy);
         nbt.putInt("meditation_inventory.maxSpiritEnergy", maxSpiritEnergy);
+        nbt.putBoolean("meditation_inventory.isReceiving", isReceiving);
     }
 
     @Override
     public void readNbt(NbtCompound nbt) {
         super.readNbt(nbt);
         Inventories.readNbt(nbt, inventory);
-        progress = nbt.getInt("meditation_inventory.progress");
+        infusionProgress = nbt.getInt("meditation_inventory.infusionProgress");
         spiritEnergy = nbt.getInt("meditation_inventory.spiritEnergy");
         maxSpiritEnergy = nbt.getInt("meditation_inventory.maxSpiritEnergy");
+        isReceiving = nbt.getBoolean("meditation_inventory.isReceiving");
     }
 
     @Override
     public @Nullable ScreenHandler createMenu(int syncId, PlayerInventory playerInventory, PlayerEntity player) {
         return new SpiritInfusionScreenHandler(syncId, playerInventory, this, this.propertyDelegate);
-    }
-    
-    public void flipIsReceiving() {
-        this.isReceiving = !isReceiving;
     }
 
     public void tick(World world, BlockPos pos, BlockState state) {
@@ -144,10 +148,12 @@ public class MeditationMatEntity extends BlockEntity implements ExtendedScreenHa
 
         /// CRAFTING LOGIC
         Optional<ShapedSpiritInfusionRecipe> recipe = getCurrentRecipe();
-        
-        if (recipe.isPresent() && hasRecipe(recipe.get())) {
 
-            if (increaseProgress() && hasEnoughEnergy(recipe.get())) {
+        // start the crafting only with matching recipe and enough spiritEnergy otherwise reset the progress
+        if (recipe.isPresent() && hasRecipe(recipe.get()) && hasEnoughEnergy(recipe.get())) {
+
+            updateMaxProgress(recipe.get());
+            if (increaseProgress()) {
                 craftItem(recipe.get());
                 resetProgress();
             }
@@ -156,14 +162,88 @@ public class MeditationMatEntity extends BlockEntity implements ExtendedScreenHa
         }
 
         /// SPIRIT POWER LOGIC
-        if (linkedSitEntity != null) {
+        naturalGeneration();
 
+        if (linkedSitEntity != null && ++receivingCooldown % 25 == 0) {
+            Entity passenger = linkedSitEntity.getFirstPassenger();
+
+            if (isReceiving) {
+                blockReceive(passenger);
+            } else {
+                entityAbsorb(passenger);
+            }
         }
 
         // save both the increased progress and the crafted item
         markDirty(world, pos, state);
     }
 
+    private void updateMaxProgress(ShapedSpiritInfusionRecipe recipe) {
+        this.maxInfusionProgress = recipe.getMaxProgress();
+    }
+
+    private void blockReceive(Entity passenger) {
+        if (!(passenger instanceof ISpiritEnergyPlayer newPassenger)) return;
+
+        // prevent overflow of block entity
+        if (spiritEnergy >= maxSpiritEnergy)
+            return;
+
+        int passenger_spirit_power = newPassenger.spirit_leveling$getSpiritPower();
+
+        if (newPassenger.spirit_leveling$removeCurrentSpiritEnergy((int) Math.pow(2.2, passenger_spirit_power))) {
+            addSpiritEnergy(passenger_spirit_power, 2.2);
+        }
+    }
+
+    private void entityAbsorb(Entity passenger) {
+        if (!(passenger instanceof ISpiritEnergyPlayer newPassenger)) return;
+
+        // prevent overflow of entity
+        if(newPassenger.spirit_leveling$isAtMax())
+            return;
+
+        newPassenger.spirit_leveling$addCurrentSpiritEnergy(removeSpiritEnergy(getMatLevel()));
+    }
+
+    ///  returns amount of spirit energy removed
+    private int removeSpiritEnergy(int level) {
+        int amount = (int) Math.pow(2.2f, level);
+
+        spiritEnergy -= Math.min(amount, spiritEnergy);
+        return amount;
+    }
+
+
+    /// adds spirit energy after every 256 ticks / 2^ spirit level of mat
+    private void naturalGeneration() {
+
+        int mat_level = getMatLevel();
+
+        if (++generationProgress >= 256 >> mat_level) {
+            generationProgress = 0;
+
+            addSpiritEnergy(mat_level);
+        }
+    }
+
+    private void addSpiritEnergy(int level) {
+        addSpiritEnergy(level, 1.5f);
+    }
+
+    private void addSpiritEnergy(int level, double factor) {
+        if (spiritEnergy + Math.pow(factor, level) > maxSpiritEnergy) {
+            spiritEnergy = maxSpiritEnergy;
+        } else {
+            spiritEnergy += (int) Math.pow(factor, level);
+        }
+    }
+
+    private int getMatLevel() {
+        return (int) Math.log10(maxSpiritEnergy - 1);
+    }
+
+    /// remove ingredients and spirit energy and add the result into the output slot
     private void craftItem(ShapedSpiritInfusionRecipe recipe) {
 
         // remove item from stack only if they aren't air
@@ -171,6 +251,9 @@ public class MeditationMatEntity extends BlockEntity implements ExtendedScreenHa
             if (this.getStack(i).getItem() != Items.AIR)
                 decrementStack(i);
         }
+
+        // remove spirit energy
+        spiritEnergy -= recipe.getCost();
 
         // add the recipe result into the output slot
         increaseStack(recipe);
@@ -204,16 +287,15 @@ public class MeditationMatEntity extends BlockEntity implements ExtendedScreenHa
     }
 
     private void resetProgress() {
-        progress = 0;
+        infusionProgress = 0;
     }
 
     private boolean hasEnoughEnergy(ShapedSpiritInfusionRecipe recipe) {
-        //return spiritEnergy >= recipe.getCost();
-        return true; // TODO: temporary
+        return spiritEnergy >= recipe.getCost();
     }
 
     private boolean increaseProgress() {
-        return progress++ >= maxProgress;
+        return ++infusionProgress >= maxInfusionProgress;
     }
 
     private boolean hasRecipe(ShapedSpiritInfusionRecipe recipe) {
@@ -237,4 +319,8 @@ public class MeditationMatEntity extends BlockEntity implements ExtendedScreenHa
         return getWorld().getRecipeManager().getFirstMatch(ShapedSpiritInfusionRecipe.Type.INSTANCE, inv, getWorld());
     }
 
+    public void flipIsReceiving() {
+        isReceiving = !isReceiving;
+        markDirty();
+    }
 }

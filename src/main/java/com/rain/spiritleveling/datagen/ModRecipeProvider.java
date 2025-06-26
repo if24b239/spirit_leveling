@@ -87,12 +87,13 @@ public class ModRecipeProvider extends FabricRecipeProvider {
                 'm', Items.IRON_INGOT,
                 'a', Items.WATER_BUCKET
         );
-        offerShapedInfusionRecipe(exporter, AllItems.SPIRIT_PILL, test_ingredients, 4, AllItems.MEDITATION_MAT);
+        offerShapedInfusionRecipe(exporter, AllItems.SPIRIT_PILL, test_ingredients, 4, 69, AllItems.MEDITATION_MAT);
 
         // second test infusion recipe
         ShapedSpiritInfusionRecipeJsonBuilder.create(Items.DIAMOND, RecipeCategory.MISC)
                 .setEnergyCost(100)
                 .fireIngredient(Ingredient.ofItems(Items.COAL))
+                .setMaxProgress(230)
                 .criterion("has_" + getItemPath(Items.COAL), conditionsFromItem(Items.COAL))
                 .offerTo(exporter, getItemPath(Items.DIAMOND) + "_shaped_infusion");
     }
@@ -143,10 +144,11 @@ public class ModRecipeProvider extends FabricRecipeProvider {
         return builder;
     }
 
-    private static void offerShapedInfusionRecipe(Consumer<RecipeJsonProvider> exporter, Item output, Map<Character, Item> ingredients, int cost, Item criterion) {
+    private static void offerShapedInfusionRecipe(Consumer<RecipeJsonProvider> exporter, Item output, Map<Character, Item> ingredients, int cost, int timeToFinish, Item criterion) {
         ShapedSpiritInfusionRecipeJsonBuilder.create(output, RecipeCategory.FOOD)
                 .allIngredients(ingredients)
                 .setEnergyCost(cost)
+                .setMaxProgress(timeToFinish)
                 .criterion("has_" + getItemPath(criterion), conditionsFromItem(criterion))
                 .offerTo(exporter, getItemPath(output) + "_spirit_infusion");
     }

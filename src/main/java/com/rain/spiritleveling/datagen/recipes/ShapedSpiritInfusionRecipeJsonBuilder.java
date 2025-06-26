@@ -33,6 +33,7 @@ public class ShapedSpiritInfusionRecipeJsonBuilder extends RecipeJsonBuilder imp
     private final Map<Character, Ingredient> inputs = new HashMap<>();
 
     private int energyCost = 0;
+    private int maxProgress = 100;
     @Nullable
     private String group;
 
@@ -111,6 +112,15 @@ public class ShapedSpiritInfusionRecipeJsonBuilder extends RecipeJsonBuilder imp
         }
     }
 
+    public ShapedSpiritInfusionRecipeJsonBuilder setMaxProgress(int max_progress) {
+        if (this.maxProgress != 100) {
+            throw new IllegalArgumentException("Max Progress can only be set once!");
+        } else {
+            this.maxProgress = max_progress;
+            return this;
+        }
+    }
+
     @Override
     public ShapedSpiritInfusionRecipeJsonBuilder criterion(String name, CriterionConditions conditions) {
         this.advancementBuilder.criterion(name, conditions);
@@ -145,14 +155,17 @@ public class ShapedSpiritInfusionRecipeJsonBuilder extends RecipeJsonBuilder imp
                         this.advancementBuilder,
                         recipeId.withPrefixedPath("recipes/" + this.category.getName() + "/"),
                         this.energyCost,
-                        this.group == null ? "" : this.group
-                )
+                        this.maxProgress,
+                        this.group == null ? "" : this.group)
         );
     }
 
     private void validate(Identifier recipeId) {
         if (this.energyCost < 0)
             throw new IllegalStateException("Negative Energy Cost not allowed in recipe: '" + recipeId + "'");
+
+        if (this.maxProgress <= 0)
+            throw new IllegalStateException("Max Progress needs to be higher than 0 in recipe: '" + recipeId + "'");
 
         List<Character> tokens = ImmutableList.of('w', 'f', 'e', 'm', 'a');
 
@@ -174,6 +187,7 @@ public class ShapedSpiritInfusionRecipeJsonBuilder extends RecipeJsonBuilder imp
         private final Advancement.Builder advancementBuilder;
         private final Identifier advancementId;
         private final int cost;
+        private final int maxProgress;
         private final String group;
 
         protected ShapedRecipeJsonProvider(
@@ -184,6 +198,7 @@ public class ShapedSpiritInfusionRecipeJsonBuilder extends RecipeJsonBuilder imp
                 Advancement.Builder advancementBuilder,
                 Identifier advancementId,
                 int cost,
+                int maxProgress,
                 String group
         ) {
             super(craftingCategory);
@@ -193,6 +208,7 @@ public class ShapedSpiritInfusionRecipeJsonBuilder extends RecipeJsonBuilder imp
             this.advancementBuilder = advancementBuilder;
             this.advancementId = advancementId;
             this.cost = cost;
+            this.maxProgress = maxProgress;
             this.group = group;
         }
 
@@ -233,6 +249,8 @@ public class ShapedSpiritInfusionRecipeJsonBuilder extends RecipeJsonBuilder imp
                 ingredients.add("water", Ingredient.ofItems(Items.AIR).toJson());
             }
             ingredients.addProperty("cost", this.cost);
+
+            json.addProperty("time", this.maxProgress);
 
             json.add("ingredients", ingredients);
 

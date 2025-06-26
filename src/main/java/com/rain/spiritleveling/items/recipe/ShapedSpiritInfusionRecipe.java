@@ -31,13 +31,15 @@ public class ShapedSpiritInfusionRecipe implements Recipe<SimpleInventory> {
     private final Identifier id;
     private final CraftingRecipeCategory category;
     private final int cost;
+    private final int maxProgress;
 
-    public ShapedSpiritInfusionRecipe(Identifier id, CraftingRecipeCategory category, List<Ingredient> ing, ItemStack out, int cost) {
+    public ShapedSpiritInfusionRecipe(Identifier id, CraftingRecipeCategory category, List<Ingredient> ing, ItemStack out, int cost, int maxProgress) {
         output = out;
         ingredients = ing;
         this.id = id;
         this.category = category;
         this.cost = cost;
+        this.maxProgress = maxProgress;
     }
 
     @Override
@@ -109,6 +111,10 @@ public class ShapedSpiritInfusionRecipe implements Recipe<SimpleInventory> {
         return cost;
     }
 
+    public int getMaxProgress() {
+        return maxProgress;
+    }
+
     public static class Type implements RecipeType<ShapedSpiritInfusionRecipe> {
         public static final Type INSTANCE = new Type();
         public static final String ID = "spirit_infusion_shaped";
@@ -159,7 +165,13 @@ public class ShapedSpiritInfusionRecipe implements Recipe<SimpleInventory> {
                 cost = JsonHelper.getInt(json_ingredients, "cost");
             }
 
-            return new ShapedSpiritInfusionRecipe(id, category, recipe_ingredients, result, cost);
+            int progress = 100;
+
+            if (JsonHelper.hasElement(json, "time")) {
+                progress = JsonHelper.getInt(json, "time");
+            }
+
+            return new ShapedSpiritInfusionRecipe(id, category, recipe_ingredients, result, cost, progress);
         }
 
         @Override
@@ -172,9 +184,11 @@ public class ShapedSpiritInfusionRecipe implements Recipe<SimpleInventory> {
 
             int cost = buf.readInt();
 
+            int progress = buf.readInt();
+
             ItemStack output = buf.readItemStack();
 
-            return new ShapedSpiritInfusionRecipe(id, category, inputs, output, cost);
+            return new ShapedSpiritInfusionRecipe(id, category, inputs, output, cost, progress);
         }
 
         @Override
@@ -190,6 +204,8 @@ public class ShapedSpiritInfusionRecipe implements Recipe<SimpleInventory> {
             }
 
             buf.writeInt(recipe.getCost());
+
+            buf.writeInt(recipe.getMaxProgress());
 
             buf.writeItemStack(recipe.getOutput(null));
         }

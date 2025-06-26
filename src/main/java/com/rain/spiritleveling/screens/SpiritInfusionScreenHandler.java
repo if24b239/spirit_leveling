@@ -1,7 +1,9 @@
 package com.rain.spiritleveling.screens;
 
-import com.rain.spiritleveling.SpiritLeveling;
 import com.rain.spiritleveling.blocks.entity.MeditationMatEntity;
+import com.rain.spiritleveling.networking.AllMessages;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -20,7 +22,7 @@ public class SpiritInfusionScreenHandler extends ScreenHandler {
 
     public SpiritInfusionScreenHandler(int syncID, PlayerInventory inventory, PacketByteBuf buf) {
         this(syncID, inventory, inventory.player.getWorld().getBlockEntity(buf.readBlockPos()),
-                new ArrayPropertyDelegate(4));
+                new ArrayPropertyDelegate(6));
     }
 
     public SpiritInfusionScreenHandler(int syncID, PlayerInventory playerInventory, BlockEntity blockEntity, PropertyDelegate propertyDelegate) {
@@ -49,7 +51,7 @@ public class SpiritInfusionScreenHandler extends ScreenHandler {
         addPlayerInventory(playerInventory);
         addPlayerHotbar(playerInventory);
 
-        addProperties(propertyDelegate);
+        addProperties(this.propertyDelegate);
     }
 
     @Override
@@ -94,5 +96,34 @@ public class SpiritInfusionScreenHandler extends ScreenHandler {
         for (int i = 0; i < 9; i++) {
             this.addSlot(new Slot(inventory, i, 8 + i * 18, 167));
         }
+    }
+
+    public double getRelativeProgress() {
+        if (propertyDelegate.get(1) == 0) {
+            return 0;
+        }
+
+        return (double) propertyDelegate.get(0) / propertyDelegate.get(1);
+    }
+
+    public int getCurrentEnergy() {
+        return propertyDelegate.get(2);
+    }
+
+    public int getMaxEnergy() {
+        return propertyDelegate.get(3);
+    }
+
+    public boolean getIsReceiving() {
+        return propertyDelegate.get(4) != 0;
+    }
+
+    public int getPassengerPower() {
+        return propertyDelegate.get(5);
+    }
+
+    public void flipIsReceiving() {
+        PacketByteBuf buf = PacketByteBufs.create().writeBlockPos(blockEntity.getPos());
+        ClientPlayNetworking.send(AllMessages.FLIP_IS_RECEIVING, buf);
     }
 }

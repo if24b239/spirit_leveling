@@ -38,8 +38,11 @@ public class MeditationMatSitEntity extends Entity implements RideableInventory 
             this.blockEntity = ((MeditationMatEntity) this.getWorld().getBlockEntity(this.blockPos));
 
             // ensure the block entity is still there and if not kill the entity
-            if (this.blockEntity != null) return;
-            this.removePassenger(this.getFirstPassenger());
+            if (this.blockEntity != null) {
+                this.blockEntity.setLinkedSitEntity(this);
+            } else {
+                this.removePassenger(this.getFirstPassenger());
+            }
         }
     }
 
