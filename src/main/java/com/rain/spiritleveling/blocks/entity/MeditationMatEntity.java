@@ -8,7 +8,6 @@ import com.rain.spiritleveling.screens.SpiritInfusionScreenHandler;
 import com.rain.spiritleveling.util.ImplementedInventory;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -30,7 +29,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 import java.util.Optional;
 
-public class MeditationMatEntity extends BlockEntity implements ExtendedScreenHandlerFactory, ImplementedInventory {
+public class MeditationMatEntity extends SpiritEnergyStorageBlockEntity implements ExtendedScreenHandlerFactory, ImplementedInventory {
 
     private MeditationMatSitEntity linkedSitEntity;
 
@@ -46,21 +45,20 @@ public class MeditationMatEntity extends BlockEntity implements ExtendedScreenHa
     private int generationProgress = 0;
     private int infusionProgress = 0;
     private int maxInfusionProgress = 0;
-    private int spiritEnergy = 0;
-    private int maxSpiritEnergy = 10;
     private boolean isReceiving = false;
     private int receivingCooldown = 0;
+    private int matLevel = 0;
 
     public MeditationMatEntity(BlockPos pos, BlockState state) {
-        super(AllBlockEntities.MEDITATION_MAT_ENTITY, pos, state);
+        super(AllBlockEntities.MEDITATION_MAT_ENTITY, pos, state, 10);
         this.propertyDelegate = new PropertyDelegate() {
             @Override
             public int get(int index) {
                 return switch (index) {
                     case 0 -> MeditationMatEntity.this.infusionProgress;
                     case 1 -> MeditationMatEntity.this.maxInfusionProgress;
-                    case 2 -> MeditationMatEntity.this.spiritEnergy;
-                    case 3 -> MeditationMatEntity.this.maxSpiritEnergy;
+                    case 2 -> MeditationMatEntity.this.getConnectedCurrentEnergy();
+                    case 3 -> MeditationMatEntity.this.getConnectedMaxEnergy();
                     case 4 -> (MeditationMatEntity.this.isReceiving) ? 1 : 0;
                     case 5 -> ((ISpiritEnergyPlayer) Objects.requireNonNull(MeditationMatEntity.this.getLinkedSitEntity().getFirstPassenger())).spirit_leveling$getSpiritPower();
                     default -> throw new IllegalStateException("Unexpected value: " + index);
@@ -72,8 +70,6 @@ public class MeditationMatEntity extends BlockEntity implements ExtendedScreenHa
                 switch (index) {
                     case 0 -> MeditationMatEntity.this.infusionProgress = value;
                     case 1 -> MeditationMatEntity.this.maxInfusionProgress = value;
-                    case 2 -> MeditationMatEntity.this.spiritEnergy = value;
-                    case 3 -> MeditationMatEntity.this.maxSpiritEnergy = value;
                     case 4 -> MeditationMatEntity.this.isReceiving = value != 0;
                     default -> throw new IllegalStateException("Unexpected value: " + index);
                 }
@@ -122,8 +118,6 @@ public class MeditationMatEntity extends BlockEntity implements ExtendedScreenHa
         super.writeNbt(nbt);
         Inventories.writeNbt(nbt, inventory);
         nbt.putInt("meditation_inventory.infusionProgress", infusionProgress);
-        nbt.putInt("meditation_inventory.spiritEnergy", spiritEnergy);
-        nbt.putInt("meditation_inventory.maxSpiritEnergy", maxSpiritEnergy);
         nbt.putBoolean("meditation_inventory.isReceiving", isReceiving);
     }
 
@@ -132,8 +126,6 @@ public class MeditationMatEntity extends BlockEntity implements ExtendedScreenHa
         super.readNbt(nbt);
         Inventories.readNbt(nbt, inventory);
         infusionProgress = nbt.getInt("meditation_inventory.infusionProgress");
-        spiritEnergy = nbt.getInt("meditation_inventory.spiritEnergy");
-        maxSpiritEnergy = nbt.getInt("meditation_inventory.maxSpiritEnergy");
         isReceiving = nbt.getBoolean("meditation_inventory.isReceiving");
     }
 
@@ -171,6 +163,8 @@ public class MeditationMatEntity extends BlockEntity implements ExtendedScreenHa
             } else {
                 entityAbsorb(passenger);
             }
+
+            receivingCooldown = 0;
         }
 
         // save both the increased progress and the crafted item
@@ -185,7 +179,7 @@ public class MeditationMatEntity extends BlockEntity implements ExtendedScreenHa
         if (!(passenger instanceof ISpiritEnergyPlayer newPassenger)) return;
 
         // prevent overflow of block entity
-        if (spiritEnergy >= maxSpiritEnergy)
+        if (getConnectedCurrentEnergy() >= getConnectedMaxEnergy())
             return;
 
         int passenger_spirit_power = newPassenger.spirit_leveling$getSpiritPower();
@@ -202,27 +196,26 @@ public class MeditationMatEntity extends BlockEntity implements ExtendedScreenHa
         if(newPassenger.spirit_leveling$isAtMax())
             return;
 
-        newPassenger.spirit_leveling$addCurrentSpiritEnergy(removeSpiritEnergy(getMatLevel()));
+        newPassenger.spirit_leveling$addCurrentSpiritEnergy(removeSpiritEnergy(matLevel));
     }
 
     ///  returns amount of spirit energy removed
     private int removeSpiritEnergy(int level) {
         int amount = (int) Math.pow(2.2f, level);
 
-        spiritEnergy -= Math.min(amount, spiritEnergy);
-        return amount;
+        return removeCurrentEnergy(amount);
     }
 
 
     /// adds spirit energy after every 256 ticks / 2^ spirit level of mat
     private void naturalGeneration() {
 
-        int mat_level = getMatLevel();
-
-        if (++generationProgress >= 256 >> mat_level) {
+        if (++generationProgress >= 256 >> matLevel) {
             generationProgress = 0;
 
-            addSpiritEnergy(mat_level);
+            addSpiritEnergy(matLevel);
+
+            matLevel = getMatLevel();
         }
     }
 
@@ -231,15 +224,11 @@ public class MeditationMatEntity extends BlockEntity implements ExtendedScreenHa
     }
 
     private void addSpiritEnergy(int level, double factor) {
-        if (spiritEnergy + Math.pow(factor, level) > maxSpiritEnergy) {
-            spiritEnergy = maxSpiritEnergy;
-        } else {
-            spiritEnergy += (int) Math.pow(factor, level);
-        }
+        addCurrentEnergy((int) Math.pow(factor, level));
     }
 
     private int getMatLevel() {
-        return (int) Math.log10(maxSpiritEnergy - 1);
+        return (int) Math.log10(getConnectedMaxEnergy() - 1);
     }
 
     /// remove ingredients and spirit energy and add the result into the output slot
@@ -252,7 +241,7 @@ public class MeditationMatEntity extends BlockEntity implements ExtendedScreenHa
         }
 
         // remove spirit energy
-        spiritEnergy -= recipe.getCost();
+        removeCurrentEnergy(recipe.getCost());
 
         // add the recipe result into the output slot
         increaseStack(recipe);
@@ -290,7 +279,7 @@ public class MeditationMatEntity extends BlockEntity implements ExtendedScreenHa
     }
 
     private boolean hasEnoughEnergy(ShapedSpiritInfusionRecipe recipe) {
-        return spiritEnergy >= recipe.getCost();
+        return getCurrentEnergy() >= recipe.getCost();
     }
 
     private boolean increaseProgress() {

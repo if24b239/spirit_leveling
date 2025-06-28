@@ -40,7 +40,7 @@ public class SpiritInfusionScreen extends HandledScreen<SpiritInfusionScreenHand
         super(handler, inventory, title);
         backgroundWidth = 176;
         backgroundHeight = 191;
-        SpiritLeveling.LOGGER.info("{}", handler.getIsReceiving());
+
         this.toggleButton = new ToggleButtonWidget(0, 0, 12, 12, handler.getIsReceiving());
     }
 
