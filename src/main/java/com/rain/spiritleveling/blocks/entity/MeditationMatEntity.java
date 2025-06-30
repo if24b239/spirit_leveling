@@ -8,6 +8,7 @@ import com.rain.spiritleveling.screens.SpiritInfusionScreenHandler;
 import com.rain.spiritleveling.util.ImplementedInventory;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -23,9 +24,12 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -42,15 +46,13 @@ public class MeditationMatEntity extends SpiritEnergyStorageBlockEntity implemen
     public static final int WATER_SLOT = 5;
 
     protected final PropertyDelegate propertyDelegate;
-    private int generationProgress = 0;
     private int infusionProgress = 0;
     private int maxInfusionProgress = 0;
     private boolean isReceiving = false;
     private int receivingCooldown = 0;
-    private int matLevel = 0;
 
     public MeditationMatEntity(BlockPos pos, BlockState state) {
-        super(AllBlockEntities.MEDITATION_MAT_ENTITY, pos, state, 10);
+        super(AllBlockEntities.MEDITATION_MAT_ENTITY, pos, state, 4);
         this.propertyDelegate = new PropertyDelegate() {
             @Override
             public int get(int index) {
@@ -153,7 +155,6 @@ public class MeditationMatEntity extends SpiritEnergyStorageBlockEntity implemen
         }
 
         /// SPIRIT POWER LOGIC
-        naturalGeneration();
 
         if (linkedSitEntity != null && ++receivingCooldown % 25 == 0) {
             Entity passenger = linkedSitEntity.getFirstPassenger();
@@ -185,7 +186,7 @@ public class MeditationMatEntity extends SpiritEnergyStorageBlockEntity implemen
         int passenger_spirit_power = newPassenger.spirit_leveling$getSpiritPower();
 
         if (newPassenger.spirit_leveling$removeCurrentSpiritEnergy((int) Math.pow(2.2, passenger_spirit_power))) {
-            addSpiritEnergy(passenger_spirit_power, 2.2);
+            addSpiritEnergy(passenger_spirit_power);
         }
     }
 
@@ -196,7 +197,7 @@ public class MeditationMatEntity extends SpiritEnergyStorageBlockEntity implemen
         if(newPassenger.spirit_leveling$isAtMax())
             return;
 
-        newPassenger.spirit_leveling$addCurrentSpiritEnergy(removeSpiritEnergy(matLevel));
+        newPassenger.spirit_leveling$addCurrentSpiritEnergy(removeSpiritEnergy(getMatLevel()));
     }
 
     ///  returns amount of spirit energy removed
@@ -206,25 +207,8 @@ public class MeditationMatEntity extends SpiritEnergyStorageBlockEntity implemen
         return removeCurrentEnergy(amount);
     }
 
-
-    /// adds spirit energy after every 256 ticks / 2^ spirit level of mat
-    private void naturalGeneration() {
-
-        if (++generationProgress >= 256 >> matLevel) {
-            generationProgress = 0;
-
-            addSpiritEnergy(matLevel);
-
-            matLevel = getMatLevel();
-        }
-    }
-
     private void addSpiritEnergy(int level) {
-        addSpiritEnergy(level, 1.5f);
-    }
-
-    private void addSpiritEnergy(int level, double factor) {
-        addCurrentEnergy((int) Math.pow(factor, level));
+        addCurrentEnergy((int) Math.pow(2.2, level));
     }
 
     private int getMatLevel() {
@@ -310,5 +294,22 @@ public class MeditationMatEntity extends SpiritEnergyStorageBlockEntity implemen
     public void flipIsReceiving() {
         isReceiving = !isReceiving;
         markDirty();
+    }
+
+    ///  make meditation mats only check for block directly underneath it that are not other meditation mats
+    @Override
+    public Collection<SpiritEnergyStorageBlockEntity> getNeighbors() {
+        Collection<SpiritEnergyStorageBlockEntity> allNeighbors = new ArrayList<>();
+
+        assert this.getWorld() != null;
+        BlockEntity neighbor = this.getWorld().getBlockEntity(this.getPos().offset(Direction.DOWN));
+
+        if (neighbor instanceof MeditationMatEntity)
+            return allNeighbors;
+
+        if (neighbor instanceof SpiritEnergyStorageBlockEntity)
+            allNeighbors.add(((SpiritEnergyStorageBlockEntity) neighbor));
+
+        return allNeighbors;
     }
 }

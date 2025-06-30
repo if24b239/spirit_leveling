@@ -20,6 +20,7 @@ public class ModBlockLootProvider extends FabricBlockLootTableProvider {
     @Override
     public void generate() {
         addDrop(AllBlocks.MEDITATION_MAT);
+        addDrop(AllBlocks.BASIC_JADE_ENERGY);
 
         addDrop(AllBlocks.JADE_STONE_BLOCK, jadeChunkDrops(AllBlocks.JADE_STONE_BLOCK));
         addDrop(AllBlocks.JADE_DEEPSLATE_BLOCK, jadeChunkDrops(AllBlocks.JADE_DEEPSLATE_BLOCK));

@@ -31,6 +31,7 @@ public class AllItems {
     public static final Item MEDITATION_MAT = AllBlocks.registerBlockItem("meditation_mat", AllBlocks.MEDITATION_MAT);
     public static final Item JADE_STONE_BLOCK = AllBlocks.registerBlockItem("jade_stone_block", AllBlocks.JADE_STONE_BLOCK);
     public static final Item JADE_DEEPSLATE_BLOCK = AllBlocks.registerBlockItem("jade_deepslate_block", AllBlocks.JADE_DEEPSLATE_BLOCK);
+    public static final Item BASIC_JADE_ENERGY = AllBlocks.registerBlockItem("basic_jade_energy", AllBlocks.BASIC_JADE_ENERGY);
 
     // item creative tab
     public static final ItemGroup SPIRIT_ITEM_GROUP = FabricItemGroup.builder()
@@ -50,6 +51,7 @@ public class AllItems {
                 entries.add(MEDITATION_MAT);
                 entries.add(JADE_STONE_BLOCK);
                 entries.add(JADE_DEEPSLATE_BLOCK);
+                entries.add(BASIC_JADE_ENERGY);
             })
             .build();
 

@@ -191,12 +191,12 @@ public class ClientSpiritEnergyManager extends MajorSpiritLevel<MinorSpiritLevel
     }
 
     public ClientSpiritEnergyManager drawCovers(int spirit_power, int spirit_level) {
-        // render animations
-        COVER_ANIMATOR.render(drawContext);
-
         // don't draw covers when spirit power is too low (cover animation is reset upon spirit level increase)
         if (spirit_power < spirit_level)
             return this;
+
+        // render animations
+        COVER_ANIMATOR.render(drawContext);
 
         // choose the number of covers either based on the number of complete minor levels or based on the position of currently running animation
         int num = getCoversNumber();

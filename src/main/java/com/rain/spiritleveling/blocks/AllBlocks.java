@@ -2,6 +2,7 @@ package com.rain.spiritleveling.blocks;
 
 import com.rain.spiritleveling.SpiritLeveling;
 import com.rain.spiritleveling.blocks.custom.MeditationMat;
+import com.rain.spiritleveling.blocks.custom.SpiritEnergyBlock;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.AbstractBlock;
@@ -16,6 +17,7 @@ public class AllBlocks {
 
     // custom blocks
     public static final MeditationMat MEDITATION_MAT = registerBlock("meditation_mat", new MeditationMat(AbstractBlock.Settings.create()));
+    public static final SpiritEnergyBlock BASIC_JADE_ENERGY = registerBlock("basic_jade_energy", new SpiritEnergyBlock(AbstractBlock.Settings.create(), 1));
 
     // basic blocks
     public static final Block JADE_STONE_BLOCK = registerBlock("jade_stone_block",

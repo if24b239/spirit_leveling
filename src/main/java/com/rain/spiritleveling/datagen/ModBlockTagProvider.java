@@ -20,13 +20,13 @@ public class ModBlockTagProvider extends FabricTagProvider<Block> {
         getOrCreateTagBuilder(BlockTags.PICKAXE_MINEABLE)
                 .add(AllBlocks.MEDITATION_MAT)
                 .add(AllBlocks.JADE_STONE_BLOCK)
-                .add(AllBlocks.JADE_DEEPSLATE_BLOCK);
-
-        getOrCreateTagBuilder(BlockTags.NEEDS_STONE_TOOL)
-                .add(AllBlocks.MEDITATION_MAT);
+                .add(AllBlocks.JADE_DEEPSLATE_BLOCK)
+                .add(AllBlocks.BASIC_JADE_ENERGY);
 
         getOrCreateTagBuilder(BlockTags.NEEDS_IRON_TOOL)
                 .add(AllBlocks.JADE_STONE_BLOCK)
-                .add(AllBlocks.JADE_DEEPSLATE_BLOCK);
+                .add(AllBlocks.JADE_DEEPSLATE_BLOCK)
+                .add(AllBlocks.BASIC_JADE_ENERGY)
+                .add(AllBlocks.MEDITATION_MAT);
     }
 }

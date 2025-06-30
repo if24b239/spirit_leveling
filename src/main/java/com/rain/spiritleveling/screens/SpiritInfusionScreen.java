@@ -62,10 +62,7 @@ public class SpiritInfusionScreen extends HandledScreen<SpiritInfusionScreenHand
 
         /// SPIRIT ENERGY BAR
         if (mouseX >= this.x + 12 && mouseX <= this.x + 18 && mouseY >= this.y + 4 && mouseY <= this.y + 106) {
-            final int level = getLevel(handler.getMaxEnergy());
-            final double natural = Math.round((200 *  Math.pow(1.5f, level) / (256 >> level) * 100d)) / 100d;
-
-            this.setTooltip(Tooltip.wrapLines(this.client, Text.translatable("gui.spiritleveling.spirit_infusion.hover_bar", handler.getCurrentEnergy(), handler.getMaxEnergy(), natural)));
+            this.setTooltip(Tooltip.wrapLines(this.client, Text.translatable("gui.spiritleveling.spirit_infusion.hover_bar", handler.getCurrentEnergy(), handler.getMaxEnergy())));
         }
 
         /// WOOD SLOT

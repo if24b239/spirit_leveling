@@ -1,6 +1,7 @@
 package com.rain.spiritleveling.blocks.entity;
 
 import com.rain.spiritleveling.SpiritLeveling;
+import com.rain.spiritleveling.blocks.AllBlockEntities;
 import com.rain.spiritleveling.util.CachedValue;
 import com.rain.spiritleveling.util.UniqueQueue;
 import net.minecraft.block.BlockState;
@@ -25,6 +26,14 @@ public class SpiritEnergyStorageBlockEntity extends BlockEntity {
         this.maxEnergy = maxEnergy;
         this.cachedConnectedCurrentEnergy = new CachedValue<>(0);
         this.cachedConnectedMaxEnergy = new CachedValue<>(maxEnergy);
+    }
+
+    public SpiritEnergyStorageBlockEntity(BlockPos pos, BlockState state, int maxEnergy) {
+        this(AllBlockEntities.SPIRIT_STORAGE_ENTITY, pos, state, maxEnergy);
+    }
+
+    public SpiritEnergyStorageBlockEntity(BlockPos blockPos, BlockState blockState) {
+        this(AllBlockEntities.SPIRIT_STORAGE_ENTITY, blockPos, blockState, 10);
     }
 
     @Override
@@ -71,6 +80,8 @@ public class SpiritEnergyStorageBlockEntity extends BlockEntity {
 
     /// always returns the actual amount that was added to the multiblock
     public int addCurrentEnergy(int amount) {
+        if (amount == 0) return 0;
+
         int rest = amount;
         for (SpiritEnergyStorageBlockEntity e : getAllConnected((en) -> en.currentEnergy < en.maxEnergy)) {
             if (rest <= e.getMaxEnergy() - e.getCurrentEnergy()) {
@@ -84,13 +95,16 @@ public class SpiritEnergyStorageBlockEntity extends BlockEntity {
         }
 
         cachedConnectedCurrentEnergy.markStale();
-        cachedConnectedMaxEnergy.markStale();
+
+        markDirty();
 
         return amount - rest;
     }
 
     /// always returns the actual amount that was removed from the multiblock
     public int removeCurrentEnergy(int amount) {
+        if (amount == 0) return 0;
+
         int rest = amount;
         for (SpiritEnergyStorageBlockEntity e : getAllConnected((en) -> en.currentEnergy != 0)) {
             if (rest <= e.getCurrentEnergy()) {
@@ -104,9 +118,21 @@ public class SpiritEnergyStorageBlockEntity extends BlockEntity {
         }
 
         cachedConnectedCurrentEnergy.markStale();
-        cachedConnectedMaxEnergy.markStale();
+
+        markDirty();
 
         return amount - rest;
+    }
+
+    /// should be called every time there is a new block added to the multiblock
+    public void markStaleConnectedMax() {
+        boolean dirtyCurrent = this.getCurrentEnergy() > 0;
+
+        for (SpiritEnergyStorageBlockEntity e : getAllConnected()) {
+            e.getCachedMax().markStale();
+            if (dirtyCurrent)
+                e.getCachedCurrent().markStale();
+        }
     }
 
     public int getMaxEnergy() {
@@ -121,6 +147,14 @@ public class SpiritEnergyStorageBlockEntity extends BlockEntity {
         this.currentEnergy = value;
     }
 
+    public CachedValue<Integer> getCachedMax() {
+        return cachedConnectedMaxEnergy;
+    }
+
+    public CachedValue<Integer> getCachedCurrent() {
+        return cachedConnectedCurrentEnergy;
+    }
+
     /// HELPER
     /// FUNCTIONS
 
@@ -130,6 +164,8 @@ public class SpiritEnergyStorageBlockEntity extends BlockEntity {
         visited.add(this);
 
         UniqueQueue<SpiritEnergyStorageBlockEntity> queue = new UniqueQueue<>();
+
+        queue.enqueueAll(this.getNeighbors());
 
         // run through all queued blocks
         while (!queue.isEmpty()) {
@@ -158,16 +194,21 @@ public class SpiritEnergyStorageBlockEntity extends BlockEntity {
             BlockEntity neighbor = this.getWorld().getBlockEntity(this.getPos().offset(d));
 
             // add meditation mat entities only from below
-            if (neighbor instanceof MeditationMatEntity && d == Direction.UP) {
-                allNeighbors.add(((MeditationMatEntity) neighbor));
-                continue;
-            }
+            if (neighbor instanceof MeditationMatEntity) {
+                if (d == Direction.UP)
+                    allNeighbors.add(((MeditationMatEntity) neighbor));
 
-            if (neighbor instanceof SpiritEnergyStorageBlockEntity) {
+            } else if (neighbor instanceof SpiritEnergyStorageBlockEntity) {
                 allNeighbors.add(((SpiritEnergyStorageBlockEntity) neighbor));
             }
         }
 
         return allNeighbors;
+    }
+
+    @Override
+    public void markDirty() {
+
+        super.markDirty();
     }
 }
