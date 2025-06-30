@@ -17,7 +17,13 @@ public class AllBlocks {
 
     // custom blocks
     public static final MeditationMat MEDITATION_MAT = registerBlock("meditation_mat", new MeditationMat(AbstractBlock.Settings.create()));
-    public static final SpiritEnergyBlock BASIC_JADE_ENERGY = registerBlock("basic_jade_energy", new SpiritEnergyBlock(AbstractBlock.Settings.create(), 1));
+    public static final SpiritEnergyBlock INFERIOR_JADE_ENERGY = registerBlock("inferior_jade_energy", new SpiritEnergyBlock(AbstractBlock.Settings.create(), 1));
+    public static final SpiritEnergyBlock BASIC_JADE_ENERGY = registerBlock("basic_jade_energy", new SpiritEnergyBlock(AbstractBlock.Settings.create(), 10));
+    public static final SpiritEnergyBlock LOWER_JADE_ENERGY = registerBlock("lower_jade_energy", new SpiritEnergyBlock(AbstractBlock.Settings.create(), 100));
+    public static final SpiritEnergyBlock INTERMEDIATE_JADE_ENERGY = registerBlock("intermediate_jade_energy", new SpiritEnergyBlock(AbstractBlock.Settings.create(), 1000));
+    public static final SpiritEnergyBlock HIGHER_JADE_ENERGY = registerBlock("higher_jade_energy", new SpiritEnergyBlock(AbstractBlock.Settings.create(), 10000));
+    public static final SpiritEnergyBlock ADVANCED_JADE_ENERGY = registerBlock("advanced_jade_energy", new SpiritEnergyBlock(AbstractBlock.Settings.create(), 100000));
+    public static final SpiritEnergyBlock SUPERIOR_JADE_ENERGY = registerBlock("superior_jade_energy", new SpiritEnergyBlock(AbstractBlock.Settings.create(), 1000000));
 
     // basic blocks
     public static final Block JADE_STONE_BLOCK = registerBlock("jade_stone_block",

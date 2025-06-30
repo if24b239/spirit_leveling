@@ -31,7 +31,15 @@ public class AllItems {
     public static final Item MEDITATION_MAT = AllBlocks.registerBlockItem("meditation_mat", AllBlocks.MEDITATION_MAT);
     public static final Item JADE_STONE_BLOCK = AllBlocks.registerBlockItem("jade_stone_block", AllBlocks.JADE_STONE_BLOCK);
     public static final Item JADE_DEEPSLATE_BLOCK = AllBlocks.registerBlockItem("jade_deepslate_block", AllBlocks.JADE_DEEPSLATE_BLOCK);
+
+    public static final Item INFERIOR_JADE_ENERGY = AllBlocks.registerBlockItem("inferior_jade_energy", AllBlocks.INFERIOR_JADE_ENERGY);
     public static final Item BASIC_JADE_ENERGY = AllBlocks.registerBlockItem("basic_jade_energy", AllBlocks.BASIC_JADE_ENERGY);
+    public static final Item LOWER_JADE_ENERGY = AllBlocks.registerBlockItem("lower_jade_energy", AllBlocks.LOWER_JADE_ENERGY);
+    public static final Item INTERMEDIATE_JADE_ENERGY = AllBlocks.registerBlockItem("intermediate_jade_energy", AllBlocks.INTERMEDIATE_JADE_ENERGY);
+    public static final Item HIGHER_JADE_ENERGY = AllBlocks.registerBlockItem("higher_jade_energy", AllBlocks.HIGHER_JADE_ENERGY);
+    public static final Item ADVANCED_JADE_ENERGY = AllBlocks.registerBlockItem("advanced_jade_energy", AllBlocks.ADVANCED_JADE_ENERGY);
+    public static final Item SUPERIOR_JADE_ENERGY = AllBlocks.registerBlockItem("superior_jade_energy", AllBlocks.SUPERIOR_JADE_ENERGY);
+
 
     // item creative tab
     public static final ItemGroup SPIRIT_ITEM_GROUP = FabricItemGroup.builder()
@@ -51,7 +59,13 @@ public class AllItems {
                 entries.add(MEDITATION_MAT);
                 entries.add(JADE_STONE_BLOCK);
                 entries.add(JADE_DEEPSLATE_BLOCK);
+                entries.add(INFERIOR_JADE_ENERGY);
                 entries.add(BASIC_JADE_ENERGY);
+                entries.add(LOWER_JADE_ENERGY);
+                entries.add(INTERMEDIATE_JADE_ENERGY);
+                entries.add(HIGHER_JADE_ENERGY);
+                entries.add(ADVANCED_JADE_ENERGY);
+                entries.add(SUPERIOR_JADE_ENERGY);
             })
             .build();
 
