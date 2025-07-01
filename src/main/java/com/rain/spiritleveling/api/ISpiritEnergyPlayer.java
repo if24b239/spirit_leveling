@@ -12,6 +12,9 @@ public interface ISpiritEnergyPlayer {
     void spirit_leveling$majorBreakthrough();
     void spirit_leveling$initSpiritEnergy(NbtCompound nbt);
 
+    void spirit_leveling$savePersistentData(NbtCompound nbt);
+    NbtCompound spirit_leveling$getPersistentData();
+
     int spirit_leveling$getSpiritPower();
     int spirit_leveling$getSpiritLevel();
 

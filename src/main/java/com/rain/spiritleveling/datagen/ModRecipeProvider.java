@@ -79,23 +79,15 @@ public class ModRecipeProvider extends FabricRecipeProvider {
                 .pattern("jjj")
                 .offerTo(exporter, getItemPath(AllItems.MEDITATION_MAT) + "_shaped");
 
-        // first test infusion recipe
-        Map<Character, Item> test_ingredients = Map.of(
-                'w', Items.OAK_LOG,
-                'f', Items.COAL,
-                'e', AllItems.JADE_CHUNK,
-                'm', Items.IRON_INGOT,
-                'a', Items.WATER_BUCKET
-        );
-        offerShapedInfusionRecipe(exporter, AllItems.SPIRIT_PILL, test_ingredients, 4, 69, AllItems.MEDITATION_MAT);
+        // inferior jade energy
+        ShapedSpiritInfusionRecipeJsonBuilder.create(AllItems.INFERIOR_JADE_ENERGY, RecipeCategory.BUILDING_BLOCKS)
+                .setEnergyCost(2)
+                .setMaxProgress(300)
+                .fireIngredient(Ingredient.ofItems(Items.GOLD_INGOT))
+                .metalIngredient(Ingredient.ofItems(AllItems.JADE_CHUNK))
+                .criterion("has_" + getItemPath(AllItems.JADE_CHUNK), conditionsFromItem(AllItems.JADE_CHUNK))
+                .offerTo(exporter, getItemPath(AllItems.INFERIOR_JADE_ENERGY) + "_shaped_infusion");
 
-        // second test infusion recipe
-        ShapedSpiritInfusionRecipeJsonBuilder.create(Items.DIAMOND, RecipeCategory.MISC)
-                .setEnergyCost(100)
-                .fireIngredient(Ingredient.ofItems(Items.COAL))
-                .setMaxProgress(230)
-                .criterion("has_" + getItemPath(Items.COAL), conditionsFromItem(Items.COAL))
-                .offerTo(exporter, getItemPath(Items.DIAMOND) + "_shaped_infusion");
     }
 
     ///

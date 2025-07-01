@@ -154,7 +154,7 @@ public class SpiritInfusionScreen extends HandledScreen<SpiritInfusionScreenHand
 
     private Tooltip getBasicTooltip() {
         int mat_level = getLevel(handler.getMaxEnergy());
-        double value = (int) Math.pow(2.2f, mat_level);
+        double value = MeditationMatEntity.getTransferAmount(mat_level);
         value /= 1.25;
 
         return Tooltip.of(Text.translatable("gui.spiritleveling.spirit_infusion.hover_button", value));
@@ -162,7 +162,7 @@ public class SpiritInfusionScreen extends HandledScreen<SpiritInfusionScreenHand
 
     private Tooltip getToggledTooltip() {
         int player_power = handler.getPassengerPower();
-        double value = (int) Math.pow(2.2f, player_power);
+        double value = MeditationMatEntity.getTransferAmount(player_power);
         value /= 1.25;
 
         return Tooltip.of(Text.translatable("gui.spiritleveling.spirit_infusion.hover_button.toggled", value));

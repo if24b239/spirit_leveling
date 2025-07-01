@@ -185,7 +185,7 @@ public class MeditationMatEntity extends SpiritEnergyStorageBlockEntity implemen
 
         int passenger_spirit_power = newPassenger.spirit_leveling$getSpiritPower();
 
-        if (newPassenger.spirit_leveling$removeCurrentSpiritEnergy((int) Math.pow(2.2, passenger_spirit_power))) {
+        if (newPassenger.spirit_leveling$removeCurrentSpiritEnergy(getTransferAmount(passenger_spirit_power))) {
             addSpiritEnergy(passenger_spirit_power);
         }
     }
@@ -202,13 +202,13 @@ public class MeditationMatEntity extends SpiritEnergyStorageBlockEntity implemen
 
     ///  returns amount of spirit energy removed
     private int removeSpiritEnergy(int level) {
-        int amount = (int) Math.pow(2.2f, level);
+        int amount = getTransferAmount(level);
 
         return removeCurrentEnergy(amount);
     }
 
     private void addSpiritEnergy(int level) {
-        addCurrentEnergy((int) Math.pow(2.2, level));
+        addCurrentEnergy(getTransferAmount(level));
     }
 
     private int getMatLevel() {
@@ -294,6 +294,12 @@ public class MeditationMatEntity extends SpiritEnergyStorageBlockEntity implemen
     public void flipIsReceiving() {
         isReceiving = !isReceiving;
         markDirty();
+    }
+
+    /// returns the amount of energy transferred from the player to the mat and vice versa
+    public static int getTransferAmount(int level) {
+
+        return (int) (1 + (Math.pow(10, level + 1) / (60 * (1 + ((double) level / 6)))));
     }
 
     ///  make meditation mats only check for block directly underneath it that are not other meditation mats

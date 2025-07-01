@@ -1,5 +1,6 @@
 package com.rain.spiritleveling.mixin;
 
+import com.faux.customentitydata.api.IPersistentDataHolder;
 import com.mojang.authlib.GameProfile;
 import com.rain.spiritleveling.api.ISpiritEnergyPlayer;
 import com.rain.spiritleveling.energymanager.ServerSpiritEnergyManager;
@@ -85,6 +86,23 @@ public abstract class SpiritEnergyPlayer implements ISpiritEnergyPlayer {
     }
 
     @Override
+    public void spirit_leveling$savePersistentData(NbtCompound nbt) {
+
+        NbtCompound wrapperCompound = new NbtCompound();
+
+        wrapperCompound.put("spirit_leveling", nbt);
+
+        ((IPersistentDataHolder) this).faux$setPersistentData(wrapperCompound);
+    }
+
+    @Override
+    public NbtCompound spirit_leveling$getPersistentData() {
+        NbtCompound nbt = ((IPersistentDataHolder) this).faux$getPersistentData();
+
+        return nbt.getCompound("spirit_leveling");
+    }
+
+    @Override
     public int spirit_leveling$getSpiritPower() {
         return spiritLevelingSystem.getSpiritPower();
     }
@@ -98,6 +116,7 @@ public abstract class SpiritEnergyPlayer implements ISpiritEnergyPlayer {
     public boolean spirit_leveling$isAtMax() {
         return spiritLevelingSystem.isAtMax();
     }
+
 
 
 }

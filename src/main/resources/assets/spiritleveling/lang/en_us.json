@@ -9,6 +9,13 @@
   "block.spiritleveling.meditation_mat": "Jade Meditation Mat",
   "block.spiritleveling.jade_stone_block": "Jade Stone Block",
   "block.spiritleveling.jade_deepslate_block": "Jade Deepslate Block",
+  "block.spiritleveling.inferior_jade_energy": "Inferior Spirit Storage",
+  "block.spiritleveling.basic_jade_energy": "Basic Spirit Storage",
+  "block.spiritleveling.lower_jade_energy": "Lower Spirit Storage",
+  "block.spiritleveling.intermediate_jade_energy": "Intermediate Spirit Storage",
+  "block.spiritleveling.higher_jade_energy": "Higher Spirit Storage",
+  "block.spiritleveling.advanced_jade_energy": "Advanced Spirit Storage",
+  "block.spiritleveling.superior_jade_energy": "Superior Spirit Storage",
 
   "effect.spiritleveling.active_soul": "Active Soul",
 

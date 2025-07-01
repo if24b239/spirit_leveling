@@ -1,6 +1,7 @@
 package com.rain.spiritleveling.energymanager;
 
 import com.faux.customentitydata.api.IPersistentDataHolder;
+import com.rain.spiritleveling.api.ISpiritEnergyPlayer;
 import com.rain.spiritleveling.client.hud.IClientSpiritEnergyPlayer;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -52,7 +53,7 @@ public class ServerSpiritEnergyManager extends ServerMajorSpiritLevel {
             nbt.putBoolean("minorBottleneck", levels.get(minorLevel).getIsChained());
 
 
-        ((IPersistentDataHolder) player).faux$setPersistentData(nbt);
+        ((ISpiritEnergyPlayer) player).spirit_leveling$savePersistentData(nbt);
     }
 
     public void updateClientData() {

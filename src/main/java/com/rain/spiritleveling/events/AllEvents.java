@@ -14,7 +14,7 @@ public class AllEvents {
 
         // load current and max spirit energy after respawn
         ServerPlayerEvents.AFTER_RESPAWN.register((oldPlayer, newPlayer, alive) -> {
-            NbtCompound nbt = ((IPersistentDataHolder)newPlayer).faux$getPersistentData();
+            NbtCompound nbt = ((ISpiritEnergyPlayer)newPlayer).spirit_leveling$getPersistentData();
 
             ((ISpiritEnergyPlayer)newPlayer).spirit_leveling$initSpiritEnergy(nbt);
 
@@ -30,7 +30,7 @@ public class AllEvents {
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
             ServerPlayerEntity player = handler.player;
 
-            NbtCompound nbt = ((IPersistentDataHolder)player).faux$getPersistentData();
+            NbtCompound nbt = ((ISpiritEnergyPlayer)player).spirit_leveling$getPersistentData();
 
             // initialize the spirit energy system
             ((ISpiritEnergyPlayer)player).spirit_leveling$initSpiritEnergy(nbt);

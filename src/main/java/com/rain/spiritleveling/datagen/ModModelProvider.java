@@ -21,7 +21,13 @@ public class ModModelProvider extends FabricModelProvider {
     public void generateBlockStateModels(BlockStateModelGenerator blockStateModelGenerator) {
         blockStateModelGenerator.registerSimpleCubeAll(AllBlocks.JADE_STONE_BLOCK);
         blockStateModelGenerator.registerSimpleCubeAll(AllBlocks.JADE_DEEPSLATE_BLOCK);
+        blockStateModelGenerator.registerSimpleCubeAll(AllBlocks.INFERIOR_JADE_ENERGY);
         blockStateModelGenerator.registerSimpleCubeAll(AllBlocks.BASIC_JADE_ENERGY);
+        blockStateModelGenerator.registerSimpleCubeAll(AllBlocks.LOWER_JADE_ENERGY);
+        blockStateModelGenerator.registerSimpleCubeAll(AllBlocks.INTERMEDIATE_JADE_ENERGY);
+        blockStateModelGenerator.registerSimpleCubeAll(AllBlocks.HIGHER_JADE_ENERGY);
+        blockStateModelGenerator.registerSimpleCubeAll(AllBlocks.ADVANCED_JADE_ENERGY);
+        blockStateModelGenerator.registerSimpleCubeAll(AllBlocks.SUPERIOR_JADE_ENERGY);
 
         blockStateModelGenerator.registerNorthDefaultHorizontalRotation(AllBlocks.MEDITATION_MAT);
     }
