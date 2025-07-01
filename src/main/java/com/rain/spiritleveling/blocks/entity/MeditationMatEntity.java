@@ -263,7 +263,7 @@ public class MeditationMatEntity extends SpiritEnergyStorageBlockEntity implemen
     }
 
     private boolean hasEnoughEnergy(ShapedSpiritInfusionRecipe recipe) {
-        return getCurrentEnergy() >= recipe.getCost();
+        return getConnectedCurrentEnergy() >= recipe.getCost();
     }
 
     private boolean increaseProgress() {

@@ -24,23 +24,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class ShapedSpiritInfusionRecipe implements Recipe<SimpleInventory> {
-
-    private final ItemStack output;
-    private final List<Ingredient> ingredients;
-    private final Identifier id;
-    private final CraftingRecipeCategory category;
-    private final int cost;
-    private final int maxProgress;
+public class ShapedSpiritInfusionRecipe extends SpiritInfusionRecipe implements Recipe<SimpleInventory> {
 
     public ShapedSpiritInfusionRecipe(Identifier id, CraftingRecipeCategory category, List<Ingredient> ing, ItemStack out, int cost, int maxProgress) {
-        output = out;
-        ingredients = ing;
-        this.id = id;
-        this.category = category;
-        this.cost = cost;
-        this.maxProgress = maxProgress;
+        super(id, category, ing, out, cost, maxProgress);
     }
+
 
     @Override
     public boolean matches(SimpleInventory inventory, World world) {
@@ -54,33 +43,6 @@ public class ShapedSpiritInfusionRecipe implements Recipe<SimpleInventory> {
 
 
         return woodMatches && fireMatches && earthMatches && metalMatches && waterMatches;
-    }
-
-    @Override
-    public ItemStack craft(SimpleInventory inventory, DynamicRegistryManager registryManager) {
-        return output.copy();
-    }
-
-    @Override
-    public boolean fits(int width, int height) {
-        return true;
-    }
-
-    @Override
-    public ItemStack getOutput(DynamicRegistryManager registryManager) {
-        return output;
-    }
-
-    @Override
-    public DefaultedList<Ingredient> getIngredients() {
-        DefaultedList<Ingredient> list = DefaultedList.ofSize(this.ingredients.size());
-        list.addAll(ingredients);
-        return list;
-    }
-
-    @Override
-    public Identifier getId() {
-        return id;
     }
 
     @Override
@@ -101,18 +63,6 @@ public class ShapedSpiritInfusionRecipe implements Recipe<SimpleInventory> {
         } else {
             return item;
         }
-    }
-
-    public CraftingRecipeCategory getCategory() {
-        return category;
-    }
-
-    public int getCost() {
-        return cost;
-    }
-
-    public int getMaxProgress() {
-        return maxProgress;
     }
 
     public static class Type implements RecipeType<ShapedSpiritInfusionRecipe> {
@@ -161,8 +111,8 @@ public class ShapedSpiritInfusionRecipe implements Recipe<SimpleInventory> {
 
             int cost = 0;
 
-            if (JsonHelper.hasElement(json_ingredients, "cost")) {
-                cost = JsonHelper.getInt(json_ingredients, "cost");
+            if (JsonHelper.hasElement(json, "cost")) {
+                cost = JsonHelper.getInt(json, "cost");
             }
 
             int progress = 100;

@@ -248,7 +248,7 @@ public class ShapedSpiritInfusionRecipeJsonBuilder extends RecipeJsonBuilder imp
             } else {
                 ingredients.add("water", Ingredient.ofItems(Items.AIR).toJson());
             }
-            ingredients.addProperty("cost", this.cost);
+            json.addProperty("cost", this.cost);
 
             json.addProperty("time", this.maxProgress);
 
