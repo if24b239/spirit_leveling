@@ -1,23 +1,17 @@
 package com.rain.spiritleveling.items.recipe;
 
 import com.google.gson.JsonObject;
-import com.google.gson.JsonSyntaxException;
 import com.rain.spiritleveling.blocks.entity.MeditationMatEntity;
 import net.minecraft.inventory.SimpleInventory;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.network.PacketByteBuf;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.RecipeType;
 import net.minecraft.recipe.book.CraftingRecipeCategory;
-import net.minecraft.registry.DynamicRegistryManager;
-import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
-import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.world.World;
 
 import java.util.ArrayList;
@@ -55,33 +49,22 @@ public class ShapedSpiritInfusionRecipe extends SpiritInfusionRecipe implements 
         return Type.INSTANCE;
     }
 
-    public static Item getItem(JsonObject json) {
-        String string = JsonHelper.getString(json, "item");
-        Item item = Registries.ITEM.getOrEmpty(Identifier.tryParse(string)).orElseThrow(() -> new JsonSyntaxException("Unknown item '" + string + "'"));
-        if (item == Items.AIR) {
-            throw new JsonSyntaxException("Empty ingredient not allowed here");
-        } else {
-            return item;
-        }
-    }
-
     public static class Type implements RecipeType<ShapedSpiritInfusionRecipe> {
         public static final Type INSTANCE = new Type();
         public static final String ID = "spirit_infusion_shaped";
     }
 
-    public static class Serializer implements RecipeSerializer<ShapedSpiritInfusionRecipe> {
-        public static final Serializer INSTANCE = new Serializer();
+    public static class Serializer extends SpiritInfusionRecipe.Serializer<ShapedSpiritInfusionRecipe> {
+        public static final Serializer INSTANCE = new Serializer(ShapedSpiritInfusionRecipe::new);
         public static final String ID = "spirit_infusion_shaped";
 
+        public Serializer(Factory<ShapedSpiritInfusionRecipe> factory) {
+            super(factory);
+        }
+
         @Override
-        public ShapedSpiritInfusionRecipe read(Identifier id, JsonObject json) {
-            CraftingRecipeCategory category = CraftingRecipeCategory.CODEC.byId(JsonHelper.getString(json, "category", null));
-
-            // populate list with minecraft:air ingredients
+        protected ArrayList<Ingredient> readIngredients(JsonObject json) {
             ArrayList<Ingredient> recipe_ingredients = new ArrayList<>(Collections.nCopies(5, Ingredient.ofItems(Items.AIR)));
-            ItemStack result = new ItemStack(ShapedSpiritInfusionRecipe.getItem(JsonHelper.getObject(json, "result")));
-
             JsonObject json_ingredients = JsonHelper.getObject(json, "ingredients");
 
             if (JsonHelper.hasElement(json_ingredients, "wood")) {
@@ -109,55 +92,7 @@ public class ShapedSpiritInfusionRecipe extends SpiritInfusionRecipe implements 
                 recipe_ingredients.set(4, ingredient);
             }
 
-            int cost = 0;
-
-            if (JsonHelper.hasElement(json, "cost")) {
-                cost = JsonHelper.getInt(json, "cost");
-            }
-
-            int progress = 100;
-
-            if (JsonHelper.hasElement(json, "time")) {
-                progress = JsonHelper.getInt(json, "time");
-            }
-
-            return new ShapedSpiritInfusionRecipe(id, category, recipe_ingredients, result, cost, progress);
-        }
-
-        @Override
-        public ShapedSpiritInfusionRecipe read(Identifier id, PacketByteBuf buf) {
-            DefaultedList<Ingredient> inputs = DefaultedList.ofSize(buf.readInt(), Ingredient.EMPTY);
-
-            CraftingRecipeCategory category = buf.readEnumConstant(CraftingRecipeCategory.class);
-
-            inputs.replaceAll(ignored -> Ingredient.fromPacket(buf));
-
-            int cost = buf.readInt();
-
-            int progress = buf.readInt();
-
-            ItemStack output = buf.readItemStack();
-
-            return new ShapedSpiritInfusionRecipe(id, category, inputs, output, cost, progress);
-        }
-
-        @Override
-        public void write(PacketByteBuf buf, ShapedSpiritInfusionRecipe recipe) {
-            DefaultedList<Ingredient> list = recipe.getIngredients();
-
-            buf.writeInt(list.size());
-
-            buf.writeEnumConstant(recipe.getCategory());
-
-            for (Ingredient ingredient : list) {
-                ingredient.write(buf);
-            }
-
-            buf.writeInt(recipe.getCost());
-
-            buf.writeInt(recipe.getMaxProgress());
-
-            buf.writeItemStack(recipe.getOutput(null));
+            return recipe_ingredients;
         }
     }
 }

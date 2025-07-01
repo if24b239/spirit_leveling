@@ -1,17 +1,23 @@
 package com.rain.spiritleveling.items.recipe;
 
 import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
 import net.minecraft.inventory.SimpleInventory;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.book.CraftingRecipeCategory;
 import net.minecraft.registry.DynamicRegistryManager;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.JsonHelper;
 import net.minecraft.util.collection.DefaultedList;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public abstract class SpiritInfusionRecipe implements Recipe<SimpleInventory> {
@@ -70,8 +76,17 @@ public abstract class SpiritInfusionRecipe implements Recipe<SimpleInventory> {
         return maxProgress;
     }
 
+    public static Item getItem(JsonObject json) {
+        String string = JsonHelper.getString(json, "item");
+        Item item = Registries.ITEM.getOrEmpty(Identifier.tryParse(string)).orElseThrow(() -> new JsonSyntaxException("Unknown item '" + string + "'"));
+        if (item == Items.AIR) {
+            throw new JsonSyntaxException("Empty ingredient not allowed here");
+        } else {
+            return item;
+        }
+    }
 
-    public static class Serializer<T extends SpiritInfusionRecipe> implements RecipeSerializer<T> {
+    public abstract static class Serializer<T extends SpiritInfusionRecipe> implements RecipeSerializer<T> {
         private final Factory<T> factory;
 
         public Serializer(Factory<T> factory) {
@@ -79,14 +94,35 @@ public abstract class SpiritInfusionRecipe implements Recipe<SimpleInventory> {
         }
 
         public interface Factory<T extends SpiritInfusionRecipe> {
-            T create(Identifier id, CraftingRecipeCategory category, DefaultedList<Ingredient> inputs,
+            T create(Identifier id, CraftingRecipeCategory category, List<Ingredient> inputs,
                      ItemStack output, int cost, int progress);
         }
 
         @Override
         public T read(Identifier id, JsonObject json) {
-            return null;
+
+            CraftingRecipeCategory category = CraftingRecipeCategory.CODEC.byId(JsonHelper.getString(json, "category", null));
+
+            ItemStack result = new ItemStack(SpiritInfusionRecipe.getItem(JsonHelper.getObject(json, "result")));
+
+            int cost = 0;
+
+            if (JsonHelper.hasElement(json, "cost")) {
+                cost = JsonHelper.getInt(json, "cost");
+            }
+
+            int progress = 100;
+
+            if (JsonHelper.hasElement(json, "time")) {
+                progress = JsonHelper.getInt(json, "time");
+            }
+
+            ArrayList<Ingredient> recipe_ingredients = readIngredients(json);
+
+            return factory.create(id, category, recipe_ingredients, result, cost, progress);
         }
+
+        protected abstract ArrayList<Ingredient> readIngredients(JsonObject json);
 
         @Override
         public T read(Identifier id, PacketByteBuf buf) {
