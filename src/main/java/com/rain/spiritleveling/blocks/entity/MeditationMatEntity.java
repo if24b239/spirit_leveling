@@ -4,6 +4,8 @@ import com.rain.spiritleveling.api.ISpiritEnergyPlayer;
 import com.rain.spiritleveling.blocks.AllBlockEntities;
 import com.rain.spiritleveling.entities.custom.MeditationMatSitEntity;
 import com.rain.spiritleveling.items.recipe.ShapedSpiritInfusionRecipe;
+import com.rain.spiritleveling.items.recipe.ShapelessSpiritInfusionRecipe;
+import com.rain.spiritleveling.items.recipe.SpiritInfusionRecipe;
 import com.rain.spiritleveling.screens.SpiritInfusionScreenHandler;
 import com.rain.spiritleveling.util.ImplementedInventory;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
@@ -140,7 +142,7 @@ public class MeditationMatEntity extends SpiritEnergyStorageBlockEntity implemen
         if (world.isClient()) return;
 
         /// CRAFTING LOGIC
-        Optional<ShapedSpiritInfusionRecipe> recipe = getCurrentRecipe();
+        Optional<? extends SpiritInfusionRecipe> recipe = getCurrentRecipe();
 
         // start the crafting only with matching recipe and enough spiritEnergy otherwise reset the progress
         if (recipe.isPresent() && hasRecipe(recipe.get()) && hasEnoughEnergy(recipe.get())) {
@@ -172,7 +174,7 @@ public class MeditationMatEntity extends SpiritEnergyStorageBlockEntity implemen
         markDirty(world, pos, state);
     }
 
-    private void updateMaxProgress(ShapedSpiritInfusionRecipe recipe) {
+    private void updateMaxProgress(SpiritInfusionRecipe recipe) {
         this.maxInfusionProgress = recipe.getMaxProgress();
     }
 
@@ -216,7 +218,7 @@ public class MeditationMatEntity extends SpiritEnergyStorageBlockEntity implemen
     }
 
     /// remove ingredients and spirit energy and add the result into the output slot
-    private void craftItem(ShapedSpiritInfusionRecipe recipe) {
+    private void craftItem(SpiritInfusionRecipe recipe) {
 
         // remove item from stack only if they aren't air
         for (int i = WOOD_SLOT; i < inventory.size(); i++) {
@@ -231,7 +233,7 @@ public class MeditationMatEntity extends SpiritEnergyStorageBlockEntity implemen
         increaseStack(recipe);
     }
 
-    private void increaseStack(ShapedSpiritInfusionRecipe recipe) {
+    private void increaseStack(SpiritInfusionRecipe recipe) {
         ItemStack stack = this.getStack(CENTRE_SLOT).copy();
 
         ItemStack output = recipe.craft(new SimpleInventory(), null);
@@ -262,7 +264,7 @@ public class MeditationMatEntity extends SpiritEnergyStorageBlockEntity implemen
         infusionProgress = 0;
     }
 
-    private boolean hasEnoughEnergy(ShapedSpiritInfusionRecipe recipe) {
+    private boolean hasEnoughEnergy(SpiritInfusionRecipe recipe) {
         return getConnectedCurrentEnergy() >= recipe.getCost();
     }
 
@@ -270,7 +272,7 @@ public class MeditationMatEntity extends SpiritEnergyStorageBlockEntity implemen
         return ++infusionProgress >= maxInfusionProgress;
     }
 
-    private boolean hasRecipe(ShapedSpiritInfusionRecipe recipe) {
+    private boolean hasRecipe(SpiritInfusionRecipe recipe) {
         return canInsertItemIntoOutputSlot(recipe.getOutput(null));
     }
 
@@ -281,14 +283,19 @@ public class MeditationMatEntity extends SpiritEnergyStorageBlockEntity implemen
                 || this.getStack(CENTRE_SLOT).isEmpty();
     }
 
-    private Optional<ShapedSpiritInfusionRecipe> getCurrentRecipe() {
+    private Optional<? extends SpiritInfusionRecipe> getCurrentRecipe() {
         SimpleInventory inv = new SimpleInventory(this.size());
         for (int i = 0; i < inv.size(); i++) {
             inv.setStack(i, this.getStack(i));
         }
 
         assert getWorld() != null;
-        return getWorld().getRecipeManager().getFirstMatch(ShapedSpiritInfusionRecipe.Type.INSTANCE, inv, getWorld());
+        Optional<ShapedSpiritInfusionRecipe> shapedRecipe = getWorld().getRecipeManager().getFirstMatch(ShapedSpiritInfusionRecipe.Type.INSTANCE, inv, getWorld());
+
+        if (shapedRecipe.isPresent())
+            return shapedRecipe;
+
+        return getWorld().getRecipeManager().getFirstMatch(ShapelessSpiritInfusionRecipe.Type.INSTANCE, inv, getWorld());
     }
 
     public void flipIsReceiving() {

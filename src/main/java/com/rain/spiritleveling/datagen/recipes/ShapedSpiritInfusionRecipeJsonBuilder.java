@@ -49,46 +49,46 @@ public class ShapedSpiritInfusionRecipeJsonBuilder extends RecipeJsonBuilder imp
     public ShapedSpiritInfusionRecipeJsonBuilder woodIngredient(Ingredient input) {
         if (this.inputs.containsKey('w')) {
             throw new IllegalArgumentException("Wood is already defined!");
-        } else {
-            this.inputs.put('w', input);
-            return this;
         }
+
+        this.inputs.put('w', input);
+        return this;
     }
 
     public ShapedSpiritInfusionRecipeJsonBuilder fireIngredient(Ingredient input) {
         if (this.inputs.containsKey('f')) {
             throw new IllegalArgumentException("Fire is already defined!");
-        } else {
-            this.inputs.put('f', input);
-            return this;
         }
+
+        this.inputs.put('f', input);
+        return this;
     }
 
     public ShapedSpiritInfusionRecipeJsonBuilder earthIngredient(Ingredient input) {
         if (this.inputs.containsKey('e')) {
             throw new IllegalArgumentException("Earth is already defined!");
-        } else {
-            this.inputs.put('e', input);
-            return this;
         }
+
+        this.inputs.put('e', input);
+        return this;
     }
 
     public ShapedSpiritInfusionRecipeJsonBuilder metalIngredient(Ingredient input) {
         if (this.inputs.containsKey('m')) {
             throw new IllegalArgumentException("Metal is already defined!");
-        } else {
-            this.inputs.put('m', input);
-            return this;
         }
+
+        this.inputs.put('m', input);
+        return this;
     }
 
     public ShapedSpiritInfusionRecipeJsonBuilder waterIngredient(Ingredient input) {
         if (this.inputs.containsKey('a')) {
             throw new IllegalArgumentException("Water is already defined!");
-        } else {
-            this.inputs.put('a', input);
-            return this;
         }
+
+        this.inputs.put('a', input);
+        return this;
     }
 
     public ShapedSpiritInfusionRecipeJsonBuilder allIngredients(Map<Character, Item> ingredients) {
@@ -106,19 +106,19 @@ public class ShapedSpiritInfusionRecipeJsonBuilder extends RecipeJsonBuilder imp
     public ShapedSpiritInfusionRecipeJsonBuilder setEnergyCost(int cost) {
         if (this.energyCost != 0) {
             throw new IllegalArgumentException("Energy cost is already defined!");
-        } else {
-            this.energyCost = cost;
-            return this;
         }
+
+        this.energyCost = cost;
+        return this;
     }
 
     public ShapedSpiritInfusionRecipeJsonBuilder setMaxProgress(int max_progress) {
         if (this.maxProgress != 100) {
             throw new IllegalArgumentException("Max Progress can only be set once!");
-        } else {
-            this.maxProgress = max_progress;
-            return this;
         }
+
+        this.maxProgress = max_progress;
+        return this;
     }
 
     @Override
@@ -248,11 +248,11 @@ public class ShapedSpiritInfusionRecipeJsonBuilder extends RecipeJsonBuilder imp
             } else {
                 ingredients.add("water", Ingredient.ofItems(Items.AIR).toJson());
             }
+            json.add("ingredients", ingredients);
+
             json.addProperty("cost", this.cost);
 
             json.addProperty("time", this.maxProgress);
-
-            json.add("ingredients", ingredients);
 
             json.add("result", Ingredient.ofItems(output).toJson());
 

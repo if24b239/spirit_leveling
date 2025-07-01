@@ -1,6 +1,7 @@
 package com.rain.spiritleveling.datagen;
 
 import com.rain.spiritleveling.datagen.recipes.ShapedSpiritInfusionRecipeJsonBuilder;
+import com.rain.spiritleveling.datagen.recipes.ShapelessSpiritInfusionRecipeJsonBuilder;
 import com.rain.spiritleveling.items.AllItems;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
@@ -88,6 +89,15 @@ public class ModRecipeProvider extends FabricRecipeProvider {
                 .criterion("has_" + getItemPath(AllItems.JADE_CHUNK), conditionsFromItem(AllItems.JADE_CHUNK))
                 .offerTo(exporter, getItemPath(AllItems.INFERIOR_JADE_ENERGY) + "_shaped_infusion");
 
+        // test shapeless infusion recipe
+        ShapelessSpiritInfusionRecipeJsonBuilder.create(Items.COAL_BLOCK, RecipeCategory.MISC)
+                .setEnergyCost(4)
+                .setMaxProgress(1000)
+                .addIngredient(Ingredient.ofItems(Items.DIAMOND))
+                .addIngredient(Ingredient.ofItems(Items.STONE))
+                .addIngredient(Ingredient.ofItems(Items.STONE))
+                .criterion("has_" + getItemPath(Items.DIAMOND), conditionsFromItem(Items.DIAMOND))
+                .offerTo(exporter, getItemPath(Items.COAL_BLOCK) + "_shapeless_infusion");
     }
 
     ///

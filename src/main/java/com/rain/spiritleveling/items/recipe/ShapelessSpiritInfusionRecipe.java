@@ -30,9 +30,9 @@ public class ShapelessSpiritInfusionRecipe extends SpiritInfusionRecipe implemen
 
         ArrayList<ItemStack> notEmptyStacks = new ArrayList<>();
 
-        for (int i = MeditationMatEntity.WOOD_SLOT; i <= MeditationMatEntity.WATER_SLOT; i ++) {
+        for (int i = MeditationMatEntity.WOOD_SLOT; i <= MeditationMatEntity.WATER_SLOT; i++) {
             if (inventory.getStack(i).isEmpty())
-                break;
+                continue;
 
             notEmptyStacks.add(inventory.getStack(i));
         }
@@ -44,12 +44,14 @@ public class ShapelessSpiritInfusionRecipe extends SpiritInfusionRecipe implemen
         // make sure every ingredient matches the inventory
         for (Ingredient i : ingredients) {
             for (ItemStack s : notEmptyStacks) {
-                if (!i.test(s))
-                    return false;
+                if (i.test(s)) {
+                    notEmptyStacks.remove(s);
+                    break;
+                }
             }
         }
 
-        return true;
+        return notEmptyStacks.isEmpty();
     }
 
     @Override
