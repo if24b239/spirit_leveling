@@ -16,6 +16,8 @@ public class SpiritTags {
     }
 
     public static class Items {
+        public static final TagKey<Item> SPIRIT_CULTIVATION_MANUAL = createTag("spirit_cultivation_manuals");
+        public static final TagKey<Item> tZT = createTag("");
 
         public static TagKey<Item> createTag(String name) {
             return TagKey.of(RegistryKeys.ITEM, SpiritLeveling.loc(name));

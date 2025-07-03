@@ -8,6 +8,7 @@ import net.minecraft.item.FoodComponent;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.sound.SoundEvent;
 import net.minecraft.world.World;
 
 public class SpiritPill extends Item {
@@ -46,8 +47,6 @@ public class SpiritPill extends Item {
         // TEMP
         if (user instanceof ServerPlayerEntity)
             ((ISpiritEnergyPlayer)user).spirit_leveling$majorBreakthrough();
-        if (user instanceof ServerPlayerEntity)
-            ((ISpiritEnergyPlayer)user).spirit_leveling$minorBreakthrough();
 
         return resultingStack;
     }

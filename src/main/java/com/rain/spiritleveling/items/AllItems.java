@@ -1,10 +1,14 @@
 package com.rain.spiritleveling.items;
 
 import com.rain.spiritleveling.SpiritLeveling;
+import com.rain.spiritleveling.api.Elements;
 import com.rain.spiritleveling.blocks.AllBlocks;
 import com.rain.spiritleveling.items.custom.BowAndDrill;
+import com.rain.spiritleveling.items.custom.CultivationManual;
 import com.rain.spiritleveling.items.custom.SpiritPill;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
+import net.minecraft.entity.attribute.EntityAttributeModifier;
+import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
@@ -20,6 +24,14 @@ public class AllItems {
     public static final SpiritPill SPIRIT_PILL = register("spirit_pill", new SpiritPill(new Item.Settings(), 0));
     public static final SpiritPill S_SPIRIT_PILL = register("s_spirit_pill", new SpiritPill(new Item.Settings(), 4));
     public static final BowAndDrill BOW_AND_DRILL = register("bow_and_drill", new BowAndDrill(new Item.Settings().maxDamage(16)));
+    public static final CultivationManual FIRST_MANUAL = register("first_manual", CultivationManual.Builder.create(SpiritLeveling.loc("first_manual"))
+            .setLevel(1)
+            .addAttributeAndModifier(Elements.WOOD, EntityAttributes.GENERIC_MAX_HEALTH, 1, EntityAttributeModifier.Operation.ADDITION)
+            .addAttributeAndModifier(Elements.FIRE, EntityAttributes.GENERIC_MAX_HEALTH, 2, EntityAttributeModifier.Operation.ADDITION)
+            .addAttributeAndModifier(Elements.EARTH, EntityAttributes.GENERIC_MAX_HEALTH, 3, EntityAttributeModifier.Operation.ADDITION)
+            .addAttributeAndModifier(Elements.METAL, EntityAttributes.GENERIC_MAX_HEALTH, 4, EntityAttributeModifier.Operation.ADDITION)
+            .addAttributeAndModifier(Elements.WATER, EntityAttributes.GENERIC_MAX_HEALTH, 5, EntityAttributeModifier.Operation.ADDITION)
+            .build(new Item.Settings()));
 
     // all basic item instances
     public static final Item JADE_CHUNK = register("jade_chunk", new Item(new Item.Settings()));
@@ -66,6 +78,8 @@ public class AllItems {
                 entries.add(HIGHER_JADE_ENERGY);
                 entries.add(ADVANCED_JADE_ENERGY);
                 entries.add(SUPERIOR_JADE_ENERGY);
+
+                entries.add(FIRST_MANUAL);
             })
             .build();
 

@@ -58,11 +58,15 @@ public abstract class SpiritEnergyPlayer implements ISpiritEnergyPlayer {
     }
 
     @Override
-    public void spirit_leveling$minorBreakthrough() {
-        spiritLevelingSystem.minorBreakthrough();
+    public boolean spirit_leveling$minorBreakthrough(int level) {
+        if (!spiritLevelingSystem.minorBreakthrough(level)) {
+            // TODO: Add punishment for failed breakthrough attempt
+            return false;
+        }
 
         spiritLevelingSystem.updateClientData();
         spiritLevelingSystem.updateNbT();
+        return true;
     }
 
     @Override

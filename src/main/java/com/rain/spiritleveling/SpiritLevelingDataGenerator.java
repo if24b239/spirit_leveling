@@ -1,9 +1,6 @@
 package com.rain.spiritleveling;
 
-import com.rain.spiritleveling.datagen.ModBlockLootProvider;
-import com.rain.spiritleveling.datagen.ModBlockTagProvider;
-import com.rain.spiritleveling.datagen.ModModelProvider;
-import com.rain.spiritleveling.datagen.ModRecipeProvider;
+import com.rain.spiritleveling.datagen.*;
 import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 
@@ -18,5 +15,6 @@ public class SpiritLevelingDataGenerator implements DataGeneratorEntrypoint {
 		pack.addProvider(ModRecipeProvider::new);
 		pack.addProvider(ModBlockLootProvider::new);
 		pack.addProvider(ModBlockTagProvider::new);
+		pack.addProvider(ModItemTagProvider::new);
 	}
 }

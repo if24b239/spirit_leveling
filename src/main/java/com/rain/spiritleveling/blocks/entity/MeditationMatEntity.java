@@ -1,13 +1,16 @@
 package com.rain.spiritleveling.blocks.entity;
 
+import com.rain.spiritleveling.api.Elements;
 import com.rain.spiritleveling.api.ISpiritEnergyPlayer;
 import com.rain.spiritleveling.blocks.AllBlockEntities;
 import com.rain.spiritleveling.entities.custom.MeditationMatSitEntity;
+import com.rain.spiritleveling.items.custom.CultivationManual;
 import com.rain.spiritleveling.items.recipe.ShapedSpiritInfusionRecipe;
 import com.rain.spiritleveling.items.recipe.ShapelessSpiritInfusionRecipe;
 import com.rain.spiritleveling.items.recipe.SpiritInfusionRecipe;
 import com.rain.spiritleveling.screens.SpiritInfusionScreenHandler;
 import com.rain.spiritleveling.util.ImplementedInventory;
+import com.rain.spiritleveling.util.SpiritTags;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
@@ -41,17 +44,25 @@ public class MeditationMatEntity extends SpiritEnergyStorageBlockEntity implemen
 
     private final DefaultedList<ItemStack> inventory = DefaultedList.ofSize(6, ItemStack.EMPTY);
     public static final int CENTRE_SLOT = 0;
-    public static final int WOOD_SLOT = 1;
-    public static final int FIRE_SLOT = 2;
-    public static final int EARTH_SLOT = 3;
-    public static final int METAL_SLOT = 4;
-    public static final int WATER_SLOT = 5;
+    public static final int WOOD_SLOT = elementsToSlot(Elements.WOOD);
+    public static final int FIRE_SLOT = elementsToSlot(Elements.FIRE);
+    public static final int EARTH_SLOT = elementsToSlot(Elements.EARTH);
+    public static final int METAL_SLOT = elementsToSlot(Elements.METAL);
+    public static final int WATER_SLOT = elementsToSlot(Elements.WATER);
 
     protected final PropertyDelegate propertyDelegate;
     private int infusionProgress = 0;
     private int maxInfusionProgress = 0;
     private boolean isReceiving = false;
     private int receivingCooldown = 0;
+
+    private static int elementsToSlot(Elements element) {
+        return element.getValue() + 1;
+    }
+
+    private static Elements slotToElements(int slot) {
+        return Elements.stateOf(slot - 1);
+    }
 
     public MeditationMatEntity(BlockPos pos, BlockState state) {
         super(AllBlockEntities.MEDITATION_MAT_ENTITY, pos, state, 4);
@@ -220,8 +231,14 @@ public class MeditationMatEntity extends SpiritEnergyStorageBlockEntity implemen
     /// remove ingredients and spirit energy and add the result into the output slot
     private void craftItem(SpiritInfusionRecipe recipe) {
 
+        Elements manualElement = Elements.NONE;
+
         // remove item from stack only if they aren't air
         for (int i = WOOD_SLOT; i < inventory.size(); i++) {
+            if (isValidManual(this.getStack(i))) {
+                manualElement = slotToElements(i);
+            }
+
             if (this.getStack(i).getItem() != Items.AIR)
                 decrementStack(i);
         }
@@ -231,6 +248,22 @@ public class MeditationMatEntity extends SpiritEnergyStorageBlockEntity implemen
 
         // add the recipe result into the output slot
         increaseStack(recipe);
+
+        // set output nbt
+        if (isValidManual(this.getStack(CENTRE_SLOT)))
+            CultivationManual.setActiveElement(this.getStack(CENTRE_SLOT), manualElement);
+    }
+
+    // check if the item is a cultivation manual and is not active
+    private boolean isValidManual(ItemStack stack) {
+        if (!stack.isIn(SpiritTags.Items.SPIRIT_CULTIVATION_MANUAL))
+            return false;
+
+        boolean alreadyActive = false;
+        if (stack.getNbt() != null && stack.getNbt().contains("activeIndex"))
+            alreadyActive = stack.getNbt().getInt("activeIndex") != Elements.NONE.getValue();
+
+        return !alreadyActive;
     }
 
     private void increaseStack(SpiritInfusionRecipe recipe) {
@@ -273,11 +306,25 @@ public class MeditationMatEntity extends SpiritEnergyStorageBlockEntity implemen
     }
 
     private boolean hasRecipe(SpiritInfusionRecipe recipe) {
-        return canInsertItemIntoOutputSlot(recipe.getOutput(null));
+        return canInsertItemIntoOutputSlot(recipe.getOutput(null)) && validBreakthroughRecipe(recipe.getOutput(null));
+    }
+
+    private boolean validBreakthroughRecipe(ItemStack output) {
+        // is ignored when the output isn't a cultivation manual
+        if (!output.isIn(SpiritTags.Items.SPIRIT_CULTIVATION_MANUAL))
+            return true;
+
+        boolean valid = false;
+
+        for (int i = WOOD_SLOT; i <= WATER_SLOT; i++) {
+            if (isValidManual(this.getStack(i)))
+                valid = true;
+        }
+
+        return valid;
     }
 
     private boolean canInsertItemIntoOutputSlot(ItemStack output) {
-
         return (this.getStack(CENTRE_SLOT).getItem() == output.getItem()
                 && this.getStack(CENTRE_SLOT).getCount() + output.getCount() <= this.getStack(CENTRE_SLOT).getMaxCount())
                 || this.getStack(CENTRE_SLOT).isEmpty();

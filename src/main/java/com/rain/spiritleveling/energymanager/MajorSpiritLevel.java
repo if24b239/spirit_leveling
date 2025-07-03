@@ -82,18 +82,17 @@ public class MajorSpiritLevel<minorLevelType extends MinorSpiritLevel> {
         isComplete = false;
 
         // unlock the second minor level of the new spirit level
-        minorBreakthrough();
+        minorBreakthrough(spiritLevel);
 
         return true;
     }
 
     // will remove chains off the next minor level
-    public void minorBreakthrough() {
-        if (isComplete) return;
+    public boolean minorBreakthrough(int breakthroughLevel) {
+        if (isComplete || breakthroughLevel != spiritLevel) return false;
 
-        if (!levels.get(getMinorLevel()).minorBreakthrough()) {
-            SpiritLeveling.LOGGER.info("MINOR BREAKTHROUGH FAILED");
-        }
+        return levels.get(getMinorLevel()).minorBreakthrough();
+
     }
 
     public int getSpiritLevel() {

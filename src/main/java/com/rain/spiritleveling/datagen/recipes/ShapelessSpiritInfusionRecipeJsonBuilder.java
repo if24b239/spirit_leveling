@@ -70,7 +70,7 @@ public class ShapelessSpiritInfusionRecipeJsonBuilder extends RecipeJsonBuilder 
     }
 
     @Override
-    public CraftingRecipeJsonBuilder criterion(String name, CriterionConditions conditions) {
+    public ShapelessSpiritInfusionRecipeJsonBuilder criterion(String name, CriterionConditions conditions) {
         this.advancementBuilder.criterion(name, conditions);
         return this;
     }
