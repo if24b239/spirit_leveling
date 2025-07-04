@@ -40,7 +40,7 @@ public class ServerSpiritEnergyManager extends ServerMajorSpiritLevel {
     }
 
     public void updateNbT() {
-        NbtCompound nbt = new NbtCompound();
+        NbtCompound nbt = ((ISpiritEnergyPlayer) player).spirit_leveling$getPersistentData();
 
         int minorLevel = getMinorLevel();
 

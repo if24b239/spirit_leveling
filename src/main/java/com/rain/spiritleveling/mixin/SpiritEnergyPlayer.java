@@ -5,6 +5,9 @@ import com.mojang.authlib.GameProfile;
 import com.rain.spiritleveling.api.ISpiritEnergyPlayer;
 import com.rain.spiritleveling.energymanager.ServerSpiritEnergyManager;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
+import net.minecraft.nbt.NbtList;
+import net.minecraft.nbt.NbtString;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -13,6 +16,9 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.util.Objects;
+import java.util.UUID;
 
 @Mixin(ServerPlayerEntity.class)
 public abstract class SpiritEnergyPlayer implements ISpiritEnergyPlayer {
@@ -91,12 +97,11 @@ public abstract class SpiritEnergyPlayer implements ISpiritEnergyPlayer {
 
     @Override
     public void spirit_leveling$savePersistentData(NbtCompound nbt) {
+        NbtCompound spiritCompound = ((IPersistentDataHolder) this).faux$getPersistentData();
 
-        NbtCompound wrapperCompound = new NbtCompound();
+        spiritCompound.put("spirit_leveling", nbt);
 
-        wrapperCompound.put("spirit_leveling", nbt);
-
-        ((IPersistentDataHolder) this).faux$setPersistentData(wrapperCompound);
+        ((IPersistentDataHolder) this).faux$setPersistentData(spiritCompound);
     }
 
     @Override
@@ -104,6 +109,29 @@ public abstract class SpiritEnergyPlayer implements ISpiritEnergyPlayer {
         NbtCompound nbt = ((IPersistentDataHolder) this).faux$getPersistentData();
 
         return nbt.getCompound("spirit_leveling");
+    }
+
+    @Override
+    public void spirit_leveling$addModifierUUID(UUID id) {
+        NbtCompound nbt = this.spirit_leveling$getPersistentData();
+
+        NbtList list = nbt.getList("attributeModifiers", NbtElement.STRING_TYPE);
+
+        if (list == null)
+            list = new NbtList();
+
+        // don't change nbt if UUID is already saved in it
+        for (NbtElement e : list) {
+            if (Objects.equals(e.asString(), id.toString()))
+                return;
+        }
+
+        // add the uuid to the
+        list.add(NbtString.of(id.toString()));
+
+        nbt.put("attributeModifiers", list);
+
+        this.spirit_leveling$savePersistentData(nbt);
     }
 
     @Override
