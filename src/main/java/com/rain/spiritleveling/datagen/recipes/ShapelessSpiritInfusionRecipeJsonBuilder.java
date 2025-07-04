@@ -12,10 +12,12 @@ import net.minecraft.data.server.recipe.CraftingRecipeJsonBuilder;
 import net.minecraft.data.server.recipe.RecipeJsonBuilder;
 import net.minecraft.data.server.recipe.RecipeJsonProvider;
 import net.minecraft.item.Item;
+import net.minecraft.item.Items;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.book.CraftingRecipeCategory;
 import net.minecraft.recipe.book.RecipeCategory;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,6 +28,7 @@ public class ShapelessSpiritInfusionRecipeJsonBuilder extends RecipeJsonBuilder 
 
     private final Advancement.Builder advancementBuilder = Advancement.Builder.createUntelemetered();
     private final Item output;
+    private final TagKey<Item> outputTag;
     private final RecipeCategory category;
     private final ArrayList<Ingredient> inputs = new ArrayList<>();
 
@@ -36,11 +39,22 @@ public class ShapelessSpiritInfusionRecipeJsonBuilder extends RecipeJsonBuilder 
 
     public ShapelessSpiritInfusionRecipeJsonBuilder(Item output, RecipeCategory category) {
         this.output = output;
+        this.outputTag = null;
+        this.category = category;
+    }
+
+    public ShapelessSpiritInfusionRecipeJsonBuilder(TagKey<Item> tag, RecipeCategory category) {
+        this.output = null;
+        this.outputTag = tag;
         this.category = category;
     }
 
     public static ShapelessSpiritInfusionRecipeJsonBuilder create(Item output, RecipeCategory category) {
         return new ShapelessSpiritInfusionRecipeJsonBuilder(output, category);
+    }
+
+    public static ShapelessSpiritInfusionRecipeJsonBuilder create(TagKey<Item> tag, RecipeCategory category) {
+        return new ShapelessSpiritInfusionRecipeJsonBuilder(tag, category);
     }
 
     public ShapelessSpiritInfusionRecipeJsonBuilder addIngredient(Ingredient ing) {
@@ -83,7 +97,7 @@ public class ShapelessSpiritInfusionRecipeJsonBuilder extends RecipeJsonBuilder 
 
     @Override
     public Item getOutputItem() {
-        return this.output;
+        return (this.output == null) ? Items.AIR : this.output;
     }
 
     @Override
@@ -99,13 +113,13 @@ public class ShapelessSpiritInfusionRecipeJsonBuilder extends RecipeJsonBuilder 
                         getCraftingCategory(this.category),
                         recipeId,
                         this.output,
+                        this.outputTag,
                         this.inputs,
                         this.advancementBuilder,
                         recipeId.withPrefixedPath("recipes/" + this.category.getName() + "/"),
                         this.energyCost,
                         this.maxProgress,
-                        this.group
-                )
+                        this.group)
         );
     }
 
@@ -125,6 +139,7 @@ public class ShapelessSpiritInfusionRecipeJsonBuilder extends RecipeJsonBuilder 
 
         private final Identifier recipeId;
         private final Item output;
+        private final TagKey<Item> outputTag;
         private final ArrayList<Ingredient> inputs;
         private final Advancement.Builder advancementBuilder;
         private final Identifier advancementId;
@@ -132,10 +147,11 @@ public class ShapelessSpiritInfusionRecipeJsonBuilder extends RecipeJsonBuilder 
         private final int maxProgress;
         private final String group;
 
-        protected ShapelessRecipeJsonProvider(CraftingRecipeCategory craftingCategory, Identifier recipeId, Item output, ArrayList<Ingredient> inputs, Advancement.Builder advancementBuilder, Identifier advancementId, int cost, int maxProgress, String group) {
+        protected ShapelessRecipeJsonProvider(CraftingRecipeCategory craftingCategory, Identifier recipeId, Item output, TagKey<Item> outputTag, ArrayList<Ingredient> inputs, Advancement.Builder advancementBuilder, Identifier advancementId, int cost, int maxProgress, String group) {
             super(craftingCategory);
             this.recipeId = recipeId;
             this.output = output;
+            this.outputTag = outputTag;
             this.inputs = inputs;
             this.advancementBuilder = advancementBuilder;
             this.advancementId = advancementId;
@@ -160,7 +176,13 @@ public class ShapelessSpiritInfusionRecipeJsonBuilder extends RecipeJsonBuilder 
 
             json.addProperty("time", this.maxProgress);
 
-            json.add("result", Ingredient.ofItems(output).toJson());
+            if (output != null)
+                json.add("result", Ingredient.ofItems(output).toJson());
+
+            if (outputTag != null) {
+                json.add("output_tag", Ingredient.fromTag(outputTag).toJson());
+            }
+
         }
 
         @Override

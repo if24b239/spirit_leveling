@@ -16,8 +16,10 @@ public class SpiritTags {
     }
 
     public static class Items {
-        public static final TagKey<Item> SPIRIT_CULTIVATION_MANUAL = createTag("spirit_cultivation_manuals");
-        public static final TagKey<Item> tZT = createTag("");
+        /// These Tags are used for the cultivation manual crafting recipes and should only contain instances of CultivationManual
+        /// the MANUAL_FOR_ tags should only contain CultivationManuals with the same CultivationManual.level.
+        public static final TagKey<Item> SPIRIT_CULTIVATION_MANUALS = createTag("spirit_cultivation_manuals");
+        public static final TagKey<Item> MANUAL_FOR_SPIRIT_CONDENSATION = createTag("manual_for_spirit_condensation");
 
         public static TagKey<Item> createTag(String name) {
             return TagKey.of(RegistryKeys.ITEM, SpiritLeveling.loc(name));

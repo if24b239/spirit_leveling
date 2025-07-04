@@ -1,11 +1,11 @@
 package com.rain.spiritleveling.api;
 
 public enum Stages {
-    A(0),
-    B(1),
-    C(2),
-    D(3),
-    E(4),
+    MORTAL(0),
+    SPIRIT_CONDENSATION(1),
+    FOUNDATION(2),
+    GOLDEN_CORE(3),
+    NASCENT_SPIRIT(4),
     F(5),
     G(6);
 

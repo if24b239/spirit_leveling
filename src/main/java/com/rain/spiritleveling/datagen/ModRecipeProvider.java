@@ -4,6 +4,7 @@ import com.rain.spiritleveling.datagen.recipes.ShapedSpiritInfusionRecipeJsonBui
 import com.rain.spiritleveling.datagen.recipes.ShapelessSpiritInfusionRecipeJsonBuilder;
 import com.rain.spiritleveling.items.AllItems;
 import com.rain.spiritleveling.items.custom.CultivationManual;
+import com.rain.spiritleveling.util.SpiritTags;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
 import net.minecraft.data.server.recipe.RecipeJsonProvider;
@@ -15,6 +16,7 @@ import net.minecraft.item.Items;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.book.RecipeCategory;
 import net.minecraft.registry.tag.ItemTags;
+import net.minecraft.registry.tag.TagKey;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -102,7 +104,7 @@ public class ModRecipeProvider extends FabricRecipeProvider {
                 .offerTo(exporter, getItemPath(Items.COAL_BLOCK) + "_shapeless_infusion");
 
         // first manual recipe
-        offerManualMinorBreakthroughRecipe(exporter, AllItems.FIRST_MANUAL, new ArrayList<>() {{add(Items.BONE);add(Items.BONE);}}, 18);
+        offerManualMinorBreakthroughRecipe(exporter, SpiritTags.Items.MANUAL_FOR_SPIRIT_CONDENSATION, new ArrayList<>() {{add(Items.BONE);add(Items.BONE);}}, 18);
     }
 
     ///
@@ -111,18 +113,19 @@ public class ModRecipeProvider extends FabricRecipeProvider {
     ///
     ///
 
-    private static void offerManualMinorBreakthroughRecipe(Consumer<RecipeJsonProvider> exporter, CultivationManual manual, List<Item> inputs, int cost) {
+    private static void offerManualMinorBreakthroughRecipe(Consumer<RecipeJsonProvider> exporter, TagKey<Item> outputTag, List<Item> inputs, int cost) {
         ShapelessSpiritInfusionRecipeJsonBuilder builder = ShapelessSpiritInfusionRecipeJsonBuilder
-                .create(manual, RecipeCategory.MISC)
+                .create(outputTag, RecipeCategory.MISC)
                 .setEnergyCost(cost)
-                .addIngredient(Ingredient.ofItems(manual))
-                .criterion("has_" + getItemPath(manual), conditionsFromItem(manual));
+                .addIngredient(Ingredient.fromTag(outputTag))
+                .setMaxProgress(777)
+                .criterion("has_" + outputTag.id().getPath(), conditionsFromTag(outputTag));
 
         for (Item i : inputs) {
             builder.addIngredient(Ingredient.ofItems(i));
         }
 
-        builder.offerTo(exporter, getItemPath(manual) + "_minor_breakthrough");
+        builder.offerTo(exporter,outputTag.id().getPath() + "_minor_breakthrough");
     }
 
     private static void offerSmithingTableRecipe(Consumer<RecipeJsonProvider> exporter, Item left, Item input, Item right, RecipeCategory category, Item result) {

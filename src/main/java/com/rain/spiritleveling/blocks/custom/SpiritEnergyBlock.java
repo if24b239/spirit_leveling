@@ -9,8 +9,10 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.explosion.Explosion;
 import org.jetbrains.annotations.Nullable;
 
 public class SpiritEnergyBlock extends BlockWithEntity implements BlockEntityProvider {
@@ -20,7 +22,9 @@ public class SpiritEnergyBlock extends BlockWithEntity implements BlockEntityPro
     public SpiritEnergyBlock(Settings settings, int maxStorage) {
         super(settings
                 .requiresTool()
-                .strength(3.5f, 3f)
+                .strength(3.5f, 10f)
+                .requiresTool()
+                .sounds(BlockSoundGroup.STONE)
         );
         MAX_STORAGE = maxStorage;
     }
@@ -52,6 +56,17 @@ public class SpiritEnergyBlock extends BlockWithEntity implements BlockEntityPro
     public void onBreak(World world, BlockPos pos, BlockState state, PlayerEntity player) {
         super.onBreak(world, pos, state, player);
 
+        updateOnRemoved(world, pos);
+    }
+
+    @Override
+    public void onDestroyedByExplosion(World world, BlockPos pos, Explosion explosion) {
+        super.onDestroyedByExplosion(world, pos, explosion);
+
+        updateOnRemoved(world, pos);
+    }
+
+    private void updateOnRemoved(World world, BlockPos pos) {
         if (world.isClient()) return;
 
         SpiritEnergyStorageBlockEntity blockEntity = (SpiritEnergyStorageBlockEntity) world.getBlockEntity((pos));

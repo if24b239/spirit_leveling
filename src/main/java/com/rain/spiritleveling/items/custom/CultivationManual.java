@@ -6,12 +6,13 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributeInstance;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.Registries;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.Identifier;
+import net.minecraft.util.*;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
@@ -23,6 +24,8 @@ import java.util.UUID;
 
 public class CultivationManual extends Item {
 
+    private static final int DURABILITY = 8;
+
     private final List<Identifier> attributes;
     private final List<EntityAttributeModifier> modifiers;
 
@@ -30,7 +33,7 @@ public class CultivationManual extends Item {
 
     /// level has to be at least 1 since 0 does not have breakthroughs
     public CultivationManual(Settings settings, int level, List<Identifier> attributes, List<EntityAttributeModifier> modifiers) {
-        super(settings);
+        super(settings.maxDamage(DURABILITY));
 
         this.level = level;
         this.attributes = attributes;
@@ -56,6 +59,20 @@ public class CultivationManual extends Item {
     }
 
     @Override
+    public UseAction getUseAction(ItemStack stack) {
+        return UseAction.SPYGLASS;
+    }
+
+    @Override
+    public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
+
+        ItemStack stack = user.getStackInHand(hand);
+        user.setCurrentHand(hand);
+
+        return TypedActionResult.consume(stack);
+    }
+
+    @Override
     public ItemStack finishUsing(ItemStack stack, World world, LivingEntity user) {
         Elements activeIndex = getActiveElement(stack);
 
@@ -65,11 +82,21 @@ public class CultivationManual extends Item {
         if (user instanceof ServerPlayerEntity && !((ISpiritEnergyPlayer) user).spirit_leveling$minorBreakthrough(this.getLevel()))
             return stack;
 
+        // increase attribute and reset the manual with one durability less
         incrementAttribute(user, activeIndex);
-
         setActiveElement(stack, Elements.NONE);
 
-        return stack;
+        return damageStack(stack);
+    }
+
+    private ItemStack damageStack(ItemStack stack) {
+        ItemStack copy = stack.copy();
+        copy.setDamage(copy.getDamage() + 1);
+
+        if (copy.getDamage() >= copy.getMaxDamage())
+            return ItemStack.EMPTY;
+
+        return copy;
     }
 
     /// throws exception when element is Elements.NONE
@@ -111,7 +138,7 @@ public class CultivationManual extends Item {
             ((ISpiritEnergyPlayer) user).spirit_leveling$addModifierUUID(mod.getId());
     }
 
-    private int getLevel() {
+    public int getLevel() {
         return this.level;
     }
 

@@ -5,8 +5,6 @@ import com.rain.spiritleveling.util.SpiritTags;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;
 import net.minecraft.item.Item;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.RegistryWrapper;
 
@@ -20,7 +18,10 @@ public class ModItemTagProvider extends FabricTagProvider<Item> {
 
     @Override
     protected void configure(RegistryWrapper.WrapperLookup arg) {
-        getOrCreateTagBuilder(SpiritTags.Items.SPIRIT_CULTIVATION_MANUAL)
+        getOrCreateTagBuilder(SpiritTags.Items.SPIRIT_CULTIVATION_MANUALS)
+                .add(AllItems.FIRST_MANUAL);
+
+        getOrCreateTagBuilder(SpiritTags.Items.MANUAL_FOR_SPIRIT_CONDENSATION)
                 .add(AllItems.FIRST_MANUAL);
     }
 }

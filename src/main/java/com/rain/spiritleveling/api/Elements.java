@@ -1,7 +1,5 @@
 package com.rain.spiritleveling.api;
 
-import com.rain.spiritleveling.energymanager.COVER_STATE;
-
 import java.util.HashMap;
 import java.util.Map;
 

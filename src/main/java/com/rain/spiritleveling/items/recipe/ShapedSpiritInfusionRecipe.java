@@ -3,13 +3,16 @@ package com.rain.spiritleveling.items.recipe;
 import com.google.gson.JsonObject;
 import com.rain.spiritleveling.blocks.entity.MeditationMatEntity;
 import net.minecraft.inventory.SimpleInventory;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.RecipeType;
 import net.minecraft.recipe.book.CraftingRecipeCategory;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
 import net.minecraft.world.World;
@@ -20,10 +23,14 @@ import java.util.List;
 
 public class ShapedSpiritInfusionRecipe extends SpiritInfusionRecipe implements Recipe<SimpleInventory> {
 
-    public ShapedSpiritInfusionRecipe(Identifier id, CraftingRecipeCategory category, List<Ingredient> ing, ItemStack out, int cost, int maxProgress) {
+    public ShapedSpiritInfusionRecipe(Identifier id, CraftingRecipeCategory category, List<Ingredient> ing, ItemStack out, int cost, int maxProgress, TagKey<Item> outputTag) {
         super(id, category, ing, out, cost, maxProgress);
     }
 
+    @Override
+    public TagKey<Item> getTag() {
+        return null;
+    }
 
     @Override
     public boolean matches(SimpleInventory inventory, World world) {
@@ -63,6 +70,11 @@ public class ShapedSpiritInfusionRecipe extends SpiritInfusionRecipe implements 
         }
 
         @Override
+        protected TagKey<Item> readTag(JsonObject json) {
+            return null;
+        }
+
+        @Override
         protected ArrayList<Ingredient> readIngredients(JsonObject json) {
             ArrayList<Ingredient> recipe_ingredients = new ArrayList<>(Collections.nCopies(5, Ingredient.ofItems(Items.AIR)));
             JsonObject json_ingredients = JsonHelper.getObject(json, "ingredients");
@@ -93,6 +105,15 @@ public class ShapedSpiritInfusionRecipe extends SpiritInfusionRecipe implements 
             }
 
             return recipe_ingredients;
+        }
+
+        @Override
+        protected TagKey<Item> readTag(PacketByteBuf buf) {
+            return null;
+        }
+
+        @Override
+        protected void writeTag(PacketByteBuf buf, ShapedSpiritInfusionRecipe recipe) {
         }
     }
 }

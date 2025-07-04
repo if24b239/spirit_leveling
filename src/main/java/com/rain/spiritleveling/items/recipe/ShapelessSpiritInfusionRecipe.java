@@ -5,12 +5,16 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.rain.spiritleveling.blocks.entity.MeditationMatEntity;
 import net.minecraft.inventory.SimpleInventory;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.RecipeType;
 import net.minecraft.recipe.book.CraftingRecipeCategory;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
 import net.minecraft.world.World;
@@ -20,8 +24,16 @@ import java.util.List;
 
 public class ShapelessSpiritInfusionRecipe extends SpiritInfusionRecipe implements Recipe<SimpleInventory> {
 
-    public ShapelessSpiritInfusionRecipe(Identifier id, CraftingRecipeCategory category, List<Ingredient> ing, ItemStack out, int cost, int maxProgress) {
+    protected final TagKey<Item> outputKey;
+
+    public ShapelessSpiritInfusionRecipe(Identifier id, CraftingRecipeCategory category, List<Ingredient> ing, ItemStack out, int cost, int maxProgress, TagKey<Item> outputKey) {
         super(id, category, ing, out, cost, maxProgress);
+        this.outputKey = outputKey;
+    }
+
+    @Override
+    public TagKey<Item> getTag() {
+        return outputKey;
     }
 
     @Override
@@ -79,6 +91,11 @@ public class ShapelessSpiritInfusionRecipe extends SpiritInfusionRecipe implemen
         }
 
         @Override
+        protected TagKey<Item> readTag(JsonObject json) {
+            return TagKey.of(RegistryKeys.ITEM, new Identifier(JsonHelper.getString(json, "tag")));
+        }
+
+        @Override
         protected ArrayList<Ingredient> readIngredients(JsonObject json) {
             ArrayList<Ingredient> recipe_ingredients = new ArrayList<>();
             JsonArray json_ingredients = JsonHelper.getArray(json, "ingredients");
@@ -90,5 +107,14 @@ public class ShapelessSpiritInfusionRecipe extends SpiritInfusionRecipe implemen
             return recipe_ingredients;
         }
 
+        @Override
+        protected TagKey<Item> readTag(PacketByteBuf buf) {
+            return TagKey.of(RegistryKeys.ITEM, buf.readIdentifier());
+        }
+
+        @Override
+        protected void writeTag(PacketByteBuf buf, ShapelessSpiritInfusionRecipe recipe) {
+            buf.writeIdentifier(recipe.getTag().id());
+        }
     }
 }

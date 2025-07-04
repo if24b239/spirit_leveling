@@ -19,10 +19,12 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventories;
 import net.minecraft.inventory.SimpleInventory;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.screen.PropertyDelegate;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -31,12 +33,10 @@ import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 public class MeditationMatEntity extends SpiritEnergyStorageBlockEntity implements ExtendedScreenHandlerFactory, ImplementedInventory {
 
@@ -232,31 +232,34 @@ public class MeditationMatEntity extends SpiritEnergyStorageBlockEntity implemen
     private void craftItem(SpiritInfusionRecipe recipe) {
 
         Elements manualElement = Elements.NONE;
+        ItemStack manual = null;
 
         // remove item from stack only if they aren't air
         for (int i = WOOD_SLOT; i < inventory.size(); i++) {
-            if (isValidManual(this.getStack(i))) {
+            ItemStack stack = this.getStack(i);
+            if (isValidManual(stack, recipe.getTag())) {
                 manualElement = slotToElements(i);
+                manual = stack.copy();
             }
 
-            if (this.getStack(i).getItem() != Items.AIR)
+            if (stack.getItem() != Items.AIR)
                 decrementStack(i);
         }
 
         // remove spirit energy
         removeCurrentEnergy(recipe.getCost());
 
-        // add the recipe result into the output slot
-        increaseStack(recipe);
-
-        // set output nbt
-        if (isValidManual(this.getStack(CENTRE_SLOT)))
+        // add the recipe result into the output slot while keeping manual durability
+        if (manual != null) {
+            this.setStack(CENTRE_SLOT, manual);
             CultivationManual.setActiveElement(this.getStack(CENTRE_SLOT), manualElement);
+        } else
+            increaseStack(recipe);
     }
 
-    // check if the item is a cultivation manual and is not active
-    private boolean isValidManual(ItemStack stack) {
-        if (!stack.isIn(SpiritTags.Items.SPIRIT_CULTIVATION_MANUAL))
+    // check if the item is a cultivation manual and is not active as well as it being in the tag SPIRIT_CULTIVATION_MANUALS
+    private boolean isValidManual(ItemStack stack, TagKey<Item> recipe_tag) {
+        if (recipe_tag == null || !stack.isIn(recipe_tag) || !stack.isIn(SpiritTags.Items.SPIRIT_CULTIVATION_MANUALS))
             return false;
 
         boolean alreadyActive = false;
@@ -306,28 +309,27 @@ public class MeditationMatEntity extends SpiritEnergyStorageBlockEntity implemen
     }
 
     private boolean hasRecipe(SpiritInfusionRecipe recipe) {
-        return canInsertItemIntoOutputSlot(recipe.getOutput(null)) && validBreakthroughRecipe(recipe.getOutput(null));
+        return canInsertItemIntoOutputSlot(recipe.getOutput(null)) && validBreakthroughRecipe(recipe);
     }
 
-    private boolean validBreakthroughRecipe(ItemStack output) {
+    private boolean validBreakthroughRecipe(SpiritInfusionRecipe recipe) {
         // is ignored when the output isn't a cultivation manual
-        if (!output.isIn(SpiritTags.Items.SPIRIT_CULTIVATION_MANUAL))
+        if (!recipe.getOutput(null).isIn(SpiritTags.Items.SPIRIT_CULTIVATION_MANUALS))
             return true;
 
         boolean valid = false;
-
         for (int i = WOOD_SLOT; i <= WATER_SLOT; i++) {
-            if (isValidManual(this.getStack(i)))
+            if (isValidManual(this.getStack(i), recipe.getTag()) && this.getStack(i).isIn(recipe.getTag()))
                 valid = true;
         }
 
         return valid;
     }
 
-    private boolean canInsertItemIntoOutputSlot(ItemStack output) {
-        return (this.getStack(CENTRE_SLOT).getItem() == output.getItem()
-                && this.getStack(CENTRE_SLOT).getCount() + output.getCount() <= this.getStack(CENTRE_SLOT).getMaxCount())
-                || this.getStack(CENTRE_SLOT).isEmpty();
+    private boolean canInsertItemIntoOutputSlot(@NotNull ItemStack output) {
+        return this.getStack(CENTRE_SLOT).isEmpty()
+                || (this.getStack(CENTRE_SLOT).getItem() == output.getItem()
+                && this.getStack(CENTRE_SLOT).getCount() + output.getCount() <= this.getStack(CENTRE_SLOT).getMaxCount());
     }
 
     private Optional<? extends SpiritInfusionRecipe> getCurrentRecipe() {

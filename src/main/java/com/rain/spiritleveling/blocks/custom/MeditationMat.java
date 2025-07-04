@@ -12,7 +12,6 @@ import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.DirectionProperty;
 import net.minecraft.util.ActionResult;
@@ -27,7 +26,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 import org.jetbrains.annotations.Nullable;
 
-public class MeditationMat extends BlockWithEntity implements BlockEntityProvider {
+public class MeditationMat extends SpiritEnergyBlock {
 
     public static final DirectionProperty FACING = HorizontalFacingBlock.FACING;
 
@@ -36,10 +35,7 @@ public class MeditationMat extends BlockWithEntity implements BlockEntityProvide
     public MeditationMat(Settings settings) {
         super(settings
                 .dynamicBounds()
-                .blockVision((state, world, pos) -> false)
-                .strength(3f, 10f)
-                .requiresTool()
-                .sounds(BlockSoundGroup.STONE)
+                .blockVision((state, world, pos) -> false), 4
         );
         setDefaultState(getDefaultState().with(FACING, Direction.NORTH));
     }
@@ -93,11 +89,6 @@ public class MeditationMat extends BlockWithEntity implements BlockEntityProvide
 
             super.onStateReplaced(state, world, pos, newState, moved);
         }
-    }
-
-    @Override
-    public BlockRenderType getRenderType(BlockState state) {
-        return BlockRenderType.MODEL;
     }
 
     // overwrite on use to let player sit on mat and link the sit entity to the block entity

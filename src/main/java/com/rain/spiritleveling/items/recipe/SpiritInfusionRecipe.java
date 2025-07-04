@@ -13,9 +13,12 @@ import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.book.CraftingRecipeCategory;
 import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.registry.Registries;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
 import net.minecraft.util.collection.DefaultedList;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,8 +51,9 @@ public abstract class SpiritInfusionRecipe implements Recipe<SimpleInventory> {
     }
 
     @Override
+    @NotNull
     public ItemStack getOutput(DynamicRegistryManager registryManager) {
-        return output;
+        return (output == null) ? Items.AIR.getDefaultStack() : output;
     }
 
     @Override
@@ -86,6 +90,8 @@ public abstract class SpiritInfusionRecipe implements Recipe<SimpleInventory> {
         }
     }
 
+    public abstract TagKey<Item> getTag();
+
     public abstract static class Serializer<T extends SpiritInfusionRecipe> implements RecipeSerializer<T> {
         private final Factory<T> factory;
 
@@ -95,7 +101,7 @@ public abstract class SpiritInfusionRecipe implements Recipe<SimpleInventory> {
 
         public interface Factory<T extends SpiritInfusionRecipe> {
             T create(Identifier id, CraftingRecipeCategory category, List<Ingredient> inputs,
-                     ItemStack output, int cost, int progress);
+                     ItemStack output, int cost, int progress, @Nullable TagKey<Item> outputTag);
         }
 
         @Override
@@ -103,24 +109,30 @@ public abstract class SpiritInfusionRecipe implements Recipe<SimpleInventory> {
 
             CraftingRecipeCategory category = CraftingRecipeCategory.CODEC.byId(JsonHelper.getString(json, "category", null));
 
-            ItemStack result = new ItemStack(SpiritInfusionRecipe.getItem(JsonHelper.getObject(json, "result")));
+            ItemStack result = null;
+            if (JsonHelper.hasElement(json, "result"))
+                result = new ItemStack(SpiritInfusionRecipe.getItem(JsonHelper.getObject(json, "result")));
 
             int cost = 0;
-
             if (JsonHelper.hasElement(json, "cost")) {
                 cost = JsonHelper.getInt(json, "cost");
             }
 
             int progress = 100;
-
             if (JsonHelper.hasElement(json, "time")) {
                 progress = JsonHelper.getInt(json, "time");
             }
 
             ArrayList<Ingredient> recipe_ingredients = readIngredients(json);
 
-            return factory.create(id, category, recipe_ingredients, result, cost, progress);
+            TagKey<Item> outputTag = null;
+            if (json.has("output_tag"))
+                outputTag = readTag(json.getAsJsonObject("output_tag"));
+
+            return factory.create(id, category, recipe_ingredients, result, cost, progress, outputTag);
         }
+
+        protected abstract TagKey<Item> readTag(JsonObject json);
 
         protected abstract ArrayList<Ingredient> readIngredients(JsonObject json);
 
@@ -138,8 +150,12 @@ public abstract class SpiritInfusionRecipe implements Recipe<SimpleInventory> {
 
             ItemStack output = buf.readItemStack();
 
-            return this.factory.create(id, category, inputs, output, cost, progress);
+            TagKey<Item> outputTag = readTag(buf);
+
+            return this.factory.create(id, category, inputs, output, cost, progress, outputTag);
         }
+
+        protected abstract TagKey<Item> readTag(PacketByteBuf buf);
 
         @Override
         public void write(PacketByteBuf buf, T recipe) {
@@ -158,6 +174,11 @@ public abstract class SpiritInfusionRecipe implements Recipe<SimpleInventory> {
             buf.writeInt(recipe.getMaxProgress());
 
             buf.writeItemStack(recipe.getOutput(null));
+
+            // for the optional tag
+            writeTag(buf, recipe);
         }
+
+        protected abstract void writeTag(PacketByteBuf buf, T recipe);
     }
 }

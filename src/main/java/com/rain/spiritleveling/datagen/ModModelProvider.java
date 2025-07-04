@@ -41,6 +41,7 @@ public class ModModelProvider extends FabricModelProvider {
         itemModelGenerator.register(AllItems.ABRASION_SAND, Models.GENERATED);
         itemModelGenerator.register(AllItems.BOW_AND_DRILL, Models.GENERATED);
         itemModelGenerator.register(AllItems.DRILL, Models.GENERATED);
+        itemModelGenerator.register(AllItems.FIRST_MANUAL, Models.GENERATED);
         itemModelGenerator.register(AllBlocks.MEDITATION_MAT.asItem(), new Model(Optional.of(SpiritLeveling.loc("block/meditation_mat")), Optional.empty()));
     }
 }
