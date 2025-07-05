@@ -9,7 +9,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.recipe.Ingredient;
-import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.RecipeType;
 import net.minecraft.recipe.book.CraftingRecipeCategory;
@@ -18,11 +17,12 @@ import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ShapelessSpiritInfusionRecipe extends SpiritInfusionRecipe implements Recipe<SimpleInventory> {
+public class ShapelessSpiritInfusionRecipe extends SpiritInfusionRecipe {
 
     protected final TagKey<Item> outputKey;
 
@@ -32,6 +32,7 @@ public class ShapelessSpiritInfusionRecipe extends SpiritInfusionRecipe implemen
     }
 
     @Override
+    @Nullable
     public TagKey<Item> getTag() {
         return outputKey;
     }
@@ -109,12 +110,16 @@ public class ShapelessSpiritInfusionRecipe extends SpiritInfusionRecipe implemen
 
         @Override
         protected TagKey<Item> readTag(PacketByteBuf buf) {
-            return TagKey.of(RegistryKeys.ITEM, buf.readIdentifier());
+
+            return (buf.readBoolean()) ? TagKey.of(RegistryKeys.ITEM, buf.readIdentifier()) : null;
         }
 
         @Override
         protected void writeTag(PacketByteBuf buf, ShapelessSpiritInfusionRecipe recipe) {
-            buf.writeIdentifier(recipe.getTag().id());
+            buf.writeBoolean(recipe.getTag() != null);
+
+            if (recipe.getTag() != null)
+                buf.writeIdentifier(recipe.getTag().id());
         }
     }
 }
