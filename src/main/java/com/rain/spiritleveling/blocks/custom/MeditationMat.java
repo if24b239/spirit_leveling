@@ -11,6 +11,7 @@ import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemPlacementContext;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.DirectionProperty;
@@ -118,6 +119,8 @@ public class MeditationMat extends SpiritEnergyBlock {
         // ensures only one player can sit on the mat
         if (!linkedEntity.hasPassengers())
             player.startRiding(linkedEntity);
+
+        ((ServerPlayerEntity) player).networkHandler.syncWithPlayerPosition();
 
         return ActionResult.SUCCESS;
     }

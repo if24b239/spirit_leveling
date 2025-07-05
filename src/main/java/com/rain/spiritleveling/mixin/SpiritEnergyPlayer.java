@@ -11,6 +11,7 @@ import net.minecraft.nbt.NbtString;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -112,22 +113,22 @@ public abstract class SpiritEnergyPlayer implements ISpiritEnergyPlayer {
     }
 
     @Override
-    public void spirit_leveling$addModifierUUID(UUID id) {
+    public void spirit_leveling$addModifierUUID(Identifier identifier, UUID uuid) {
         NbtCompound nbt = this.spirit_leveling$getPersistentData();
 
-        NbtList list = nbt.getList("attributeModifiers", NbtElement.STRING_TYPE);
-
-        if (list == null)
-            list = new NbtList();
+        NbtList list = nbt.getList("attributeModifiers", NbtElement.COMPOUND_TYPE);
 
         // don't change nbt if UUID is already saved in it
-        for (NbtElement e : list) {
-            if (Objects.equals(e.asString(), id.toString()))
+        for (int i = 0; i < list.size(); i++) {
+            if (list.getCompound(i).getUuid("uuid") == uuid && Objects.equals(list.getCompound(i).getString("attribute"), identifier.toString()))
                 return;
         }
 
-        // add the uuid to the
-        list.add(NbtString.of(id.toString()));
+        // add the new uuid and identifier into the list
+        NbtCompound newCompound = new NbtCompound();
+        newCompound.putUuid("uuid", uuid);
+        newCompound.putString("attribute", identifier.toString());
+        list.add(newCompound);
 
         nbt.put("attributeModifiers", list);
 

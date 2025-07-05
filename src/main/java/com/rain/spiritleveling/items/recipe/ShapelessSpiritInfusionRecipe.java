@@ -77,7 +77,7 @@ public class ShapelessSpiritInfusionRecipe extends SpiritInfusionRecipe implemen
     }
 
     public static class Type implements RecipeType<ShapelessSpiritInfusionRecipe> {
-        public static final ShapelessSpiritInfusionRecipe.Type INSTANCE = new ShapelessSpiritInfusionRecipe.Type();
+        public static final Type INSTANCE = new Type();
         public static final String ID = "spirit_infusion_shapeless";
     }
 

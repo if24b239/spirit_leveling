@@ -4,6 +4,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtString;
+import net.minecraft.util.Identifier;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -23,7 +24,7 @@ public interface ISpiritEnergyPlayer {
     void spirit_leveling$savePersistentData(NbtCompound nbt);
     NbtCompound spirit_leveling$getPersistentData();
 
-    void spirit_leveling$addModifierUUID(UUID id);
+    void spirit_leveling$addModifierUUID(Identifier identifier, UUID id);
 
     int spirit_leveling$getSpiritPower();
     int spirit_leveling$getSpiritLevel();

@@ -133,9 +133,9 @@ public class CultivationManual extends Item {
             ));
         }
 
-        // add uuid to the player nbt for display
+        // add uuid and attribute id to the player nbt for display and respawn
         if (user instanceof ServerPlayerEntity)
-            ((ISpiritEnergyPlayer) user).spirit_leveling$addModifierUUID(mod.getId());
+            ((ISpiritEnergyPlayer) user).spirit_leveling$addModifierUUID(Registries.ATTRIBUTE.getId(att) ,mod.getId());
     }
 
     public int getLevel() {
