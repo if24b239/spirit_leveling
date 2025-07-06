@@ -1,6 +1,7 @@
 package com.rain.spiritleveling.client.hud;
 
 import com.rain.spiritleveling.SpiritLeveling;
+import com.rain.spiritleveling.api.Stages;
 import com.rain.spiritleveling.energymanager.ClientSpiritEnergyManager;
 import com.rain.spiritleveling.energymanager.MajorSpiritLevel;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
@@ -36,8 +37,8 @@ public class SpiritEnergyHudOverlay implements HudRenderCallback {
         int maxEnergy = player.spirit_leveling$getDataMaxEnergy();
         int currentEnergy = player.spirit_leveling$getDataCurrentEnergy();
         boolean minorBottleneck = player.spirit_leveling$getDataMinorBottleneck();
-        int sLevel = player.spirit_leveling$getDataSpiritLevel();
-        int sPower = MajorSpiritLevel.calculateSpiritStrength(currentEnergy);
+        Stages sLevel = player.spirit_leveling$getDataSpiritLevel();
+        Stages sPower = MajorSpiritLevel.calculateSpiritStrength(currentEnergy);
 
         ClientSpiritEnergyManager SE_manager = new ClientSpiritEnergyManager(drawContext, sLevel, maxEnergy, minorBottleneck, positionX, positionY);
 

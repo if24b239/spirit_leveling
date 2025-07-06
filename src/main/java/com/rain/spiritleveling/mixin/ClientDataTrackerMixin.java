@@ -1,5 +1,6 @@
 package com.rain.spiritleveling.mixin;
 
+import com.rain.spiritleveling.api.Stages;
 import com.rain.spiritleveling.client.hud.IClientSpiritEnergyPlayer;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -49,8 +50,8 @@ public abstract class ClientDataTrackerMixin extends LivingEntity implements ICl
 	}
 
 	@Override
-	public void spirit_leveling$setDataSpiritLevel(int amount) {
-		this.dataTracker.set(SPIRIT_LEVEL, amount);
+	public void spirit_leveling$setDataSpiritLevel(Stages amount) {
+		this.dataTracker.set(SPIRIT_LEVEL, amount.getValue());
 	}
 
 	@Override
@@ -69,8 +70,8 @@ public abstract class ClientDataTrackerMixin extends LivingEntity implements ICl
 	}
 
 	@Override
-	public int spirit_leveling$getDataSpiritLevel() {
-		return this.dataTracker.get(SPIRIT_LEVEL);
+	public Stages spirit_leveling$getDataSpiritLevel() {
+		return Stages.stateOf(this.dataTracker.get(SPIRIT_LEVEL));
 	}
 
 	@Override

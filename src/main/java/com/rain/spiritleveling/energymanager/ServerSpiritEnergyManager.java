@@ -1,6 +1,7 @@
 package com.rain.spiritleveling.energymanager;
 
 import com.rain.spiritleveling.api.ISpiritEnergyPlayer;
+import com.rain.spiritleveling.api.Stages;
 import com.rain.spiritleveling.client.hud.IClientSpiritEnergyPlayer;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -9,9 +10,9 @@ public class ServerSpiritEnergyManager extends ServerMajorSpiritLevel {
 
     private int currentEnergy;
     private int maxEnergy;
-    private int spiritPower;
+    private Stages spiritPower;
 
-    public ServerSpiritEnergyManager(ServerPlayerEntity player, int current_energy, int max_energy, int spirit_level, boolean minorBottleneck) {
+    public ServerSpiritEnergyManager(ServerPlayerEntity player, int current_energy, int max_energy, Stages spirit_level, boolean minorBottleneck) {
         super(player, spirit_level, max_energy, minorBottleneck);
         spiritPower = calculateSpiritStrength(current_energy);
         currentEnergy = current_energy;
@@ -46,7 +47,7 @@ public class ServerSpiritEnergyManager extends ServerMajorSpiritLevel {
 
         nbt.putInt("maxEnergy", maxEnergy);
         nbt.putInt("currentEnergy", currentEnergy);
-        nbt.putInt("spiritLevel", getSpiritLevel());
+        nbt.putInt("spiritLevel", getSpiritLevel().getValue());
 
         if (minorLevel < 10)
             nbt.putBoolean("minorBottleneck", levels.get(minorLevel).getIsChained());
@@ -79,7 +80,7 @@ public class ServerSpiritEnergyManager extends ServerMajorSpiritLevel {
         spiritPower = calculateSpiritStrength(currentEnergy);
     }
 
-    public int getSpiritPower() {
+    public Stages getSpiritPower() {
         return spiritPower;
     }
 

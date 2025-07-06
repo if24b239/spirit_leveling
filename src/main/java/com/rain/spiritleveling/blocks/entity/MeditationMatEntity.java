@@ -2,6 +2,7 @@ package com.rain.spiritleveling.blocks.entity;
 
 import com.rain.spiritleveling.api.Elements;
 import com.rain.spiritleveling.api.ISpiritEnergyPlayer;
+import com.rain.spiritleveling.api.Stages;
 import com.rain.spiritleveling.blocks.AllBlockEntities;
 import com.rain.spiritleveling.entities.custom.MeditationMatSitEntity;
 import com.rain.spiritleveling.items.custom.CultivationManual;
@@ -75,7 +76,7 @@ public class MeditationMatEntity extends SpiritEnergyStorageBlockEntity implemen
                     case 2 -> MeditationMatEntity.this.getConnectedCurrentEnergy();
                     case 3 -> MeditationMatEntity.this.getConnectedMaxEnergy();
                     case 4 -> (MeditationMatEntity.this.isReceiving) ? 1 : 0;
-                    case 5 -> ((ISpiritEnergyPlayer) Objects.requireNonNull(MeditationMatEntity.this.getLinkedSitEntity().getFirstPassenger())).spirit_leveling$getSpiritPower();
+                    case 5 -> ((ISpiritEnergyPlayer) Objects.requireNonNull(MeditationMatEntity.this.getLinkedSitEntity().getFirstPassenger())).spirit_leveling$getSpiritPower().getValue();
                     default -> throw new IllegalStateException("Unexpected value: " + index);
                 };
             }
@@ -196,7 +197,7 @@ public class MeditationMatEntity extends SpiritEnergyStorageBlockEntity implemen
         if (getConnectedCurrentEnergy() >= getConnectedMaxEnergy())
             return;
 
-        int passenger_spirit_power = newPassenger.spirit_leveling$getSpiritPower();
+        Stages passenger_spirit_power = newPassenger.spirit_leveling$getSpiritPower();
 
         if (newPassenger.spirit_leveling$removeCurrentSpiritEnergy(getTransferAmount(passenger_spirit_power))) {
             addSpiritEnergy(passenger_spirit_power);
@@ -214,18 +215,18 @@ public class MeditationMatEntity extends SpiritEnergyStorageBlockEntity implemen
     }
 
     ///  returns amount of spirit energy removed
-    private int removeSpiritEnergy(int level) {
+    private int removeSpiritEnergy(Stages level) {
         int amount = getTransferAmount(level);
 
         return removeCurrentEnergy(amount);
     }
 
-    private void addSpiritEnergy(int level) {
+    private void addSpiritEnergy(Stages level) {
         addCurrentEnergy(getTransferAmount(level));
     }
 
-    private int getMatLevel() {
-        return (int) Math.log10(getConnectedMaxEnergy() - 1);
+    private Stages getMatLevel() {
+        return Stages.stateOf((int) Math.log10(getConnectedMaxEnergy() - 1));
     }
 
     /// remove ingredients and spirit energy and add the result into the output slot
@@ -353,9 +354,9 @@ public class MeditationMatEntity extends SpiritEnergyStorageBlockEntity implemen
     }
 
     /// returns the amount of energy transferred from the player to the mat and vice versa
-    public static int getTransferAmount(int level) {
+    public static int getTransferAmount(Stages level) {
 
-        return (int) (1 + (Math.pow(10, level + 1) / (60 * (1 + ((double) level / 6)))));
+        return (int) (1 + (Math.pow(10, level.getValue() + 1) / (60 * (1 + ((double) level.getValue() / 6)))));
     }
 
     ///  make meditation mats only check for block directly underneath it that are not other meditation mats

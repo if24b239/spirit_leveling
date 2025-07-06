@@ -1,5 +1,6 @@
 package com.rain.spiritleveling.energymanager;
 
+import com.rain.spiritleveling.api.Stages;
 import com.rain.spiritleveling.networking.AllMessages;
 import com.rain.spiritleveling.util.ServerMinorSpiritLevelFactory;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
@@ -11,7 +12,7 @@ public class ServerMajorSpiritLevel extends MajorSpiritLevel<ServerMinorSpiritLe
 
     protected final ServerPlayerEntity player;
 
-    public ServerMajorSpiritLevel(ServerPlayerEntity player, int s_level, int max_energy, boolean minorBottleneck) {
+    public ServerMajorSpiritLevel(ServerPlayerEntity player, Stages s_level, int max_energy, boolean minorBottleneck) {
         super(s_level, max_energy, minorBottleneck, new ServerMinorSpiritLevelFactory());
         this.player = player;
 
@@ -20,7 +21,7 @@ public class ServerMajorSpiritLevel extends MajorSpiritLevel<ServerMinorSpiritLe
     }
 
     @Override
-    protected void createMinorLevels(int sLevel) {
+    protected void createMinorLevels(Stages sLevel) {
         super.createMinorLevels(sLevel);
 
         // set index in reverse for easier location calculation in S2CPacket

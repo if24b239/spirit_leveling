@@ -1,5 +1,7 @@
 package com.rain.spiritleveling.energymanager;
 
+import com.rain.spiritleveling.api.Stages;
+
 public class MinorSpiritLevel {
 
     private final int levelSize;
@@ -8,15 +10,15 @@ public class MinorSpiritLevel {
     private boolean isChained;
     public COVER_STATE state;
 
-    public MinorSpiritLevel(int spiritLevel, boolean chains) {
+    public MinorSpiritLevel(Stages spiritLevel, boolean chains) {
         levelSize = getLevelSize(spiritLevel);
         state = getCoverState();
         isChained = chains;
     }
 
     // calculates how much total spirit power is needed to complete the minor level
-    public static int getLevelSize(int spiritLevel) {
-        return (int)Math.pow(10, spiritLevel);
+    public static int getLevelSize(Stages spiritLevel) {
+        return (int)Math.pow(10, spiritLevel.getValue());
     }
 
     public COVER_STATE getCoverState() {

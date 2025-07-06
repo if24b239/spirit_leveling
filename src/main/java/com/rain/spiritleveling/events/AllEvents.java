@@ -2,6 +2,7 @@ package com.rain.spiritleveling.events;
 
 import com.rain.spiritleveling.SpiritLeveling;
 import com.rain.spiritleveling.api.ISpiritEnergyPlayer;
+import com.rain.spiritleveling.api.Stages;
 import com.rain.spiritleveling.client.hud.IClientSpiritEnergyPlayer;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
@@ -77,7 +78,7 @@ public class AllEvents {
         IClientSpiritEnergyPlayer clientNewPlayer = (IClientSpiritEnergyPlayer)player;
         clientNewPlayer.spirit_leveling$setDataMaxEnergy(nbt.getInt("maxEnergy"));
         clientNewPlayer.spirit_leveling$setDataCurrentEnergy(nbt.getInt("currentEnergy"));
-        clientNewPlayer.spirit_leveling$setDataSpiritLevel(nbt.getInt("spiritLevel"));
+        clientNewPlayer.spirit_leveling$setDataSpiritLevel(Stages.stateOf(nbt.getInt("spiritLevel")));
         clientNewPlayer.spirit_leveling$setDataMinorBottleneck(nbt.getBoolean("minorBottleneck"));
     }
 }

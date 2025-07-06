@@ -1,5 +1,7 @@
 package com.rain.spiritleveling.util;
 
+import com.rain.spiritleveling.SpiritLeveling;
+
 public class CachedValue<T> {
     private static final int MAX_COUNT = 100;
 
@@ -13,13 +15,14 @@ public class CachedValue<T> {
 
     public T getValue() {
         if (++count > MAX_COUNT)
-            markStale();
+            isValid = false;
         return value;
     }
 
     public void setValue(T value) {
         this.value = value;
         this.isValid = true;
+        this.count = 0;
     }
 
     public boolean isValid() {

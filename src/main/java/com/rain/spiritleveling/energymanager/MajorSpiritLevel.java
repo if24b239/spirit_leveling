@@ -1,6 +1,6 @@
 package com.rain.spiritleveling.energymanager;
 
-import com.rain.spiritleveling.SpiritLeveling;
+import com.rain.spiritleveling.api.Stages;
 import com.rain.spiritleveling.util.MinorSpiritLevelFactory;
 
 import java.util.ArrayList;
@@ -8,12 +8,12 @@ import java.util.ArrayList;
 public class MajorSpiritLevel<minorLevelType extends MinorSpiritLevel> {
     private final MinorSpiritLevelFactory<minorLevelType> factory;
 
-    private int spiritLevel;
+    private Stages spiritLevel;
     private boolean isComplete = false;
 
     ArrayList<minorLevelType> levels = new ArrayList<>();
 
-    public MajorSpiritLevel(int s_level, int max_energy, boolean minorBottleneck, MinorSpiritLevelFactory<minorLevelType> factory) {
+    public MajorSpiritLevel(Stages s_level, int max_energy, boolean minorBottleneck, MinorSpiritLevelFactory<minorLevelType> factory) {
 
         //initialize the factory
         this.factory = factory;
@@ -74,7 +74,7 @@ public class MajorSpiritLevel<minorLevelType extends MinorSpiritLevel> {
     public boolean majorBreakthrough() {
         if (!isComplete) return false;
 
-        spiritLevel++;
+        spiritLevel = spiritLevel.next();
 
         levels.clear();
         createMinorLevels(spiritLevel);
@@ -88,34 +88,34 @@ public class MajorSpiritLevel<minorLevelType extends MinorSpiritLevel> {
     }
 
     // will remove chains off the next minor level
-    public boolean minorBreakthrough(int breakthroughLevel) {
+    public boolean minorBreakthrough(Stages breakthroughLevel) {
         if (isComplete || breakthroughLevel != spiritLevel) return false;
 
         return levels.get(getMinorLevel()).minorBreakthrough();
 
     }
 
-    public int getSpiritLevel() {
+    public Stages getSpiritLevel() {
         return spiritLevel;
     }
 
-    public static int calculateSpiritStrength(int spiritEnergy) {
+    public static Stages calculateSpiritStrength(int spiritEnergy) {
         if (spiritEnergy <= 1)
-            return 0;
+            return Stages.MORTAL;
 
-        return (int)Math.log10(spiritEnergy - 1);
+        return Stages.stateOf((int)Math.log10(spiritEnergy - 1));
     }
 
     // should only be called outside of constructor if levels.clear() was called before
-    protected void createMinorLevels(int sLevel) {
+    protected void createMinorLevels(Stages sLevel) {
         for (int i = 0; i <= 9; i++) {
 
             // create minorLevel instance that is chained only if it's not the first element and not spirit level 0
-            minorLevelType minorLevel = factory.createInstance(sLevel, !(i == 0 || sLevel == 0));
+            minorLevelType minorLevel = factory.createInstance(sLevel, !(i == 0 || sLevel == Stages.MORTAL));
 
             levels.add(minorLevel);
 
-            if (i == 0 && sLevel != 0) {
+            if (i == 0 && sLevel != Stages.MORTAL) {
                 levels.get(i).setToComplete();
             }
         }

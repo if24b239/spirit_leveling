@@ -122,7 +122,7 @@ public class MeditationMat extends SpiritEnergyBlock {
 
         ((ServerPlayerEntity) player).networkHandler.syncWithPlayerPosition();
 
-        return ActionResult.SUCCESS;
+        return ActionResult.PASS;
     }
 
     @Override

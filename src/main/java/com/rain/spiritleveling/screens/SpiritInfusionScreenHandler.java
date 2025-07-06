@@ -1,5 +1,6 @@
 package com.rain.spiritleveling.screens;
 
+import com.rain.spiritleveling.api.Stages;
 import com.rain.spiritleveling.blocks.entity.MeditationMatEntity;
 import com.rain.spiritleveling.networking.AllMessages;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -118,8 +119,8 @@ public class SpiritInfusionScreenHandler extends ScreenHandler {
         return propertyDelegate.get(4) != 0;
     }
 
-    public int getPassengerPower() {
-        return propertyDelegate.get(5);
+    public Stages getPassengerPower() {
+        return Stages.stateOf(propertyDelegate.get(5));
     }
 
     public void flipIsReceiving() {

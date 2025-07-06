@@ -1,5 +1,6 @@
 package com.rain.spiritleveling.energymanager;
 
+import com.rain.spiritleveling.api.Stages;
 import com.rain.spiritleveling.networking.AllMessages;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -11,7 +12,7 @@ public class ServerMinorSpiritLevel extends MinorSpiritLevel{
     private ServerPlayerEntity player;
     private int index = 0;
 
-    public ServerMinorSpiritLevel(int spiritLevel, boolean chains) {
+    public ServerMinorSpiritLevel(Stages spiritLevel, boolean chains) {
         super(spiritLevel, chains);
 
         player = null;

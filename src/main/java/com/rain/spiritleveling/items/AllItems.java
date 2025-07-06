@@ -2,6 +2,7 @@ package com.rain.spiritleveling.items;
 
 import com.rain.spiritleveling.SpiritLeveling;
 import com.rain.spiritleveling.api.Elements;
+import com.rain.spiritleveling.api.Stages;
 import com.rain.spiritleveling.blocks.AllBlocks;
 import com.rain.spiritleveling.items.custom.BowAndDrill;
 import com.rain.spiritleveling.items.custom.CultivationManual;
@@ -25,7 +26,7 @@ public class AllItems {
     public static final SpiritPill S_SPIRIT_PILL = register("s_spirit_pill", new SpiritPill(new Item.Settings(), 4));
     public static final BowAndDrill BOW_AND_DRILL = register("bow_and_drill", new BowAndDrill(new Item.Settings().maxDamage(16)));
     public static final CultivationManual FIRST_MANUAL = register("first_manual", CultivationManual.Builder.create(SpiritLeveling.loc("first_manual"))
-            .setLevel(1)
+            .setLevel(Stages.SPIRIT_CONDENSATION)
             .addAttributeAndModifier(Elements.WOOD, EntityAttributes.GENERIC_MAX_HEALTH, 1, EntityAttributeModifier.Operation.ADDITION)
             .addAttributeAndModifier(Elements.FIRE, EntityAttributes.GENERIC_MAX_HEALTH, 2, EntityAttributeModifier.Operation.ADDITION)
             .addAttributeAndModifier(Elements.EARTH, EntityAttributes.GENERIC_MAX_HEALTH, 3, EntityAttributeModifier.Operation.ADDITION)

@@ -1,6 +1,7 @@
 package com.rain.spiritleveling.energymanager;
 
 import com.rain.spiritleveling.SpiritLeveling;
+import com.rain.spiritleveling.api.Stages;
 import com.rain.spiritleveling.client.hud.ClientHUDAnimator;
 import com.rain.spiritleveling.util.ClientMinorSpiritLevelFactory;
 import net.minecraft.client.gui.DrawContext;
@@ -144,7 +145,7 @@ public class ClientSpiritEnergyManager extends MajorSpiritLevel<MinorSpiritLevel
         }
     };
 
-    public ClientSpiritEnergyManager(@NotNull DrawContext draw_context, int s_level, int max_energy, boolean minorBottleneck, int pos_x, int pos_y) {
+    public ClientSpiritEnergyManager(@NotNull DrawContext draw_context, Stages s_level, int max_energy, boolean minorBottleneck, int pos_x, int pos_y) {
         super(s_level, max_energy, minorBottleneck, new ClientMinorSpiritLevelFactory());
         drawContext = draw_context;
         posX = pos_x;
@@ -156,8 +157,8 @@ public class ClientSpiritEnergyManager extends MajorSpiritLevel<MinorSpiritLevel
     }
 
     // draw the chains and render the animation over it if needed
-    public void drawChains(int spirit_power, int spirit_level) {
-        if (spirit_power < spirit_level)
+    public void drawChains(Stages spirit_power, Stages spirit_level) {
+        if (spirit_power.getValue() < spirit_level.getValue())
             return;
 
         // render the animations
@@ -190,9 +191,9 @@ public class ClientSpiritEnergyManager extends MajorSpiritLevel<MinorSpiritLevel
         }
     }
 
-    public ClientSpiritEnergyManager drawCovers(int spirit_power, int spirit_level) {
+    public ClientSpiritEnergyManager drawCovers(Stages spirit_power, Stages spirit_level) {
         // don't draw covers when spirit power is too low (cover animation is reset upon spirit level increase)
-        if (spirit_power < spirit_level)
+        if (spirit_power.getValue() < spirit_level.getValue())
             return this;
 
         // render animations
@@ -232,10 +233,10 @@ public class ClientSpiritEnergyManager extends MajorSpiritLevel<MinorSpiritLevel
         return this;
     }
 
-    public ClientSpiritEnergyManager drawSlots(int spirit_power, int current_energy, int max_energy) {
+    public ClientSpiritEnergyManager drawSlots(Stages spirit_power, int current_energy, int max_energy) {
         int num = getSlotsNumber(spirit_power, current_energy, max_energy);
 
-        if (spirit_power >= SLOT_LIST.size()) num = 6;
+        if (spirit_power.getValue() >= SLOT_LIST.size()) num = 6;
 
         int relX = 3;
         int relY = 0;
@@ -246,7 +247,7 @@ public class ClientSpiritEnergyManager extends MajorSpiritLevel<MinorSpiritLevel
         int offset = (10 - num) * 10;
 
         drawContext.drawTexture(
-                SLOT_LIST.get(spirit_power),
+                SLOT_LIST.get(spirit_power.getValue()),
                 posX + relX, posY + relY + offset,
                 0,0,
                 slotsWidth, slotsHeight - offset,
@@ -286,7 +287,7 @@ public class ClientSpiritEnergyManager extends MajorSpiritLevel<MinorSpiritLevel
         return num_covers;
     }
 
-    public int getSlotsNumber(int spirit_power, int current_energy, int max_energy) {
+    public int getSlotsNumber(Stages spirit_power, int current_energy, int max_energy) {
 
         int size_slots = MinorSpiritLevel.getLevelSize(spirit_power);
 

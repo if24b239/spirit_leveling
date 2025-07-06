@@ -2,6 +2,7 @@ package com.rain.spiritleveling.items.custom;
 
 import com.rain.spiritleveling.api.Elements;
 import com.rain.spiritleveling.api.ISpiritEnergyPlayer;
+import com.rain.spiritleveling.api.Stages;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributeInstance;
@@ -29,10 +30,10 @@ public class CultivationManual extends Item {
     private final List<Identifier> attributes;
     private final List<EntityAttributeModifier> modifiers;
 
-    private final int level;
+    private final Stages level;
 
     /// level has to be at least 1 since 0 does not have breakthroughs
-    public CultivationManual(Settings settings, int level, List<Identifier> attributes, List<EntityAttributeModifier> modifiers) {
+    public CultivationManual(Settings settings, Stages level, List<Identifier> attributes, List<EntityAttributeModifier> modifiers) {
         super(settings.maxDamage(DURABILITY));
 
         this.level = level;
@@ -138,7 +139,7 @@ public class CultivationManual extends Item {
             ((ISpiritEnergyPlayer) user).spirit_leveling$addModifierUUID(Registries.ATTRIBUTE.getId(att) ,mod.getId());
     }
 
-    public int getLevel() {
+    public Stages getLevel() {
         return this.level;
     }
 
@@ -148,7 +149,7 @@ public class CultivationManual extends Item {
         private final List<Identifier> attributes = new ArrayList<>(Collections.nCopies(5, null));
         private final List<EntityAttributeModifier> modifiers = new ArrayList<>(Collections.nCopies(5, null));
 
-        private int level = 0;
+        private Stages level = Stages.MORTAL;
 
         private Builder(@NotNull Identifier itemId) {
             this.itemId = itemId;
@@ -179,7 +180,7 @@ public class CultivationManual extends Item {
             return this;
         }
 
-        public Builder setLevel(int lvl) {
+        public Builder setLevel(Stages lvl) {
             this.level = lvl;
 
             return this;
@@ -222,7 +223,7 @@ public class CultivationManual extends Item {
                     throw new IllegalStateException("All modifiers in CultivationManual need to be created correctly");
             }
 
-            if (level < 1)
+            if (level.getValue() < Stages.SPIRIT_CONDENSATION.getValue())
                 throw new IllegalStateException("Level needs to be at least 1 in CultivationManual");
         }
     }

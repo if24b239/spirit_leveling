@@ -3,11 +3,11 @@ package com.rain.spiritleveling.mixin;
 import com.faux.customentitydata.api.IPersistentDataHolder;
 import com.mojang.authlib.GameProfile;
 import com.rain.spiritleveling.api.ISpiritEnergyPlayer;
+import com.rain.spiritleveling.api.Stages;
 import com.rain.spiritleveling.energymanager.ServerSpiritEnergyManager;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
-import net.minecraft.nbt.NbtString;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -29,7 +29,7 @@ public abstract class SpiritEnergyPlayer implements ISpiritEnergyPlayer {
 
     @Inject(method= "<init>", at = @At("RETURN"))
     private void onSpiritEnergyPlayerConstruct(MinecraftServer server, ServerWorld world, GameProfile profile, CallbackInfo ci) {
-        spiritLevelingSystem = new ServerSpiritEnergyManager((ServerPlayerEntity) (Object) this,0,0,0,false);
+        spiritLevelingSystem = new ServerSpiritEnergyManager((ServerPlayerEntity) (Object) this,0,0,Stages.MORTAL,false);
     }
 
     @Override
@@ -65,7 +65,7 @@ public abstract class SpiritEnergyPlayer implements ISpiritEnergyPlayer {
     }
 
     @Override
-    public boolean spirit_leveling$minorBreakthrough(int level) {
+    public boolean spirit_leveling$minorBreakthrough(Stages level) {
         if (!spiritLevelingSystem.minorBreakthrough(level)) {
             // TODO: Add punishment for failed breakthrough attempt
             return false;
@@ -89,7 +89,7 @@ public abstract class SpiritEnergyPlayer implements ISpiritEnergyPlayer {
 
         int currentEnergy = nbt.getInt("currentEnergy");
         int maxEnergy = nbt.getInt("maxEnergy");
-        int spiritLevel = nbt.getInt("spiritLevel");
+        Stages spiritLevel = Stages.stateOf(nbt.getInt("spiritLevel"));
         boolean minorBottleneck = nbt.getBoolean("minorBottleneck");
 
 
@@ -136,12 +136,12 @@ public abstract class SpiritEnergyPlayer implements ISpiritEnergyPlayer {
     }
 
     @Override
-    public int spirit_leveling$getSpiritPower() {
+    public Stages spirit_leveling$getSpiritPower() {
         return spiritLevelingSystem.getSpiritPower();
     }
 
     @Override
-    public int spirit_leveling$getSpiritLevel() {
+    public Stages spirit_leveling$getSpiritLevel() {
         return spiritLevelingSystem.getSpiritLevel();
     }
 

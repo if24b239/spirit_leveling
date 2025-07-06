@@ -2,6 +2,7 @@ package com.rain.spiritleveling.screens;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.rain.spiritleveling.SpiritLeveling;
+import com.rain.spiritleveling.api.Stages;
 import com.rain.spiritleveling.blocks.entity.MeditationMatEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
@@ -153,7 +154,7 @@ public class SpiritInfusionScreen extends HandledScreen<SpiritInfusionScreenHand
     }
 
     private Tooltip getBasicTooltip() {
-        int mat_level = getLevel(handler.getMaxEnergy());
+        Stages mat_level = getLevel(handler.getMaxEnergy());
         double value = MeditationMatEntity.getTransferAmount(mat_level);
         value /= 1.25;
 
@@ -161,7 +162,7 @@ public class SpiritInfusionScreen extends HandledScreen<SpiritInfusionScreenHand
     }
 
     private Tooltip getToggledTooltip() {
-        int player_power = handler.getPassengerPower();
+        Stages player_power = handler.getPassengerPower();
         double value = MeditationMatEntity.getTransferAmount(player_power);
         value /= 1.25;
 
@@ -191,15 +192,15 @@ public class SpiritInfusionScreen extends HandledScreen<SpiritInfusionScreenHand
 
     private void drawEnergyBar(DrawContext context) {
 
-        int displayLevel = getLevel(handler.getCurrentEnergy());
-        int maxLevel = getLevel(handler.getMaxEnergy());
-        int displayBarCount = (int) (handler.getCurrentEnergy() / Math.pow(10, displayLevel));
-        int displayCoversCount = (displayLevel == maxLevel) ? 10 - (int) (handler.getMaxEnergy() / Math.pow(10, maxLevel)) : 0;
+        Stages displayLevel = getLevel(handler.getCurrentEnergy());
+        Stages maxLevel = getLevel(handler.getMaxEnergy());
+        int displayBarCount = (handler.getCurrentEnergy() / displayLevel.getSpiritEnergy());
+        int displayCoversCount = (displayLevel == maxLevel) ? 10 - (handler.getMaxEnergy() / maxLevel.getSpiritEnergy()) : 0;
 
         for (int i = 0; i < displayBarCount; i++) {
             context.drawTexture(TEXTURE,
                     x + 14, y + 96 - i * 10,
-                    displayLevel * 3,191,
+                    displayLevel.getValue() * 3,191,
                     3, 9);
         }
 
@@ -211,8 +212,8 @@ public class SpiritInfusionScreen extends HandledScreen<SpiritInfusionScreenHand
         }
     }
 
-    private int getLevel(int energy) {
-        return (int) Math.log10(Math.max(energy - 1, 1));
+    private Stages getLevel(int energy) {
+        return Stages.stateOf((int) Math.log10(Math.max(energy - 1, 1)));
     }
 
     private void drawCurrentProgressBar(DrawContext context, double progress) {
@@ -304,16 +305,17 @@ public class SpiritInfusionScreen extends HandledScreen<SpiritInfusionScreenHand
         DiffuseLighting.enableGuiDepthLighting();
     }
 
-}
+    static class Pair {
+        int x;
+        int y;
 
-class Pair {
-    int x;
-    int y;
-
-    public Pair(int first, int second) {
-        x = first;
-        y = second;
+        public Pair(int first, int second) {
+            x = first;
+            y = second;
+        }
     }
 }
+
+
 
 

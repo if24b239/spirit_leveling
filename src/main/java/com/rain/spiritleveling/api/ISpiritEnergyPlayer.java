@@ -1,12 +1,8 @@
 package com.rain.spiritleveling.api;
 
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
-import net.minecraft.nbt.NbtList;
-import net.minecraft.nbt.NbtString;
 import net.minecraft.util.Identifier;
 
-import java.util.Objects;
 import java.util.UUID;
 
 public interface ISpiritEnergyPlayer {
@@ -16,7 +12,7 @@ public interface ISpiritEnergyPlayer {
     void spirit_leveling$addCurrentSpiritEnergy(int amount);
     boolean spirit_leveling$removeCurrentSpiritEnergy(int amount);
 
-    boolean spirit_leveling$minorBreakthrough(int level);
+    boolean spirit_leveling$minorBreakthrough(Stages level);
     void spirit_leveling$majorBreakthrough();
 
     void spirit_leveling$initSpiritEnergy(NbtCompound nbt);
@@ -26,8 +22,8 @@ public interface ISpiritEnergyPlayer {
 
     void spirit_leveling$addModifierUUID(Identifier identifier, UUID id);
 
-    int spirit_leveling$getSpiritPower();
-    int spirit_leveling$getSpiritLevel();
+    Stages spirit_leveling$getSpiritPower();
+    Stages spirit_leveling$getSpiritLevel();
 
     boolean spirit_leveling$isAtMax();
 }
