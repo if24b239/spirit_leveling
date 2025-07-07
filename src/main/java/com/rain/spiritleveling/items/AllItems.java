@@ -1,7 +1,7 @@
 package com.rain.spiritleveling.items;
 
 import com.rain.spiritleveling.SpiritLeveling;
-import com.rain.spiritleveling.api.Elements;
+import com.rain.spiritleveling.api.Phases;
 import com.rain.spiritleveling.api.Stages;
 import com.rain.spiritleveling.blocks.AllBlocks;
 import com.rain.spiritleveling.items.custom.BowAndDrill;
@@ -27,11 +27,11 @@ public class AllItems {
     public static final BowAndDrill BOW_AND_DRILL = register("bow_and_drill", new BowAndDrill(new Item.Settings().maxDamage(16)));
     public static final CultivationManual FIRST_MANUAL = register("first_manual", CultivationManual.Builder.create(SpiritLeveling.loc("first_manual"))
             .setLevel(Stages.SPIRIT_CONDENSATION)
-            .addAttributeAndModifier(Elements.WOOD, EntityAttributes.GENERIC_MAX_HEALTH, 1, EntityAttributeModifier.Operation.ADDITION)
-            .addAttributeAndModifier(Elements.FIRE, EntityAttributes.GENERIC_MAX_HEALTH, 2, EntityAttributeModifier.Operation.ADDITION)
-            .addAttributeAndModifier(Elements.EARTH, EntityAttributes.GENERIC_MAX_HEALTH, 3, EntityAttributeModifier.Operation.ADDITION)
-            .addAttributeAndModifier(Elements.METAL, EntityAttributes.GENERIC_MAX_HEALTH, 4, EntityAttributeModifier.Operation.ADDITION)
-            .addAttributeAndModifier(Elements.WATER, EntityAttributes.GENERIC_MAX_HEALTH, 5, EntityAttributeModifier.Operation.ADDITION)
+            .addAttributeAndModifier(Phases.WOOD, EntityAttributes.GENERIC_MAX_HEALTH, 1, EntityAttributeModifier.Operation.ADDITION)
+            .addAttributeAndModifier(Phases.FIRE, EntityAttributes.GENERIC_MAX_HEALTH, 2, EntityAttributeModifier.Operation.ADDITION)
+            .addAttributeAndModifier(Phases.EARTH, EntityAttributes.GENERIC_MAX_HEALTH, 3, EntityAttributeModifier.Operation.ADDITION)
+            .addAttributeAndModifier(Phases.METAL, EntityAttributes.GENERIC_MAX_HEALTH, 4, EntityAttributeModifier.Operation.ADDITION)
+            .addAttributeAndModifier(Phases.WATER, EntityAttributes.GENERIC_MAX_HEALTH, 5, EntityAttributeModifier.Operation.ADDITION)
             .build(new Item.Settings()));
 
     // all basic item instances

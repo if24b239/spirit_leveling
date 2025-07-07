@@ -3,6 +3,7 @@ package com.rain.spiritleveling.datagen;
 import com.rain.spiritleveling.SpiritLeveling;
 import com.rain.spiritleveling.blocks.AllBlocks;
 import com.rain.spiritleveling.items.AllItems;
+import com.rain.spiritleveling.items.custom.CultivationManual;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricModelProvider;
 import net.minecraft.data.client.BlockStateModelGenerator;
@@ -41,7 +42,7 @@ public class ModModelProvider extends FabricModelProvider {
         itemModelGenerator.register(AllItems.ABRASION_SAND, Models.GENERATED);
         itemModelGenerator.register(AllItems.BOW_AND_DRILL, Models.GENERATED);
         itemModelGenerator.register(AllItems.DRILL, Models.GENERATED);
-        itemModelGenerator.register(AllItems.FIRST_MANUAL, Models.GENERATED);
         itemModelGenerator.register(AllBlocks.MEDITATION_MAT.asItem(), new Model(Optional.of(SpiritLeveling.loc("block/meditation_mat")), Optional.empty()));
+        CultivationManual.generateModel(itemModelGenerator, AllItems.FIRST_MANUAL);
     }
 }

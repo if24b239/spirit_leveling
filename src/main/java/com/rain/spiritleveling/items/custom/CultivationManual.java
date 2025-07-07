@@ -1,8 +1,14 @@
 package com.rain.spiritleveling.items.custom;
 
-import com.rain.spiritleveling.api.Elements;
+import com.rain.spiritleveling.SpiritLeveling;
+import com.rain.spiritleveling.api.Phases;
 import com.rain.spiritleveling.api.ISpiritEnergyPlayer;
 import com.rain.spiritleveling.api.Stages;
+import net.minecraft.client.item.TooltipContext;
+import net.minecraft.data.client.ItemModelGenerator;
+import net.minecraft.data.client.ModelIds;
+import net.minecraft.data.client.Models;
+import net.minecraft.data.client.TextureMap;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributeInstance;
@@ -13,22 +19,25 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.Registries;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class CultivationManual extends Item {
 
+    private static final Map<Identifier, MutableText> ATTRIBUTE_DISPLAY = new HashMap<>();
     private static final int DURABILITY = 8;
 
-    private final List<Identifier> attributes;
-    private final List<EntityAttributeModifier> modifiers;
+    private final Map<Phases, Identifier> attributes;
+    private final Map<Phases, EntityAttributeModifier> modifiers;
 
     private final Stages level;
 
@@ -37,26 +46,39 @@ public class CultivationManual extends Item {
         super(settings.maxDamage(DURABILITY));
 
         this.level = level;
-        this.attributes = attributes;
-        this.modifiers = modifiers;
+        this.attributes = IntStream.range(0, attributes.size()).boxed().collect(Collectors.toMap(Phases::stateOf, attributes::get));
+        this.modifiers = IntStream.range(0, modifiers.size()).boxed().collect(Collectors.toMap(Phases::stateOf, modifiers::get));
+
+        for (Phases e : Phases.safeValues()) {
+            CultivationManual.addAttributeDisplay(this.attributes.get(e));
+        }
     }
 
-    public static Elements getActiveElement(ItemStack stack) {
+    public static Phases getActiveElement(ItemStack stack) {
         NbtCompound nbt = stack.getNbt();
 
         if (nbt == null || !nbt.contains("activeIndex"))
-            return Elements.NONE;
+            return Phases.NONE;
 
-        return Elements.stateOf(nbt.getInt("activeIndex"));
+        return Phases.stateOf(nbt.getInt("activeIndex"));
     }
 
-    public static void setActiveElement(ItemStack stack, Elements elementIndex) {
+    public static void setActiveElement(ItemStack stack, Phases elementIndex) {
         stack.getOrCreateNbt().putInt("activeIndex", elementIndex.getValue());
     }
 
     @Override
+    public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
+        for (Phases e : Phases.safeValues()) {
+            tooltip.add(Text.translatable(e.getTooltipString())
+                    .append( ": +" + modifiers.get(e).getValue() + " ")
+                    .append(ATTRIBUTE_DISPLAY.get(attributes.get(e))));
+        }
+    }
+
+    @Override
     public int getMaxUseTime(ItemStack stack) {
-        return (getActiveElement(stack) == Elements.NONE) ? 0 : 48;
+        return (getActiveElement(stack) == Phases.NONE) ? 0 : 48;
     }
 
     @Override
@@ -75,9 +97,9 @@ public class CultivationManual extends Item {
 
     @Override
     public ItemStack finishUsing(ItemStack stack, World world, LivingEntity user) {
-        Elements activeIndex = getActiveElement(stack);
+        Phases activeIndex = getActiveElement(stack);
 
-        if (world.isClient() || activeIndex == Elements.NONE)
+        if (world.isClient() || activeIndex == Phases.NONE)
             return stack;
 
         if (user instanceof ServerPlayerEntity && !((ISpiritEnergyPlayer) user).spirit_leveling$minorBreakthrough(this.getLevel()))
@@ -85,7 +107,7 @@ public class CultivationManual extends Item {
 
         // increase attribute and reset the manual with one durability less
         incrementAttribute(user, activeIndex);
-        setActiveElement(stack, Elements.NONE);
+        setActiveElement(stack, Phases.NONE);
 
         return damageStack(stack);
     }
@@ -100,16 +122,16 @@ public class CultivationManual extends Item {
         return copy;
     }
 
-    /// throws exception when element is Elements.NONE
-    private void incrementAttribute(LivingEntity user, Elements element) {
-        if (element == Elements.NONE)
+    /// throws exception when element is Phases.NONE
+    private void incrementAttribute(LivingEntity user, Phases element) {
+        if (element == Phases.NONE)
             throw new IllegalArgumentException("increment Attribute element can't be Element.NONE");
 
         // the attribute that will be modified
-        EntityAttribute att = Registries.ATTRIBUTE.get(this.attributes.get(element.getValue()));
+        EntityAttribute att = Registries.ATTRIBUTE.get(this.attributes.get(element));
 
         // the modifier to change the attribute
-        EntityAttributeModifier mod = this.modifiers.get(element.getValue());
+        EntityAttributeModifier mod = this.modifiers.get(element);
 
         // the instance of the attribute on the user
         EntityAttributeInstance attributeInstance = user.getAttributes().getCustomInstance(att);
@@ -159,7 +181,7 @@ public class CultivationManual extends Item {
             return new Builder(itemId);
         }
 
-        public Builder addAttributeAndModifier(Elements element, @NotNull EntityAttribute attribute, int value, EntityAttributeModifier.Operation operation) {
+        public Builder addAttributeAndModifier(Phases element, @NotNull EntityAttribute attribute, int value, EntityAttributeModifier.Operation operation) {
             validateElement(element);
             validateAttribute(attribute);
 
@@ -196,9 +218,9 @@ public class CultivationManual extends Item {
                     this.modifiers);
         }
 
-        private void validateElement(Elements element) {
-            if (element == Elements.NONE)
-                throw new IllegalStateException("Can't set Elements.NONE");
+        private void validateElement(Phases element) {
+            if (element == Phases.NONE)
+                throw new IllegalStateException("Can't set Phases.NONE");
 
             if (attributes.get(element.getValue()) != null)
                 throw new IllegalStateException("The attribute on index " + element + " has already been set");
@@ -226,5 +248,19 @@ public class CultivationManual extends Item {
             if (level.getValue() < Stages.SPIRIT_CONDENSATION.getValue())
                 throw new IllegalStateException("Level needs to be at least 1 in CultivationManual");
         }
+    }
+
+    public static void generateModel(ItemModelGenerator modelGenerator, @NotNull Item item) {
+        Models.GENERATED_TWO_LAYERS.upload(
+                ModelIds.getItemModelId(item),
+                TextureMap.layered(SpiritLeveling.loc("item/manual_base"), Registries.ITEM.getId(item).withPrefixedPath("item/")),
+                modelGenerator.writer);
+    }
+
+    public static void addAttributeDisplay(Identifier attribute) {
+        if (ATTRIBUTE_DISPLAY.containsKey(attribute))
+            return;
+
+        ATTRIBUTE_DISPLAY.put(attribute, Text.translatable("tooltip.spiritleveling." + attribute.toShortTranslationKey()));
     }
 }

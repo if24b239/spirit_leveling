@@ -21,13 +21,15 @@
 
   "itemGroup.spiritleveling.item_group": "Spirit Leveling Items",
 
-  "gui.spiritleveling.spirit_infusion": "Spirit Crafting",
+  "gui.spiritleveling.spirit_infusion": "Spirit Infusion",
   "gui.spiritleveling.spirit_infusion.hover_bar": "Spirit Energy Stored\n%d / %d",
   "gui.spiritleveling.spirit_infusion.hover_button": "Player Restores\n%d/s",
   "gui.spiritleveling.spirit_infusion.hover_button.toggled": "Mat Absorbs\n%d/s",
-  "gui.spiritleveling.spirit_infusion.wood_slot": "Wood Element Slot",
-  "gui.spiritleveling.spirit_infusion.fire_slot": "Fire Element Slot",
-  "gui.spiritleveling.spirit_infusion.earth_slot": "Earth Element Slot",
-  "gui.spiritleveling.spirit_infusion.metal_slot": "Metal Element Slot",
-  "gui.spiritleveling.spirit_infusion.water_slot": "Water Element Slot"
+  "gui.spiritleveling.spirit_infusion.wood_slot": "Wood Phase Slot",
+  "gui.spiritleveling.spirit_infusion.fire_slot": "Fire Phase Slot",
+  "gui.spiritleveling.spirit_infusion.earth_slot": "Earth Phase Slot",
+  "gui.spiritleveling.spirit_infusion.metal_slot": "Metal Phase Slot",
+  "gui.spiritleveling.spirit_infusion.water_slot": "Water Phase Slot",
+
+  "tooltip.spiritleveling.generic.max_health": "Max Health"
 }

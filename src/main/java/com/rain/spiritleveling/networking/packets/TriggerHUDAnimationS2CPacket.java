@@ -1,6 +1,5 @@
 package com.rain.spiritleveling.networking.packets;
 
-import com.rain.spiritleveling.SpiritLeveling;
 import com.rain.spiritleveling.client.hud.HUDAnimationStruct;
 import com.rain.spiritleveling.energymanager.ClientSpiritEnergyManager;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
@@ -15,7 +14,6 @@ public class TriggerHUDAnimationS2CPacket  {
     public static void receive(MinecraftClient client, ClientPlayNetworkHandler ignoredHandler, PacketByteBuf buf, PacketSender ignoredSender) {
 
         boolean bool = buf.readBoolean();
-        SpiritLeveling.LOGGER.info("BOOLEAN: {}", bool);
 
         // clear only the animator queue
         if (bool) {
@@ -25,8 +23,6 @@ public class TriggerHUDAnimationS2CPacket  {
         }
 
         int[] data = buf.readIntArray();
-
-        SpiritLeveling.LOGGER.info("DATA: {}", data);
 
         int index = data[0];
 

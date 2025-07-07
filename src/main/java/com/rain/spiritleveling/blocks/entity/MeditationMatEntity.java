@@ -1,6 +1,6 @@
 package com.rain.spiritleveling.blocks.entity;
 
-import com.rain.spiritleveling.api.Elements;
+import com.rain.spiritleveling.api.Phases;
 import com.rain.spiritleveling.api.ISpiritEnergyPlayer;
 import com.rain.spiritleveling.api.Stages;
 import com.rain.spiritleveling.blocks.AllBlockEntities;
@@ -45,11 +45,11 @@ public class MeditationMatEntity extends SpiritEnergyStorageBlockEntity implemen
 
     private final DefaultedList<ItemStack> inventory = DefaultedList.ofSize(6, ItemStack.EMPTY);
     public static final int CENTRE_SLOT = 0;
-    public static final int WOOD_SLOT = elementsToSlot(Elements.WOOD);
-    public static final int FIRE_SLOT = elementsToSlot(Elements.FIRE);
-    public static final int EARTH_SLOT = elementsToSlot(Elements.EARTH);
-    public static final int METAL_SLOT = elementsToSlot(Elements.METAL);
-    public static final int WATER_SLOT = elementsToSlot(Elements.WATER);
+    public static final int WOOD_SLOT = phasesToSlot(Phases.WOOD);
+    public static final int FIRE_SLOT = phasesToSlot(Phases.FIRE);
+    public static final int EARTH_SLOT = phasesToSlot(Phases.EARTH);
+    public static final int METAL_SLOT = phasesToSlot(Phases.METAL);
+    public static final int WATER_SLOT = phasesToSlot(Phases.WATER);
 
     protected final PropertyDelegate propertyDelegate;
     private int infusionProgress = 0;
@@ -57,12 +57,12 @@ public class MeditationMatEntity extends SpiritEnergyStorageBlockEntity implemen
     private boolean isReceiving = false;
     private int receivingCooldown = 0;
 
-    private static int elementsToSlot(Elements element) {
+    private static int phasesToSlot(Phases element) {
         return element.getValue() + 1;
     }
 
-    private static Elements slotToElements(int slot) {
-        return Elements.stateOf(slot - 1);
+    private static Phases slotToPhase(int slot) {
+        return Phases.stateOf(slot - 1);
     }
 
     public MeditationMatEntity(BlockPos pos, BlockState state) {
@@ -232,14 +232,14 @@ public class MeditationMatEntity extends SpiritEnergyStorageBlockEntity implemen
     /// remove ingredients and spirit energy and add the result into the output slot
     private void craftItem(SpiritInfusionRecipe recipe) {
 
-        Elements manualElement = Elements.NONE;
+        Phases manualElement = Phases.NONE;
         ItemStack manual = null;
 
         // remove item from stack only if they aren't air
         for (int i = WOOD_SLOT; i < inventory.size(); i++) {
             ItemStack stack = this.getStack(i);
             if (isValidManual(stack, recipe.getTag())) {
-                manualElement = slotToElements(i);
+                manualElement = slotToPhase(i);
                 manual = stack.copy();
             }
 
@@ -265,7 +265,7 @@ public class MeditationMatEntity extends SpiritEnergyStorageBlockEntity implemen
 
         boolean alreadyActive = false;
         if (stack.getNbt() != null && stack.getNbt().contains("activeIndex"))
-            alreadyActive = stack.getNbt().getInt("activeIndex") != Elements.NONE.getValue();
+            alreadyActive = stack.getNbt().getInt("activeIndex") != Phases.NONE.getValue();
 
         return !alreadyActive;
     }

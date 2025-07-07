@@ -96,7 +96,7 @@ public class MeditationMat extends SpiritEnergyBlock {
     @Override
     @SuppressWarnings("deprecation")
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-        if (world.isClient()) return ActionResult.FAIL;
+        if (world.isClient()) return ActionResult.SUCCESS;
 
         MeditationMatEntity blockEntity = ((MeditationMatEntity) world.getBlockEntity(pos));
         MeditationMatSitEntity linkedEntity = null;
@@ -122,7 +122,7 @@ public class MeditationMat extends SpiritEnergyBlock {
 
         ((ServerPlayerEntity) player).networkHandler.syncWithPlayerPosition();
 
-        return ActionResult.PASS;
+        return ActionResult.CONSUME;
     }
 
     @Override
