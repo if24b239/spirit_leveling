@@ -9,6 +9,7 @@ import com.rain.spiritleveling.items.AllItems;
 import com.rain.spiritleveling.items.AllRecipes;
 import com.rain.spiritleveling.networking.AllMessages;
 import com.rain.spiritleveling.screens.AllScreenHandlers;
+import com.rain.spiritleveling.util.SpiritRegistries;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
@@ -24,16 +25,16 @@ public class SpiritLeveling implements ModInitializer {
 		LOGGER.info("Init Mod");
 
 		// register Mod content
-		AllItems.initialize();
-		AllBlocks.initialize();
-		AllBlockEntities.initialize();
+		SpiritRegistries.initialize();
 		AllMessages.registerC2SPackets();
 		AllEvents.initialize();
 		AllEffects.initialize();
-		AllEntities.initialize();
 		AllScreenHandlers.initialize();
 		AllRecipes.registerRecipes();
-
+		AllEntities.initialize();
+		AllBlocks.initialize();
+		AllBlockEntities.initialize();
+		AllItems.initialize();
 	}
 
 	// get a registry Identifier for SpiritLeveling

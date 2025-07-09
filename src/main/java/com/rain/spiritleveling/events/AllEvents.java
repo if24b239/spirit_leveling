@@ -5,6 +5,7 @@ import com.rain.spiritleveling.api.ISpiritEnergyPlayer;
 import com.rain.spiritleveling.api.Stages;
 import com.rain.spiritleveling.client.hud.IClientSpiritEnergyPlayer;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
+import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributeInstance;

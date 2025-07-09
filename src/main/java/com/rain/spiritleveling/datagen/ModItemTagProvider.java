@@ -19,9 +19,9 @@ public class ModItemTagProvider extends FabricTagProvider<Item> {
     @Override
     protected void configure(RegistryWrapper.WrapperLookup arg) {
         getOrCreateTagBuilder(SpiritTags.Items.SPIRIT_CULTIVATION_MANUALS)
-                .add(AllItems.FIRST_MANUAL);
+                .add(AllItems.SPIRIT_CONDENSATION_BODY_MANUAL);
 
         getOrCreateTagBuilder(SpiritTags.Items.MANUAL_FOR_SPIRIT_CONDENSATION)
-                .add(AllItems.FIRST_MANUAL);
+                .add(AllItems.SPIRIT_CONDENSATION_BODY_MANUAL);
     }
 }

@@ -3,7 +3,6 @@ package com.rain.spiritleveling.energymanager;
 import com.rain.spiritleveling.SpiritLeveling;
 import com.rain.spiritleveling.api.Stages;
 import com.rain.spiritleveling.client.hud.ClientHUDAnimator;
-import com.rain.spiritleveling.util.ClientMinorSpiritLevelFactory;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;

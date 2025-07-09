@@ -1,7 +1,6 @@
 package com.rain.spiritleveling.energymanager;
 
 import com.rain.spiritleveling.api.Stages;
-import com.rain.spiritleveling.util.MinorSpiritLevelFactory;
 
 import java.util.ArrayList;
 

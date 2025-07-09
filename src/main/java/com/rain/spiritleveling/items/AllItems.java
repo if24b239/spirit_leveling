@@ -16,6 +16,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.text.Text;
+import net.puffish.attributesmod.AttributesMod;
 
 public class AllItems {
 
@@ -25,13 +26,13 @@ public class AllItems {
     public static final SpiritPill SPIRIT_PILL = register("spirit_pill", new SpiritPill(new Item.Settings(), 0));
     public static final SpiritPill S_SPIRIT_PILL = register("s_spirit_pill", new SpiritPill(new Item.Settings(), 4));
     public static final BowAndDrill BOW_AND_DRILL = register("bow_and_drill", new BowAndDrill(new Item.Settings().maxDamage(16)));
-    public static final CultivationManual FIRST_MANUAL = register("first_manual", CultivationManual.Builder.create(SpiritLeveling.loc("first_manual"))
+    public static final CultivationManual SPIRIT_CONDENSATION_BODY_MANUAL = register("spirit_condensation_body_manual", CultivationManual.Builder.create(SpiritLeveling.loc("spirit_condensation_body_manual"))
             .setLevel(Stages.SPIRIT_CONDENSATION)
             .addAttributeAndModifier(Phases.WOOD, EntityAttributes.GENERIC_MAX_HEALTH, 1, EntityAttributeModifier.Operation.ADDITION)
-            .addAttributeAndModifier(Phases.FIRE, EntityAttributes.GENERIC_MAX_HEALTH, 2, EntityAttributeModifier.Operation.ADDITION)
-            .addAttributeAndModifier(Phases.EARTH, EntityAttributes.GENERIC_MAX_HEALTH, 3, EntityAttributeModifier.Operation.ADDITION)
-            .addAttributeAndModifier(Phases.METAL, EntityAttributes.GENERIC_MAX_HEALTH, 4, EntityAttributeModifier.Operation.ADDITION)
-            .addAttributeAndModifier(Phases.WATER, EntityAttributes.GENERIC_MAX_HEALTH, 5, EntityAttributeModifier.Operation.ADDITION)
+            .addAttributeAndModifier(Phases.FIRE, EntityAttributes.GENERIC_ARMOR, 0.5, EntityAttributeModifier.Operation.ADDITION)
+            .addAttributeAndModifier(Phases.METAL, AttributesMod.MAGIC_RESISTANCE, 0.5, EntityAttributeModifier.Operation.ADDITION)
+            .addAttributeAndModifier(Phases.EARTH, EntityAttributes.GENERIC_MAX_HEALTH, 0.02, EntityAttributeModifier.Operation.MULTIPLY_BASE)
+            .addAttributeAndModifier(Phases.WATER, EntityAttributes.GENERIC_MAX_HEALTH, 1, EntityAttributeModifier.Operation.ADDITION)
             .build(new Item.Settings()));
 
     // all basic item instances
@@ -80,7 +81,7 @@ public class AllItems {
                 entries.add(ADVANCED_JADE_ENERGY);
                 entries.add(SUPERIOR_JADE_ENERGY);
 
-                entries.add(FIRST_MANUAL);
+                entries.add(SPIRIT_CONDENSATION_BODY_MANUAL);
             })
             .build();
 

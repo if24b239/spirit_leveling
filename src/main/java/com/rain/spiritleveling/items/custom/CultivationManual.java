@@ -33,25 +33,24 @@ import java.util.stream.IntStream;
 
 public class CultivationManual extends Item {
 
-    private static final Map<Identifier, MutableText> ATTRIBUTE_DISPLAY = new HashMap<>();
+    private static final Map<EntityAttribute, MutableText> ATTRIBUTE_DISPLAY = new HashMap<>();
     private static final int DURABILITY = 8;
 
-    private final Map<Phases, Identifier> attributes;
+    private final Map<Phases, EntityAttribute> attributes;
     private final Map<Phases, EntityAttributeModifier> modifiers;
 
     private final Stages level;
 
     /// level has to be at least 1 since 0 does not have breakthroughs
-    public CultivationManual(Settings settings, Stages level, List<Identifier> attributes, List<EntityAttributeModifier> modifiers) {
-        super(settings.maxDamage(DURABILITY));
+    public CultivationManual(Settings settings, Stages level, List<EntityAttribute> attributes, List<EntityAttributeModifier> modifiers) {
+        super(settings
+                .maxDamage(DURABILITY)
+                .rarity(Rarity.RARE)
+        );
 
         this.level = level;
         this.attributes = IntStream.range(0, attributes.size()).boxed().collect(Collectors.toMap(Phases::stateOf, attributes::get));
         this.modifiers = IntStream.range(0, modifiers.size()).boxed().collect(Collectors.toMap(Phases::stateOf, modifiers::get));
-
-        for (Phases e : Phases.safeValues()) {
-            CultivationManual.addAttributeDisplay(this.attributes.get(e));
-        }
     }
 
     public static Phases getActiveElement(ItemStack stack) {
@@ -70,10 +69,24 @@ public class CultivationManual extends Item {
     @Override
     public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
         for (Phases e : Phases.safeValues()) {
+            addAttributeDisplay(attributes.get(e));
             tooltip.add(Text.translatable(e.getTooltipString())
-                    .append( ": +" + modifiers.get(e).getValue() + " ")
+                    .append( ": ")
+                    .append(getOperationValue(modifiers.get(e).getOperation(), modifiers.get(e).getValue()))
                     .append(ATTRIBUTE_DISPLAY.get(attributes.get(e))));
         }
+    }
+
+    private Text getOperationValue(EntityAttributeModifier.Operation operation, double value) {
+        MutableText out = Text.empty();
+
+        switch (operation) {
+            case ADDITION -> out.append("+" + value + " ");
+            case MULTIPLY_BASE -> out.append("+" + value*100 + "% ");
+            case MULTIPLY_TOTAL -> out.append((100+value*100) + "% ");
+        }
+
+        return out;
     }
 
     @Override
@@ -83,7 +96,7 @@ public class CultivationManual extends Item {
 
     @Override
     public UseAction getUseAction(ItemStack stack) {
-        return UseAction.SPYGLASS;
+        return UseAction.BOW;
     }
 
     @Override
@@ -122,13 +135,13 @@ public class CultivationManual extends Item {
         return copy;
     }
 
-    /// throws exception when element is Phases.NONE
+    /// throws exception when element is Phases. NONE
     private void incrementAttribute(LivingEntity user, Phases element) {
         if (element == Phases.NONE)
             throw new IllegalArgumentException("increment Attribute element can't be Element.NONE");
 
         // the attribute that will be modified
-        EntityAttribute att = Registries.ATTRIBUTE.get(this.attributes.get(element));
+        EntityAttribute att = this.attributes.get(element);
 
         // the modifier to change the attribute
         EntityAttributeModifier mod = this.modifiers.get(element);
@@ -168,7 +181,7 @@ public class CultivationManual extends Item {
     public static class Builder {
         Identifier itemId;
 
-        private final List<Identifier> attributes = new ArrayList<>(Collections.nCopies(5, null));
+        private final List<EntityAttribute> attributes = new ArrayList<>(Collections.nCopies(5, null));
         private final List<EntityAttributeModifier> modifiers = new ArrayList<>(Collections.nCopies(5, null));
 
         private Stages level = Stages.MORTAL;
@@ -181,12 +194,11 @@ public class CultivationManual extends Item {
             return new Builder(itemId);
         }
 
-        public Builder addAttributeAndModifier(Phases element, @NotNull EntityAttribute attribute, int value, EntityAttributeModifier.Operation operation) {
+        public Builder addAttributeAndModifier(Phases element, @NotNull EntityAttribute attribute, double value, EntityAttributeModifier.Operation operation) {
             validateElement(element);
-            validateAttribute(attribute);
 
             // add the attribute id
-            this.attributes.set(element.getValue(), Registries.ATTRIBUTE.getId(attribute));
+            this.attributes.set(element.getValue(), attribute);
 
             // setup and add the attribute modifier
             String uuid_seed = this.itemId.toUnderscoreSeparatedString() + "_" + element + "_" + value;
@@ -229,14 +241,9 @@ public class CultivationManual extends Item {
                 throw new IllegalStateException("The modifier for index " + element + " has already been set");
         }
 
-        private void validateAttribute(EntityAttribute attribute) {
-            if (Registries.ATTRIBUTE.getId(attribute) == null)
-                throw new IllegalArgumentException("The attribute " + attribute + " has not been registered");
-        }
-
         private void validateComplete() {
-            for (Identifier i : this.attributes) {
-                if (i == null)
+            for (EntityAttribute a : this.attributes) {
+                if (a == null)
                     throw new IllegalStateException("All indices of target attributes in CultivationManual need to be filled");
             }
 
@@ -257,10 +264,10 @@ public class CultivationManual extends Item {
                 modelGenerator.writer);
     }
 
-    public static void addAttributeDisplay(Identifier attribute) {
+    public static void addAttributeDisplay(EntityAttribute attribute) {
         if (ATTRIBUTE_DISPLAY.containsKey(attribute))
             return;
 
-        ATTRIBUTE_DISPLAY.put(attribute, Text.translatable("tooltip.spiritleveling." + attribute.toShortTranslationKey()));
+        ATTRIBUTE_DISPLAY.put(attribute, Text.translatable("tooltip.spiritleveling." + Objects.requireNonNull(Registries.ATTRIBUTE.getId(attribute)).toShortTranslationKey()));
     }
 }
