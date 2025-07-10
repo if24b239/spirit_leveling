@@ -20,6 +20,8 @@ public class SpiritTags {
         /// the MANUAL_FOR_ tags should only contain CultivationManuals with the same CultivationManual.level.
         public static final TagKey<Item> SPIRIT_CULTIVATION_MANUALS = createTag("spirit_cultivation_manuals");
         public static final TagKey<Item> MANUAL_FOR_SPIRIT_CONDENSATION = createTag("manual_for_spirit_condensation");
+        public static final TagKey<Item> MANUAL_FOR_FOUNDATION = createTag("manual_for_foundation");
+        public static final TagKey<Item> MANUAL_FOR_GOLDEN_CORE = createTag("manual_for_golden_core");
 
         public static TagKey<Item> createTag(String name) {
             return TagKey.of(RegistryKeys.ITEM, SpiritLeveling.loc(name));

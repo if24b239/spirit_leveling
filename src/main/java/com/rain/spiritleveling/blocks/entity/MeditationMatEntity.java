@@ -263,11 +263,8 @@ public class MeditationMatEntity extends SpiritEnergyStorageBlockEntity implemen
         if (recipe_tag == null || !stack.isIn(recipe_tag) || !stack.isIn(SpiritTags.Items.SPIRIT_CULTIVATION_MANUALS))
             return false;
 
-        boolean alreadyActive = false;
-        if (stack.getNbt() != null && stack.getNbt().contains("activeIndex"))
-            alreadyActive = stack.getNbt().getInt("activeIndex") != Phases.NONE.getValue();
+        return CultivationManual.getActivePhase(stack) == Phases.NONE;
 
-        return !alreadyActive;
     }
 
     private void increaseStack(SpiritInfusionRecipe recipe) {
@@ -314,9 +311,9 @@ public class MeditationMatEntity extends SpiritEnergyStorageBlockEntity implemen
     }
 
     private boolean validBreakthroughRecipe(SpiritInfusionRecipe recipe) {
-        // is ignored when the output isn't a cultivation manual
-        if (!recipe.getOutput(null).isIn(SpiritTags.Items.SPIRIT_CULTIVATION_MANUALS))
-            return true;
+        // is ignored when the output isn't a cultivation manual and the output isn't AIR
+        if (!recipe.getOutput(null).isIn(SpiritTags.Items.SPIRIT_CULTIVATION_MANUALS) && recipe.getOutput(null).getItem() != Items.AIR)
+            return false;
 
         boolean valid = false;
         for (int i = WOOD_SLOT; i <= WATER_SLOT; i++) {

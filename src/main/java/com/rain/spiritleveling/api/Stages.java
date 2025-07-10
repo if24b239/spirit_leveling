@@ -4,15 +4,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum Stages {
-    MORTAL(0),
-    SPIRIT_CONDENSATION(1),
-    FOUNDATION(2),
-    GOLDEN_CORE(3),
-    NASCENT_SPIRIT(4),
-    F(5),
-    G(6);
+    MORTAL(0, "mortal"),
+    SPIRIT_CONDENSATION(1, "spirit_condensation"),
+    FOUNDATION(2, "foundation"),
+    GOLDEN_CORE(3, "golden_core"),
+    NASCENT_SPIRIT(4, "nascent_spirit"),
+    F(5, "F"),
+    G(6, "G");
 
     private final int value;
+    private final String string;
     private static final Map<Integer, Stages> map = new HashMap<>();
 
     static {
@@ -21,12 +22,17 @@ public enum Stages {
         }
     }
 
-    Stages(int value) {
+    Stages(int value, String string) {
         this.value = value;
+        this.string = string;
     }
 
     public int getValue() {
         return value;
+    }
+
+    public String getString() {
+        return string;
     }
 
     public int getSpiritEnergy() {

@@ -1,9 +1,1 @@
-[submodule "ZenithAttributes"]
-	path = ZenithAttributes
-	url = git@github.com:TheWinABagel/ZenithAttributes
-[submodule "local_dependencies/ZenithAttributes"]
-	path = local_dependencies/ZenithAttributes
-	url = git@github.com:TheWinABagel/ZenithAttributes
-[submodule "local_dependencies/FakerLib"]
-	path = local_dependencies/FakerLib
-	url = git@github.com:TheWinABagel/FakerLib.git
+

@@ -53,7 +53,7 @@ public class CultivationManual extends Item {
         this.modifiers = IntStream.range(0, modifiers.size()).boxed().collect(Collectors.toMap(Phases::stateOf, modifiers::get));
     }
 
-    public static Phases getActiveElement(ItemStack stack) {
+    public static Phases getActivePhase(ItemStack stack) {
         NbtCompound nbt = stack.getNbt();
 
         if (nbt == null || !nbt.contains("activeIndex"))
@@ -68,12 +68,17 @@ public class CultivationManual extends Item {
 
     @Override
     public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
+        Phases activePhase = getActivePhase(stack);
         for (Phases e : Phases.safeValues()) {
             addAttributeDisplay(attributes.get(e));
-            tooltip.add(Text.translatable(e.getTooltipString())
-                    .append( ": ")
+
+            MutableText text = Text.empty().append(Text.translatable(e.getTooltipString()))
+                    .append(": ")
                     .append(getOperationValue(modifiers.get(e).getOperation(), modifiers.get(e).getValue()))
-                    .append(ATTRIBUTE_DISPLAY.get(attributes.get(e))));
+                    .append(ATTRIBUTE_DISPLAY.get(attributes.get(e)))
+                    .formatted((e == activePhase) ? Formatting.DARK_AQUA : Formatting.WHITE);
+
+            tooltip.add(text);
         }
     }
 
@@ -91,7 +96,7 @@ public class CultivationManual extends Item {
 
     @Override
     public int getMaxUseTime(ItemStack stack) {
-        return (getActiveElement(stack) == Phases.NONE) ? 0 : 48;
+        return (getActivePhase(stack) == Phases.NONE) ? 0 : 48;
     }
 
     @Override
@@ -110,16 +115,16 @@ public class CultivationManual extends Item {
 
     @Override
     public ItemStack finishUsing(ItemStack stack, World world, LivingEntity user) {
-        Phases activeIndex = getActiveElement(stack);
+        Phases activePhase = getActivePhase(stack);
 
-        if (world.isClient() || activeIndex == Phases.NONE)
+        if (world.isClient() || activePhase == Phases.NONE)
             return stack;
 
         if (user instanceof ServerPlayerEntity && !((ISpiritEnergyPlayer) user).spirit_leveling$minorBreakthrough(this.getLevel()))
             return stack;
 
         // increase attribute and reset the manual with one durability less
-        incrementAttribute(user, activeIndex);
+        incrementAttribute(user, activePhase);
         setActiveElement(stack, Phases.NONE);
 
         return damageStack(stack);
@@ -138,7 +143,7 @@ public class CultivationManual extends Item {
     /// throws exception when element is Phases. NONE
     private void incrementAttribute(LivingEntity user, Phases element) {
         if (element == Phases.NONE)
-            throw new IllegalArgumentException("increment Attribute element can't be Element.NONE");
+            throw new IllegalArgumentException("increment Attribute element can't be Phases.NONE");
 
         // the attribute that will be modified
         EntityAttribute att = this.attributes.get(element);
@@ -190,8 +195,8 @@ public class CultivationManual extends Item {
             this.itemId = itemId;
         }
 
-        public static Builder create(@NotNull Identifier itemId) {
-            return new Builder(itemId);
+        public static Builder create(@NotNull String itemId) {
+            return new Builder(SpiritLeveling.loc(itemId));
         }
 
         public Builder addAttributeAndModifier(Phases element, @NotNull EntityAttribute attribute, double value, EntityAttributeModifier.Operation operation) {
@@ -257,10 +262,10 @@ public class CultivationManual extends Item {
         }
     }
 
-    public static void generateModel(ItemModelGenerator modelGenerator, @NotNull Item item) {
-        Models.GENERATED_TWO_LAYERS.upload(
+    public static void generateModel(ItemModelGenerator modelGenerator, @NotNull CultivationManual item) {
+        Models.GENERATED_THREE_LAYERS.upload(
                 ModelIds.getItemModelId(item),
-                TextureMap.layered(SpiritLeveling.loc("item/manual_base"), Registries.ITEM.getId(item).withPrefixedPath("item/")),
+                TextureMap.layered(SpiritLeveling.loc("item/manual_base"), SpiritLeveling.loc("item/manual_" + item.getLevel().getString()), Registries.ITEM.getId(item).withPrefixedPath("item/")),
                 modelGenerator.writer);
     }
 

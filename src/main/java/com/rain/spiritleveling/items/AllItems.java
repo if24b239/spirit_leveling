@@ -22,18 +22,15 @@ public class AllItems {
 
     private AllItems() {}
 
-    // all custom item instances
+    // custom item instances
     public static final SpiritPill SPIRIT_PILL = register("spirit_pill", new SpiritPill(new Item.Settings(), 0));
     public static final SpiritPill S_SPIRIT_PILL = register("s_spirit_pill", new SpiritPill(new Item.Settings(), 4));
     public static final BowAndDrill BOW_AND_DRILL = register("bow_and_drill", new BowAndDrill(new Item.Settings().maxDamage(16)));
-    public static final CultivationManual SPIRIT_CONDENSATION_BODY_MANUAL = register("spirit_condensation_body_manual", CultivationManual.Builder.create(SpiritLeveling.loc("spirit_condensation_body_manual"))
-            .setLevel(Stages.SPIRIT_CONDENSATION)
-            .addAttributeAndModifier(Phases.WOOD, EntityAttributes.GENERIC_MAX_HEALTH, 1, EntityAttributeModifier.Operation.ADDITION)
-            .addAttributeAndModifier(Phases.FIRE, EntityAttributes.GENERIC_ARMOR, 0.5, EntityAttributeModifier.Operation.ADDITION)
-            .addAttributeAndModifier(Phases.METAL, AttributesMod.MAGIC_RESISTANCE, 0.5, EntityAttributeModifier.Operation.ADDITION)
-            .addAttributeAndModifier(Phases.EARTH, EntityAttributes.GENERIC_MAX_HEALTH, 0.02, EntityAttributeModifier.Operation.MULTIPLY_BASE)
-            .addAttributeAndModifier(Phases.WATER, EntityAttributes.GENERIC_MAX_HEALTH, 1, EntityAttributeModifier.Operation.ADDITION)
-            .build(new Item.Settings()));
+
+    // cultivation manuals
+    public static final CultivationManual SPIRIT_CONDENSATION_BODY_MANUAL = registerBodyManual("spirit_condensation_body_manual", Stages.SPIRIT_CONDENSATION);
+    public static final CultivationManual FOUNDATION_BODY_MANUAL = registerBodyManual("foundation_body_manual", Stages.FOUNDATION);
+    public static final CultivationManual GOLDEN_CORE_BODY_MANUAL = registerBodyManual("golden_core_body_manual", Stages.GOLDEN_CORE);
 
     // all basic item instances
     public static final Item JADE_CHUNK = register("jade_chunk", new Item(new Item.Settings()));
@@ -82,13 +79,26 @@ public class AllItems {
                 entries.add(SUPERIOR_JADE_ENERGY);
 
                 entries.add(SPIRIT_CONDENSATION_BODY_MANUAL);
+                entries.add(FOUNDATION_BODY_MANUAL);
+                entries.add(GOLDEN_CORE_BODY_MANUAL);
             })
             .build();
 
-    // helper to register items
+    // helpers to register items
     private static <T extends Item> T register(String path, T item) {
 
         return Registry.register(Registries.ITEM, SpiritLeveling.loc(path), item);
+    }
+
+    private static CultivationManual registerBodyManual(String path, Stages stage) {
+        return register(path, CultivationManual.Builder.create(path)
+                .setLevel(stage)
+                .addAttributeAndModifier(Phases.WOOD, AttributesMod.STAMINA, 0.02 * stage.getValue(), EntityAttributeModifier.Operation.MULTIPLY_BASE)
+                .addAttributeAndModifier(Phases.FIRE, AttributesMod.MAGIC_RESISTANCE, 0.25 * stage.getValue(), EntityAttributeModifier.Operation.ADDITION)
+                .addAttributeAndModifier(Phases.METAL, AttributesMod.RANGED_RESISTANCE, 0.25 * stage.getValue(), EntityAttributeModifier.Operation.ADDITION)
+                .addAttributeAndModifier(Phases.EARTH, EntityAttributes.GENERIC_MAX_HEALTH, 2 * stage.getValue(), EntityAttributeModifier.Operation.ADDITION)
+                .addAttributeAndModifier(Phases.WATER, AttributesMod.MELEE_RESISTANCE, 0.25 * stage.getValue(), EntityAttributeModifier.Operation.ADDITION)
+                .build(new Item.Settings()));
     }
 
     public static void initialize() {

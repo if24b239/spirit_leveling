@@ -32,5 +32,9 @@
   "gui.spiritleveling.spirit_infusion.metal_slot": "Metal Phase Slot",
   "gui.spiritleveling.spirit_infusion.water_slot": "Water Phase Slot",
 
-  "tooltip.spiritleveling.generic.max_health": "Max Health"
+  "tooltip.spiritleveling.generic.max_health": "Max Health",
+  "tooltip.spiritleveling.puffish_attributes.stamina": "Stamina (Consume less Food)",
+  "tooltip.spiritleveling.puffish_attributes.magic_resistance": "Magic Resistance",
+  "tooltip.spiritleveling.puffish_attributes.ranged_resistance": "Projectile Resistance",
+  "tooltip.spiritleveling.puffish_attributes.melee_resistance": "Melee Resistance"
 }

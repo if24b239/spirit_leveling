@@ -44,5 +44,7 @@ public class ModModelProvider extends FabricModelProvider {
         itemModelGenerator.register(AllItems.DRILL, Models.GENERATED);
         itemModelGenerator.register(AllBlocks.MEDITATION_MAT.asItem(), new Model(Optional.of(SpiritLeveling.loc("block/meditation_mat")), Optional.empty()));
         CultivationManual.generateModel(itemModelGenerator, AllItems.SPIRIT_CONDENSATION_BODY_MANUAL);
+        CultivationManual.generateModel(itemModelGenerator, AllItems.FOUNDATION_BODY_MANUAL);
+        CultivationManual.generateModel(itemModelGenerator, AllItems.GOLDEN_CORE_BODY_MANUAL);
     }
 }
