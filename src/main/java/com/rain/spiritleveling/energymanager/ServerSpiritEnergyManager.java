@@ -3,6 +3,8 @@ package com.rain.spiritleveling.energymanager;
 import com.rain.spiritleveling.api.ISpiritEnergyPlayer;
 import com.rain.spiritleveling.api.Stages;
 import com.rain.spiritleveling.client.hud.IClientSpiritEnergyPlayer;
+import com.rain.spiritleveling.util.SpiritAttributes;
+import net.minecraft.entity.attribute.EntityAttributeInstance;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
 
@@ -17,6 +19,8 @@ public class ServerSpiritEnergyManager extends ServerMajorSpiritLevel {
         spiritPower = calculateSpiritStrength(current_energy);
         currentEnergy = current_energy;
         maxEnergy = max_energy;
+
+        updateModifiers();
     }
 
     // called to increase the maximum spirit energy while taking care of all bottlenecks
@@ -28,6 +32,7 @@ public class ServerSpiritEnergyManager extends ServerMajorSpiritLevel {
     public void addCurrentEnergy(int amount) {
         currentEnergy = Math.min(currentEnergy + amount, maxEnergy);
         updateSpiritPower();
+        updateModifiers();
     }
 
     // returns false when amount is bigger than currentEnergy and doesn't change anything
@@ -36,6 +41,7 @@ public class ServerSpiritEnergyManager extends ServerMajorSpiritLevel {
 
         currentEnergy -= amount;
         updateSpiritPower();
+        updateModifiers();
 
         return true;
     }
@@ -73,7 +79,23 @@ public class ServerSpiritEnergyManager extends ServerMajorSpiritLevel {
 
         // add one max energy to sync up spiritLevel calculations with MajorSpiritLevel state
         addMaxEnergy(1);
+
+        // update Spirit power attribute modifiers
+        updateModifiers();
         return true;
+    }
+
+    private void updateModifiers() {
+
+        EntityAttributeInstance instance = player.getAttributes().getCustomInstance(SpiritAttributes.SPIRIT_POWER);
+
+        if (instance == null)
+            throw new IllegalStateException(SpiritAttributes.SPIRIT_POWER.getTranslationKey() + " attribute not on entity");
+
+        instance.clearModifiers();
+
+        instance.addTemporaryModifier(getSpiritLevel().getLevelModifier());
+        instance.addTemporaryModifier(getSpiritPower().getPowerModifier());
     }
 
     private void updateSpiritPower() {

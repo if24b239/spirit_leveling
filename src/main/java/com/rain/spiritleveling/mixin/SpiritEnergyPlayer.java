@@ -5,6 +5,9 @@ import com.mojang.authlib.GameProfile;
 import com.rain.spiritleveling.api.ISpiritEnergyPlayer;
 import com.rain.spiritleveling.api.Stages;
 import com.rain.spiritleveling.energymanager.ServerSpiritEnergyManager;
+import com.rain.spiritleveling.util.SpiritAttributes;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
@@ -12,6 +15,8 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
+import net.minecraft.world.World;
+import net.puffish.attributesmod.api.DynamicModification;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -22,10 +27,16 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Mixin(ServerPlayerEntity.class)
-public abstract class SpiritEnergyPlayer implements ISpiritEnergyPlayer {
+public abstract class SpiritEnergyPlayer extends LivingEntity implements ISpiritEnergyPlayer {
 
     @Unique
     private ServerSpiritEnergyManager spiritLevelingSystem;
+    @Unique
+    private int spiritRegenCooldown = 0;
+
+    protected SpiritEnergyPlayer(EntityType<? extends LivingEntity> entityType, World world) {
+        super(entityType, world);
+    }
 
     @Inject(method= "<init>", at = @At("RETURN"))
     private void onSpiritEnergyPlayerConstruct(MinecraftServer server, ServerWorld world, GameProfile profile, CallbackInfo ci) {
@@ -150,6 +161,21 @@ public abstract class SpiritEnergyPlayer implements ISpiritEnergyPlayer {
         return spiritLevelingSystem.isAtMax();
     }
 
+    /**
+     * Add spirit energy based on SPIRIT_REGENERATION attribute
+     */
+    @Inject(method = "tick", at = @At("HEAD"))
+    public void spiritGenerationTick(CallbackInfo ignoredCi) {
+        spiritRegenCooldown++;
 
+        int attributeValue = (int) DynamicModification.create().withPositive(SpiritAttributes.SPIRIT_REGENERATION, this).applyTo(0);
+
+        int interval = 400 >> attributeValue;
+
+        if (spiritRegenCooldown >= interval) {
+            this.spirit_leveling$addCurrentSpiritEnergy(attributeValue <= 0 ? 0 : (int)Math.pow(2, attributeValue - 1));
+            spiritRegenCooldown = 0;
+        }
+    }
 
 }

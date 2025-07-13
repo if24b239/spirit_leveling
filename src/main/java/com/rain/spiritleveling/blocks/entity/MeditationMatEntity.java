@@ -353,7 +353,7 @@ public class MeditationMatEntity extends SpiritEnergyStorageBlockEntity implemen
     /// returns the amount of energy transferred from the player to the mat and vice versa
     public static int getTransferAmount(Stages level) {
 
-        return (int) (1 + (Math.pow(10, level.getValue() + 1) / (60 * (1 + ((double) level.getValue() / 6)))));
+        return (int) (1 + level.next().getSpiritEnergy() / (60 * (1 + ((double) level.getValue() / 6))));
     }
 
     ///  make meditation mats only check for block directly underneath it that are not other meditation mats

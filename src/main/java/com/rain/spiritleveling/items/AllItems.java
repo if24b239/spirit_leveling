@@ -20,8 +20,6 @@ import net.puffish.attributesmod.AttributesMod;
 
 public class AllItems {
 
-    private AllItems() {}
-
     // custom item instances
     public static final SpiritPill SPIRIT_PILL = register("spirit_pill", new SpiritPill(new Item.Settings(), 0));
     public static final SpiritPill S_SPIRIT_PILL = register("s_spirit_pill", new SpiritPill(new Item.Settings(), 4));

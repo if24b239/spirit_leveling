@@ -22,7 +22,7 @@ public class MajorSpiritLevel<minorLevelType extends MinorSpiritLevel> {
         createMinorLevels(s_level);
 
         // update minor levels to fit with data given in constructor
-        int level_size = MinorSpiritLevel.getLevelSize(s_level);
+        int level_size = s_level.getSpiritEnergy();
         int completed_minor_levels = max_energy / level_size;
         int progress_next = max_energy % level_size;
 

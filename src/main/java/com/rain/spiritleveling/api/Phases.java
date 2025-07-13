@@ -2,6 +2,7 @@ package com.rain.spiritleveling.api;
 
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -48,11 +49,6 @@ public enum Phases {
     }
 
     public static Phases[] safeValues() {
-        return new Phases[]{
-                WOOD,
-                FIRE,
-                EARTH,
-                METAL,
-                WATER};
+        return Arrays.stream(Phases.values()).filter(phase -> phase != Phases.NONE).toArray(Phases[]::new);
     }
 }

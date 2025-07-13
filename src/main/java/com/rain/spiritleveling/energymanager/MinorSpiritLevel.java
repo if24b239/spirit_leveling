@@ -11,14 +11,9 @@ public class MinorSpiritLevel {
     public COVER_STATE state;
 
     public MinorSpiritLevel(Stages spiritLevel, boolean chains) {
-        levelSize = getLevelSize(spiritLevel);
+        levelSize = spiritLevel.getSpiritEnergy();
         state = getCoverState();
         isChained = chains;
-    }
-
-    // calculates how much total spirit power is needed to complete the minor level
-    public static int getLevelSize(Stages spiritLevel) {
-        return (int)Math.pow(10, spiritLevel.getValue());
     }
 
     public COVER_STATE getCoverState() {

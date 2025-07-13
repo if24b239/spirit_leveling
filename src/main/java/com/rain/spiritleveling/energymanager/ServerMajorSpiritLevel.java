@@ -2,8 +2,10 @@ package com.rain.spiritleveling.energymanager;
 
 import com.rain.spiritleveling.api.Stages;
 import com.rain.spiritleveling.networking.AllMessages;
+import com.rain.spiritleveling.util.SpiritAttributes;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.entity.attribute.EntityAttributeInstance;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.network.ServerPlayerEntity;
 

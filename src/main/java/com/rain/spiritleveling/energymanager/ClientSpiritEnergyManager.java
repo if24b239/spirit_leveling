@@ -288,7 +288,7 @@ public class ClientSpiritEnergyManager extends MajorSpiritLevel<MinorSpiritLevel
 
     public int getSlotsNumber(Stages spirit_power, int current_energy, int max_energy) {
 
-        int size_slots = MinorSpiritLevel.getLevelSize(spirit_power);
+        int size_slots = spirit_power.getSpiritEnergy();
 
         int num_slots = current_energy / size_slots;
 
