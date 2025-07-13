@@ -13,8 +13,8 @@ public enum Stages {
     FOUNDATION(2, "foundation"),
     GOLDEN_CORE(3, "golden_core"),
     NASCENT_SPIRIT(4, "nascent_spirit"),
-    F(5, "F"),
-    G(6, "G"),
+    F(5, "f"),
+    G(6, "g"),
     LAST(7, "PLACEHOLDER");
 
     private final int value;

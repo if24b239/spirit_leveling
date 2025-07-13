@@ -1,6 +1,7 @@
 package com.rain.spiritleveling.items;
 
 import com.rain.spiritleveling.SpiritLeveling;
+import com.rain.spiritleveling.api.Element;
 import com.rain.spiritleveling.api.Phases;
 import com.rain.spiritleveling.api.Stages;
 import com.rain.spiritleveling.blocks.AllBlocks;
@@ -17,6 +18,8 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.text.Text;
 import net.puffish.attributesmod.AttributesMod;
+
+import java.util.Arrays;
 
 public class AllItems {
 
@@ -79,6 +82,9 @@ public class AllItems {
                 entries.add(SPIRIT_CONDENSATION_BODY_MANUAL);
                 entries.add(FOUNDATION_BODY_MANUAL);
                 entries.add(GOLDEN_CORE_BODY_MANUAL);
+
+                // all elemental items
+                Arrays.stream(Element.getItems()).forEach(entries::add);
             })
             .build();
 

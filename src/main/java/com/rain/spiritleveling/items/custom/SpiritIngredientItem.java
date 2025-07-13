@@ -6,14 +6,20 @@ import net.minecraft.item.Item;
 
 public class SpiritIngredientItem extends Item {
 
-    private final Stages INGREDIENT_LEVEL;
+    private final Stages ingredientLevel;
+    private final Element element;
 
     public SpiritIngredientItem(Settings settings, Stages ingredient_level, Element element) {
         super(settings);
-        INGREDIENT_LEVEL = ingredient_level;
+        ingredientLevel = ingredient_level;
+        this.element = element;
     }
 
     public Stages getIngredientLevel() {
-        return INGREDIENT_LEVEL;
+        return ingredientLevel;
+    }
+
+    public Element getElement() {
+        return element;
     }
 }

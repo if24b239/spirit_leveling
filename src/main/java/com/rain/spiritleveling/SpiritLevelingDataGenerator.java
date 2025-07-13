@@ -16,5 +16,6 @@ public class SpiritLevelingDataGenerator implements DataGeneratorEntrypoint {
 		pack.addProvider(ModBlockLootProvider::new);
 		pack.addProvider(ModBlockTagProvider::new);
 		pack.addProvider(ModItemTagProvider::new);
+		pack.addProvider(ModElementTagProvider::new);
 	}
 }

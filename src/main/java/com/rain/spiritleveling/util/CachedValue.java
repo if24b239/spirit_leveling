@@ -1,9 +1,7 @@
 package com.rain.spiritleveling.util;
 
-import com.rain.spiritleveling.SpiritLeveling;
-
 public class CachedValue<T> {
-    private static final int MAX_COUNT = 100;
+    private static final int MAX_COUNT = 10;
 
     private T value;
     private boolean isValid = false;

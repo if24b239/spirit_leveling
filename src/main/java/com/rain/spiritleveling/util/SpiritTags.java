@@ -1,6 +1,7 @@
 package com.rain.spiritleveling.util;
 
 import com.rain.spiritleveling.SpiritLeveling;
+import com.rain.spiritleveling.api.Element;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.registry.RegistryKeys;
@@ -10,7 +11,7 @@ public class SpiritTags {
     public static class Blocks {
         public static final TagKey<Block> NEEDS_NETHERITE_TOOL = createTag("needs_netherite_tool");
 
-        public static TagKey<Block> createTag(String name) {
+        private static TagKey<Block> createTag(String name) {
             return TagKey.of(RegistryKeys.BLOCK, SpiritLeveling.loc(name));
         }
     }
@@ -23,8 +24,16 @@ public class SpiritTags {
         public static final TagKey<Item> MANUAL_FOR_FOUNDATION = createTag("manual_for_foundation");
         public static final TagKey<Item> MANUAL_FOR_GOLDEN_CORE = createTag("manual_for_golden_core");
 
-        public static TagKey<Item> createTag(String name) {
+        private static TagKey<Item> createTag(String name) {
             return TagKey.of(RegistryKeys.ITEM, SpiritLeveling.loc(name));
+        }
+    }
+
+    public static class Others {
+        public static final TagKey<Element> ALL_ELEMENTS = createTag("all_elements");
+
+        private static TagKey<Element> createTag(String name) {
+            return TagKey.of(SpiritRegistries.ELEMENTS_KEY, SpiritLeveling.loc(name));
         }
     }
 }
