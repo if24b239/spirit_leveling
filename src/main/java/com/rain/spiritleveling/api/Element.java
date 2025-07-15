@@ -11,10 +11,13 @@ import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.util.Identifier;
 import net.puffish.attributesmod.api.DynamicEntityAttribute;
+import org.joml.Vector2d;
 
 import java.util.*;
 
 public class Element {
+
+    public static final Map<Element, Vector2d> registeredFlowPositions = new HashMap<>();
 
     protected final Identifier ID;
 
@@ -23,9 +26,11 @@ public class Element {
     protected final RegistryKey<DamageType> DAMAGE_TYPE;
 
     protected final Map<Identifier, SpiritIngredientItem> ITEMS = new HashMap<>();
+    private final Vector2d flowPos;
 
-    public Element(Identifier elementId) {
+    public Element(Identifier elementId, Vector2d flowPos) {
         ID = elementId;
+        this.flowPos = flowPos;
         ATTRIBUTE = DynamicEntityAttribute.create(ID).setTracked(true);
 
         for (Stages stage : Stages.safeValues()) {
@@ -55,6 +60,14 @@ public class Element {
      * @param element_instance the instance of the element that will be registered
      */
     public static <T extends Element> T register(T element_instance) {
+
+        Vector2d flowPos = new Vector2d(element_instance.getFlowPos());
+        // flow position checks
+        if (flowPos.absolute().x > 5 || flowPos.absolute().y > 5)
+            throw new IllegalStateException("Flow Pos: " + flowPos + " in Element: " + element_instance + " has to be in area from (-5,-5) to (5,5)");
+
+
+        // register all objects of the element
         Registry.register(SpiritRegistries.ELEMENTS, element_instance.ID, element_instance);
 
         Registry.register(Registries.ATTRIBUTE, element_instance.ID, element_instance.ATTRIBUTE);
@@ -63,6 +76,7 @@ public class Element {
 
         return element_instance;
     }
+
 
     public static Element[] getElements() {
         return SpiritRegistries.ELEMENTS.stream().toArray(Element[]::new);
@@ -82,5 +96,9 @@ public class Element {
      */
     public static SpiritIngredientItem[] getItems(Element element) {
         return element.ITEMS.values().toArray(new SpiritIngredientItem[0]);
+    }
+
+    public Vector2d getFlowPos() {
+        return this.flowPos;
     }
 }

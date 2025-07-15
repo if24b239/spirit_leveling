@@ -75,4 +75,6 @@ public enum Stages {
     public EntityAttributeModifier getLevelModifier() {
         return new EntityAttributeModifier(UUID.fromString("087dffe8-6522-4b2e-8ff0-e072736d998f"), "power adder", this.value, EntityAttributeModifier.Operation.ADDITION);
     }
+
+
 }
